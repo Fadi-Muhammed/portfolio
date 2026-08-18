@@ -1,0 +1,17 @@
+# Normalise line endings: LF in the repository, matching .editorconfig.
+# Without this, git on Windows commits CRLF and fights Prettier and ESLint.
+* text=auto eol=lf
+
+# Binary assets — never touched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.mp4 binary
+*.webm binary
