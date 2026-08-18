@@ -20,7 +20,7 @@ Status: done.
 - `CLAUDE.md` — the working rules, a verbatim copy of Section C of the plan.
 - `docs/DECISIONS.md` — Section A decisions plus a dated log of decisions taken in chat.
 - `docs/PROGRESS.md` — this file.
-- `.gitignore`, `.editorconfig`, `README.md`.
+- `.gitignore`, `.editorconfig`, `.gitattributes`, `README.md`.
 
 No application code, no dependencies, no `package.json`. That is correct for Part 0 — the scaffold is
 Part 1.
@@ -40,6 +40,14 @@ Node is above the required 20, so A30 is resolved.
 - In Claude Code, typing `/frontend-design` lists the skill. A newly created skills directory can
   need a restart of Claude Code before it is picked up; if it does not appear, restart and use the
   resume prompt from Section E.
+
+### Decided without asking
+
+- Added `.gitattributes` (`* text=auto eol=lf`) on top of the file list in the Part 0 prompt. Git on
+  Windows was converting the working copy to CRLF while `.editorconfig` declares LF; left alone, that
+  would fight Prettier and ESLint from Part 1 on. Determined by the spec, so decided rather than asked.
+- Part 0 step 6 asks for one commit; the line-ending fix is a second, separate commit so the reason is
+  recoverable from the history.
 
 ### Known gaps
 
