@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+.yarn/cache
+.yarn/install-state.gz
+
+# Next.js
+.next/
+out/
+build/
+next-env.d.ts
+
+# Production and tooling output
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# Design screenshots (npm run screens)
+.screens/
+
+# Environment — never commit real keys; .env.example is tracked
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editors
+.idea/
+*.swp
+*.swo
+*~
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
