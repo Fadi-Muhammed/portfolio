@@ -72,3 +72,10 @@ displayed attribution (Part 7).
 - **CLAUDE.md is a verbatim copy of Section C** of `docs/BUILD_PLAN.md`. No path adaptation was
   needed — the paths Section C names (`docs/BUILD_PLAN.md`, `.claude/skills/frontend-design/SKILL.md`,
   `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/DESIGN.md`) are the paths this repo uses.
+
+- **The design skill is the file in this repo, not the built-in one with the same name.** Confirmed in
+  chat. `.claude/skills/frontend-design/SKILL.md` is the user's own uploaded file, moved unchanged from
+  `frontend-design/SKILL.md` in Part 0 step 2. Claude Code also ships a built-in skill called
+  `frontend-design`, so the name is ambiguous when invoked as a slash command. To remove the ambiguity,
+  every UI part reads `.claude/skills/frontend-design/SKILL.md` from the repo path directly and follows
+  that text. If the two ever disagree, the repo file wins.
