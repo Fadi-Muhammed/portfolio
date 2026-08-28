@@ -19,7 +19,11 @@
   --color-accent: var(--accent);
   --color-signal: var(--signal);
   --color-line: var(--line);
+  --color-danger: var(--danger);
   --color-on-accent: var(--on-accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-surface-hover: var(--surface-hover);
+  --color-ghost-hover: var(--ghost-hover);
   --color-transparent: transparent;
   --color-current: currentColor;
 
@@ -150,6 +154,17 @@
 
 @utility measure {
   max-width: var(--measure);
+}
+
+/* The packet, used as the loading indicator on buttons. */
+@keyframes packet {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /*

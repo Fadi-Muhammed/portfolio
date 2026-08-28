@@ -19,11 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     // suppressHydrationWarning: ThemeScript writes data-theme before React hydrates,
     // so the server and client markup differ on that attribute by design.
-    <html
-      lang="en"
-      className={`${archivo.variable} ${plexMono.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${archivo.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         <ThemeScript />
       </head>

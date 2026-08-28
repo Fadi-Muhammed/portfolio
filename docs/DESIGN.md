@@ -41,51 +41,57 @@ visitor expresses no preference; dark is a full counterpart, not an inversion.
 
 ### Light
 
-| Role | Hex | Use |
-|---|---|---|
-| `bg` | `#EFF2F5` | Page ground. Cool blue-grey, the colour of an instrument panel — never cream. |
-| `surface` | `#FAFBFC` | Raised planes: cards, the palette sheet, form fields. |
-| `ink` | `#0F151B` | All body and display text. A blue-black, not a true black. |
-| `muted` | `#5B6672` | Secondary text, labels, node labels, disabled states. |
-| `accent` | `#A34A00` | Interactive: links, focus ring, filled buttons, active states. |
-| `signal` | `#C06400` | Live things only: status LEDs, the packet, the active rail node. |
-| `line` | `#CFD6DD` | Hairlines. Structural only, never decorative. |
+| Role      | Hex       | Use                                                                           |
+| --------- | --------- | ----------------------------------------------------------------------------- |
+| `bg`      | `#EFF2F5` | Page ground. Cool blue-grey, the colour of an instrument panel — never cream. |
+| `surface` | `#FAFBFC` | Raised planes: cards, the palette sheet, form fields.                         |
+| `ink`     | `#0F151B` | All body and display text. A blue-black, not a true black.                    |
+| `muted`   | `#5B6672` | Secondary text, labels, node labels, disabled states.                         |
+| `accent`  | `#A34A00` | Interactive: links, focus ring, filled buttons, active states.                |
+| `signal`  | `#C06400` | Live things only: status LEDs, the packet, the active rail node.              |
+| `line`    | `#CFD6DD` | Hairlines. Structural only, never decorative.                                 |
+| `danger`  | `#B3261E` | Errors only: invalid fields, failed submissions, destructive confirmations.   |
 
-| Pair | Ratio | Meets |
-|---|---|---|
-| `ink` on `bg` | 16.35:1 | AA body |
-| `ink` on `surface` | 17.73:1 | AA body |
-| `muted` on `bg` | 5.21:1 | AA body |
-| `muted` on `surface` | 5.65:1 | AA body |
-| `accent` on `bg` | 5.28:1 | AA body |
-| `accent` on `surface` | 5.73:1 | AA body |
-| `signal` on `bg` | 3.69:1 | AA large / UI |
-| `signal` on `surface` | 4.00:1 | AA large / UI |
-| `#FFFFFF` on `accent` (filled button) | 5.94:1 | AA body |
+| Pair                                  | Ratio   | Meets         |
+| ------------------------------------- | ------- | ------------- |
+| `ink` on `bg`                         | 16.35:1 | AA body       |
+| `ink` on `surface`                    | 17.73:1 | AA body       |
+| `muted` on `bg`                       | 5.21:1  | AA body       |
+| `muted` on `surface`                  | 5.65:1  | AA body       |
+| `accent` on `bg`                      | 5.28:1  | AA body       |
+| `accent` on `surface`                 | 5.73:1  | AA body       |
+| `signal` on `bg`                      | 3.69:1  | AA large / UI |
+| `signal` on `surface`                 | 4.00:1  | AA large / UI |
+| `danger` on `bg`                      | 5.82:1  | AA body       |
+| `danger` on `surface`                 | 6.31:1  | AA body       |
+| `#FFFFFF` on `accent` (filled button) | 5.94:1  | AA body       |
 
 ### Dark
 
-| Role | Hex | Use |
-|---|---|---|
-| `bg` | `#0E1419` | Deep blue-slate. Explicitly not near-black: an instrument at night, not a terminal. |
-| `surface` | `#161D24` | Raised planes. |
-| `ink` | `#E4E9EE` | Body and display text. |
-| `muted` | `#94A0AC` | Secondary text and labels. |
-| `accent` | `#F0A94A` | Interactive. |
-| `signal` | `#FFB84D` | Live things only. |
-| `line` | `#28323C` | Hairlines. |
+| Role      | Hex       | Use                                                                                 |
+| --------- | --------- | ----------------------------------------------------------------------------------- |
+| `bg`      | `#0E1419` | Deep blue-slate. Explicitly not near-black: an instrument at night, not a terminal. |
+| `surface` | `#161D24` | Raised planes.                                                                      |
+| `ink`     | `#E4E9EE` | Body and display text.                                                              |
+| `muted`   | `#94A0AC` | Secondary text and labels.                                                          |
+| `accent`  | `#F0A94A` | Interactive.                                                                        |
+| `signal`  | `#FFB84D` | Live things only.                                                                   |
+| `line`    | `#28323C` | Hairlines.                                                                          |
+| `danger`  | `#FF9A8F` | Errors only.                                                                        |
 
-| Pair | Ratio | Meets |
-|---|---|---|
-| `ink` on `bg` | 15.17:1 | AA body |
-| `ink` on `surface` | 13.91:1 | AA body |
-| `muted` on `bg` | 6.96:1 | AA body |
-| `muted` on `surface` | 6.38:1 | AA body |
-| `accent` on `bg` | 9.25:1 | AA body |
-| `accent` on `surface` | 8.48:1 | AA body |
-| `signal` on `bg` | 10.78:1 | AA body |
-| `signal` on `surface` | 9.89:1 | AA body |
-| `bg` on `accent` (filled button) | 9.25:1 | AA body |
+| Pair                             | Ratio   | Meets   |
+| -------------------------------- | ------- | ------- |
+| `ink` on `bg`                    | 15.17:1 | AA body |
+| `ink` on `surface`               | 13.91:1 | AA body |
+| `muted` on `bg`                  | 6.96:1  | AA body |
+| `muted` on `surface`             | 6.38:1  | AA body |
+| `accent` on `bg`                 | 9.25:1  | AA body |
+| `accent` on `surface`            | 8.48:1  | AA body |
+| `signal` on `bg`                 | 10.78:1 | AA body |
+| `signal` on `surface`            | 9.89:1  | AA body |
+| `danger` on `bg`                 | 9.07:1  | AA body |
+| `danger` on `surface`            | 8.31:1  | AA body |
+| `bg` on `accent` (filled button) | 9.25:1  | AA body |
 
 **Rule on `signal`.** It is reserved for things that are genuinely live: a product's status LED, the
 packet in the rail and the topology, the active node, a form's success state. If it is used for
@@ -100,14 +106,14 @@ Three roles, two families. Both are open-licence (SIL OFL 1.1), free, and loaded
 `next/font/google`, which self-hosts and subsets them at build time — no runtime request to Google,
 no layout shift, nothing to pay for.
 
-| Role | Face | Why |
-|---|---|---|
-| Display | **Archivo Expanded** (Archivo variable, `wdth` axis) | An engineered grotesque that gets wider rather than louder. Set heavy and tight it reads like instrument labelling. |
-| Body | **Archivo** (normal width) | The same voice at normal bandwidth: hierarchy carried by the width axis, not by an unrelated second family. |
-| Mono / utility | **IBM Plex Mono** | Drawn for an engineering company. Carries data, units, hop numbers, eyebrows and captions — the places where this site's vocabulary is technical. |
+| Role           | Face                                                 | Why                                                                                                                                               |
+| -------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Display        | **Archivo Expanded** (Archivo variable, `wdth` axis) | An engineered grotesque that gets wider rather than louder. Set heavy and tight it reads like instrument labelling.                               |
+| Body           | **Archivo** (normal width)                           | The same voice at normal bandwidth: hierarchy carried by the width axis, not by an unrelated second family.                                       |
+| Mono / utility | **IBM Plex Mono**                                    | Drawn for an engineering company. Carries data, units, hop numbers, eyebrows and captions — the places where this site's vocabulary is technical. |
 
 The display/body decision is deliberate and is the most debatable call in this plan: one superfamily
-split across its width axis, rather than two contrasting families. The reason is that width *is* the
+split across its width axis, rather than two contrasting families. The reason is that width _is_ the
 subject's own metaphor — the same signal at greater bandwidth — and the third voice (mono) supplies
 the real contrast. It is defended again in section 9.
 
@@ -115,15 +121,15 @@ the real contrast. It is defended again in section 9.
 
 Sizes are `clamp()` between 390 px and 1440 px. Tracking is in em.
 
-| Token | Face / weight | Size | Line-height | Tracking |
-|---|---|---|---|---|
-| `display` | Archivo Expanded 700 | 2.5 to 4.5 rem | 0.98 | -0.03em |
-| `h1` | Archivo Expanded 600 | 2.25 to 3 rem | 1.05 | -0.02em |
-| `h2` | Archivo Expanded 600 | 1.75 to 2.25 rem | 1.10 | -0.015em |
-| `h3` | Archivo 600 | 1.25 to 1.5 rem | 1.20 | -0.01em |
-| `body` | Archivo 400 | 1 to 1.0625 rem | 1.60 | 0 |
-| `small` | Archivo 400 | 0.875 rem | 1.50 | 0 |
-| `data` | IBM Plex Mono 500 | 0.75 rem | 1.40 | +0.06em, uppercase |
+| Token     | Face / weight        | Size             | Line-height | Tracking           |
+| --------- | -------------------- | ---------------- | ----------- | ------------------ |
+| `display` | Archivo Expanded 700 | 2.5 to 4.5 rem   | 0.98        | -0.03em            |
+| `h1`      | Archivo Expanded 600 | 2.25 to 3 rem    | 1.05        | -0.02em            |
+| `h2`      | Archivo Expanded 600 | 1.75 to 2.25 rem | 1.10        | -0.015em           |
+| `h3`      | Archivo 600          | 1.25 to 1.5 rem  | 1.20        | -0.01em            |
+| `body`    | Archivo 400          | 1 to 1.0625 rem  | 1.60        | 0                  |
+| `small`   | Archivo 400          | 0.875 rem        | 1.50        | 0                  |
+| `data`    | IBM Plex Mono 500    | 0.75 rem         | 1.40        | +0.06em, uppercase |
 
 `data` is the eyebrow, the hop label ("hop 3 of 7 · engineering"), the live reading ("live · 84 ms"),
 the date and city on a timeline hop, and the caption under a diagram. It is never used for prose.
@@ -311,7 +317,7 @@ avatar, where the name is already written next to it.
 ## 6. Signature — the hero routing topology
 
 The one memorable element (B4). Everything else on the site stays quiet so this can be loud — and
-even this is loud only in *structure*, never in contrast.
+even this is loud only in _structure_, never in contrast.
 
 - **Canvas.** Inline SVG, `viewBox="0 0 640 420"`, `preserveAspectRatio="xMaxYMid slice"` so it
   bleeds off the right edge. Server-rendered static first, hydrated by a lazy module after first
@@ -329,7 +335,7 @@ even this is loud only in *structure*, never in contrast.
   physics library; `requestAnimationFrame` and a small module.
 - **How it stays quieter than the tagline.** Nothing in it uses `ink`. Its heaviest value is `muted`
   at 1 px; the tagline is `ink` at 700 weight and roughly forty times the stroke area. Total ink
-  coverage of the topology is under 3% of its box. It draws the eye by *movement*, which the tagline
+  coverage of the topology is under 3% of its box. It draws the eye by _movement_, which the tagline
   does not compete for, rather than by contrast, which the tagline wins outright.
 - **Mobile.** Reduced height, static layout, one packet, tappable nodes, paused when off-screen or
   when the tab is hidden.
@@ -344,11 +350,11 @@ One curve. `--ease: cubic-bezier(0.2, 0, 0, 1)` — leaves immediately, settles 
 using a single curve everywhere is what makes the site feel like one object rather than a set of
 components that each animate their own way.
 
-| Token | ms | Use |
-|---|---|---|
-| `--dur-fast` | 200 | Hover, focus, tag toggle, button press |
-| `--dur` | 280 | Default transition, card lift, field focus |
-| `--dur-hop` | 360 | Section hop, entrance of the new section |
+| Token        | ms  | Use                                                           |
+| ------------ | --- | ------------------------------------------------------------- |
+| `--dur-fast` | 200 | Hover, focus, tag toggle, button press                        |
+| `--dur`      | 280 | Default transition, card lift, field focus                    |
+| `--dur-hop`  | 360 | Section hop, entrance of the new section                      |
 | `--dur-slow` | 480 | Orchestrated only: hero load, diagram draw-in, contact finale |
 
 Stagger 40 ms, never more than 60. No bounce anywhere except the slider's spring-back (B7), which is
@@ -433,3 +439,21 @@ real measurements. One icon set, one easing curve, one accent, one signature.
    brief, the width axis is the subject's own metaphor, and IBM Plex Mono supplies genuine contrast
    for every technical reading on the site. If it looks timid on screen at step 5, the display face
    is the first thing to change.
+
+---
+
+## 10. Amendments after approval
+
+Changes made to this document after Fadi approved it on 28 August 2026. Each one is a value the plan
+turned out to be missing, not a change of direction.
+
+**28 August 2026 — added the `danger` role.** The approved palette had six roles and no error colour,
+but B10 requires designed error states and Part 2 step 3 requires an `Input`/`Textarea` with one.
+Using `accent` for errors was rejected: `accent` means _interactive_ everywhere else on the site, and
+overloading it would make an invalid field look like a link. `signal` was rejected for the same
+reason — it means _live_. Added `#B3261E` on light (5.82:1 on `bg`, 6.31:1 on `surface`) and
+`#FF9A8F` on dark (9.07:1 and 8.31:1), both clearing AA for body text. It is reserved for errors and
+destructive actions; it never appears decoratively.
+
+Errors do not rely on colour alone: an invalid field gets the `danger` border, a text message naming
+what is wrong, and `aria-invalid` with the message wired through `aria-describedby`.

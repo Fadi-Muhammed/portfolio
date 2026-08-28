@@ -19,9 +19,19 @@
   --accent: #a34a00;
   --signal: #c06400;
   --line: #cfd6dd;
+  --danger: #b3261e;
 
   /* Label colour for a filled accent button. 5.94:1 on light accent. */
   --on-accent: #ffffff;
+
+  /*
+   * Interactive states are derived from the roles above rather than being new hues,
+   * so they stay correct in both themes automatically and cannot drift from the
+   * palette. Each is the base colour pulled a little toward the ink.
+   */
+  --accent-hover: color-mix(in oklab, var(--accent) 88%, var(--ink));
+  --surface-hover: color-mix(in oklab, var(--surface) 94%, var(--ink));
+  --ghost-hover: color-mix(in oklab, var(--bg) 94%, var(--ink));
 
   /* ---- Type ---------------------------------------------------------------- */
   /* Fluid between 390px and 1440px. Weights and tracking live in the utilities. */
@@ -78,6 +88,7 @@
     --accent: #f0a94a;
     --signal: #ffb84d;
     --line: #28323c;
+    --danger: #ff9a8f;
 
     /* 9.25:1 on dark accent. */
     --on-accent: #0e1419;
@@ -93,6 +104,7 @@
   --accent: #f0a94a;
   --signal: #ffb84d;
   --line: #28323c;
+  --danger: #ff9a8f;
   --on-accent: #0e1419;
 }
 
@@ -104,5 +116,6 @@
   --accent: #a34a00;
   --signal: #c06400;
   --line: #cfd6dd;
+  --danger: #b3261e;
   --on-accent: #ffffff;
 }

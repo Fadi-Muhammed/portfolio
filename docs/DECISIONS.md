@@ -169,7 +169,7 @@ the site's look or content was not decided here — that is Part 2.
 - **A24 icons, confirmed.** Lucide, already installed. Stroke width 1.5 set in the design plan.
 - **Theme default: follow the system setting; light when there is no preference.** Fadi's own
   preference is light and asked for a recommendation. Agreed and taken further: light is the theme
-  designed *first*, with dark as a full counterpart rather than an inversion. The structural reason
+  designed _first_, with dark as a full counterpart rather than an inversion. The structural reason
   is that B13 names near-black-plus-acid-green as this project's trap, and designing dark-first is
   what makes that trap hard to escape.
 - **Typefaces: open licence only.** No money spent. Archivo (variable, with its width axis) and
