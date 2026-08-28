@@ -28,7 +28,7 @@ Status: done. Needs a real-device check before Part 6 — see "What Fadi needs t
 - `src/components/deck/site-nav.tsx`, `skip-link.tsx`, `section-placeholder.tsx`.
 - Deck and rail styles in `globals.css`; `--nav-h` added to the tokens.
 - Tests: 71 unit (18 new on deck state) and 20 Playwright (10 new on the deck).
-- `part05-done` was tagged before the last two fixes landed; see the note in the report.
+- `part05-done` points at the finished state. It was first tagged three commits early, before the axe, rapid-paging and svh fixes; moved with Fadi's explicit approval, since CLAUDE.md forbids deleting a tag without it.
 
 ### How to test
 
