@@ -44,17 +44,19 @@ if (needsDatabase && !process.env.SUPABASE_DB_PASSWORD) {
   process.exit(1);
 }
 
-const binary = path.join(
-  ROOT,
-  "node_modules",
-  ".bin",
-  process.platform === "win32" ? "supabase.cmd" : "supabase",
-);
+// The package's bin is a plain JS file, so it is run with node directly rather than
+// through node_modules/.bin. That avoids a shell entirely — and on Windows a shell
+// would split this project's path at the space in "Portfolio site".
+const entry = path.join(ROOT, "node_modules", "supabase", "dist", "supabase.js");
 
-const child = spawn(binary, process.argv.slice(2), {
+if (!existsSync(entry)) {
+  console.error("The supabase CLI is not installed. Run: npm i -D supabase");
+  process.exit(1);
+}
+
+const child = spawn(process.execPath, [entry, ...process.argv.slice(2)], {
   cwd: ROOT,
   stdio: "inherit",
-  shell: process.platform === "win32",
 });
 
 child.on("exit", (code) => process.exit(code ?? 1));
