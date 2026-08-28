@@ -42,8 +42,22 @@ const DeckContext = createContext<DeckContextValue | null>(null);
 
 export function DeckProvider({ children }: { children: ReactNode }) {
   const deckRef = useRef<HTMLDivElement | null>(null);
+  /**
+   * Where a hop is currently heading, while the scroll is still travelling.
+   *
+   * hopTo sets the active section immediately so a keypress or click feels answered. But
+   * a smooth scroll takes time, and during it the observer still reports the section
+   * being left as the most visible one — which would drag `active` backwards. A second
+   * keypress arriving in that window would then compute "next" from the old section and
+   * hop to where it already was, which is how rapid paging got stuck.
+   *
+   * So while a hop is in flight the observer is only allowed to confirm the destination,
+   * never to contradict it.
+   */
+  const hopTarget = useRef<SectionId | null>(null);
   const [active, setActive] = useState<SectionId>(SECTIONS[0].id);
   const [nearEnd, setNearEnd] = useState(false);
+  const hopTimeout = useRef(0);
   const reducedMotion = useReducedMotion();
 
   const hopTo = useCallback(
@@ -51,14 +65,23 @@ export function DeckProvider({ children }: { children: ReactNode }) {
       const target = document.getElementById(id);
       if (!target) return;
 
+      hopTarget.current = id;
+
       target.scrollIntoView({
         behavior: reducedMotion ? "auto" : "smooth",
         block: "start",
       });
 
       // Set immediately rather than waiting for the observer, so a click feels answered.
-      // The observer corrects it if the scroll ends somewhere else.
       setActive(id);
+
+      // Safety net: if the destination never becomes the most visible section — a very
+      // short last section, an interrupted scroll — stop ignoring the observer rather
+      // than leaving it muted forever.
+      window.clearTimeout(hopTimeout.current);
+      hopTimeout.current = window.setTimeout(() => {
+        hopTarget.current = null;
+      }, 1200);
     },
     [reducedMotion],
   );
@@ -86,7 +109,15 @@ export function DeckProvider({ children }: { children: ReactNode }) {
           }
         }
         const next = mostVisible(ratios);
-        if (next) setActive(next);
+        if (!next) return;
+
+        if (hopTarget.current) {
+          // In flight: the observer may confirm the destination, not contradict it.
+          if (next !== hopTarget.current) return;
+          hopTarget.current = null;
+        }
+
+        setActive(next);
       },
       { root, threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] },
     );
