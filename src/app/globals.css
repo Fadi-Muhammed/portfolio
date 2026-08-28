@@ -343,10 +343,12 @@
       border-color var(--dur-fast) var(--ease);
   }
 
-  .rail-node[data-active] {
-    background-color: var(--signal);
-    border-color: var(--signal);
-  }
+  /*
+   * The active node is deliberately NOT filled. The packet beside it already marks the
+   * position, and two markers for one state read as a smudge rather than an indicator —
+   * this is the "remove one accessory" cut. It also gives the packet a job: it is the
+   * thing that moves, which is the whole connective idea (B5).
+   */
 
   button:hover .rail-node {
     border-color: var(--ink);
@@ -360,9 +362,9 @@
     position: absolute;
     top: 0;
     left: 50%;
-    width: 3.5px;
-    height: 3.5px;
-    margin-top: 20.25px;
+    width: 4px;
+    height: 4px;
+    margin-top: 20px;
     margin-left: -11px;
     background-color: var(--signal);
     transition: transform var(--dur-hop) var(--ease);
@@ -371,6 +373,19 @@
   /* One pulse as the visitor nears the bottom of a section. A keepalive, not a loop. */
   .rail-packet[data-pulse] {
     animation: packet var(--dur-slow) var(--ease) 1;
+  }
+
+  /* The reading sits level with the node it describes, like an annotation on an
+     instrument, rather than floating under the whole rail. */
+  .rail-label {
+    position: absolute;
+    top: 0;
+    right: calc(100% + 0.75rem);
+    height: 44px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: transform var(--dur-hop) var(--ease);
   }
 
   .skip-link {

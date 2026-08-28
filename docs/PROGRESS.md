@@ -8,6 +8,129 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 
 ---
 
+## Part 5 — Deck engine, navigation and hop rail · 28 August 2026
+
+Status: done. Needs a real-device check before Part 6 — see "What Fadi needs to test".
+
+### What exists
+
+- `src/lib/deck/sections.ts` — the seven sections in order, each with a name, a teaser and
+  the part that builds it. One list, used by the deck, the rail, the nav, and later the
+  palette and the footer recap.
+- `src/lib/deck/state.ts` — the deck's decisions as pure functions: next/previous, key
+  intents, which section is active from intersection ratios, what to mount, the title and
+  rail labels. No DOM, so it is directly testable.
+- `src/components/deck/deck-provider.tsx` — `hopTo`, `useDeck`, the IntersectionObserver,
+  hash sync, document title, keyboard paging and the keepalive.
+- `src/components/deck/deck.tsx` — the scroll container and the section shell.
+- `src/components/deck/rail.tsx` — nodes, the packet, and the reading level with the
+  active node.
+- `src/components/deck/site-nav.tsx`, `skip-link.tsx`, `section-placeholder.tsx`.
+- Deck and rail styles in `globals.css`; `--nav-h` added to the tokens.
+- Tests: 71 unit (18 new on deck state) and 20 Playwright (10 new on the deck).
+
+### How to test
+
+```
+npm run dev                     # then use PageDown/PageUp, the rail, the peek strip
+npm run lint && npm run typecheck && npm test && npm run build
+npm run test:e2e
+npm run screens -- "#products"  # captures the deck parked on a section
+```
+
+Deep links work: `/#engineering` lands on that section with the title
+"Fadi Muhammed — Engineering".
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes, across every section.
+
+- **Tokens**: every value from `tokens.css`. `--nav-h` was added as a token rather than a
+  magic number, because three separate rules depend on the nav's height agreeing.
+- **Typography**: section names use the display face at `h3`, teasers at `small`, the rail
+  reading in mono. No new sizes introduced.
+- **Layout**: an intentional sequence — the deck is a real order, so hop numbers encode
+  something true rather than decorating. Content is left-aligned to one column, not
+  centred in a box.
+- **Copy**: real. Placeholders name the part that builds the section and nothing else. An
+  earlier draft read "Products arrives here", which does not agree in number; replaced
+  with "This section is built in Part 8", which is correct for every section name.
+- **Motion**: one easing, `--dur-hop` for the entrance and the packet, no bounce. Under
+  reduced motion the deck's `scroll-behavior` is `auto` and hops are instant — asserted in
+  Playwright rather than assumed.
+- **Interaction**: focus visible, 44 px targets on every rail node, the skip link first in
+  the tab order, inactive section bodies `inert`.
+- **Accessibility**: zero serious or critical axe violations on the deck.
+
+**Three faults found, none of them by reasoning:**
+
+1. **The fixed nav overlapped every snapped section's header.** At 390 the words sat
+   literally on top of each other. Found by looking at the first mobile screenshot. Fixed
+   with `--nav-h`, `scroll-padding-top`, and a section height accounting for both.
+2. **"Work" and "Contact" stayed visible on mobile.** `hidden` and the Button base's
+   `inline-flex` are both display utilities, so which wins is decided by stylesheet order,
+   not by their order in the class string. This is exactly the conflict `cn()` declines to
+   resolve, and the fix is structural: wrap the pair in a container that carries the
+   responsive display.
+3. **The rail's decorative line intercepted clicks on the node buttons.** Found by a
+   Playwright test timing out, not by eye — a real visitor would have met a dead rail
+   wherever the line crossed a node. Fixed with `pointer-events: none`.
+
+**Remove one accessory.** The active rail node was filled _and_ had the packet beside it:
+two markers for one state, reading as a smudge rather than an indicator. The fill is gone.
+The packet alone marks position, which also gives the packet a job — it is the thing that
+moves, which is the whole connective idea in B5.
+
+**A tooling fault worth recording.** `npm run screens` only built when `.next` was
+missing, so after an edit it silently photographed stale code. It produced a screenshot
+that looked like proof a fix had worked when the fix had never been compiled. It now
+always rebuilds, with `SCREENS_SKIP_BUILD=1` to opt out.
+
+### Decided without asking
+
+- **The hero has no header bar.** Every other section's header doubles as the peek for the
+  one before it; nothing precedes the hero, so a strip reading "Home" under the nav would
+  label something already obvious.
+- **The body is `inert`, not the whole section.** Making the section inert would kill the
+  peek strip, which must stay clickable while it is the next section's way in.
+- **Arrow keys page the deck, but not inside form fields or anything marked
+  `data-inner-scroll`.** Taking ArrowDown away from a textarea would be worse than not
+  binding it at all.
+- **The rail is vertical at every size.** B3 allows a horizontal mobile rail; a horizontal
+  one would compete with the peek strip for the bottom of a phone screen.
+- **The Part 2 `Section`/`PeekStrip` primitive was deleted.** The deck shell replaces it,
+  and two shells for one job is the parallel convention CLAUDE.md forbids. `/design` now
+  shows the real markup instead.
+
+### Known gaps
+
+- **The Search button is disabled.** Part 6 wires it to the command palette.
+- **Every section is a placeholder.** Parts 7 to 13 fill them.
+- **Lazy mounting is in place but invisible**, because placeholders are cheap. It starts
+  mattering in Part 7, when the topology and images arrive.
+- **`scroll-snap-stop: always` is not directly tested.** Proving a fast flick cannot skip a
+  section needs touch-gesture emulation; the wheel test asserts that a realistic scroll
+  lands exactly one section on. Worth checking by hand on a real phone.
+- **Not tested on a real device yet.**
+
+### What Fadi needs to test
+
+On a real phone, iOS Safari and Android Chrome if possible:
+
+1. Does one section fill the screen, with the top of the next one showing below it?
+2. Flick fast. Does it ever skip a section?
+3. Does the URL bar hiding and reappearing break the section heights? This is what
+   `100dvh` is meant to solve and is the single most likely thing to be wrong.
+4. Tap the peek strip and the rail dots. Do they respond, and are they big enough?
+5. Turn on Reduce Motion in system settings. Hops should be instant, with no sliding.
+
+### Next
+
+Part 6 — the command palette. It reuses `hopTo` and the section list, and replaces the
+disabled Search button in the nav.
+
+---
+
 ## Part 4 — Data layer and content seeding · 28 August 2026
 
 Status: done, with a deliberately partial content set. Fadi supplied one item per

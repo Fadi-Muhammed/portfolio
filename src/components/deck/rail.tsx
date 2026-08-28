@@ -29,6 +29,16 @@ export function Rail() {
       <ol className="relative flex flex-col items-center gap-0">
         <span aria-hidden="true" className="rail-line" />
 
+        {/* The reading, in the site's data voice, level with the active node. Desktop
+            only: on a phone it would cost more width than it earns. */}
+        <li
+          aria-live="polite"
+          className="text-data rail-label hidden text-muted lg:flex"
+          style={{ transform: `translateY(${activeIndex * 44}px)` }}
+        >
+          {railLabel(active)}
+        </li>
+
         {/* The packet. Positioned by index rather than by measuring the DOM, so it
             cannot drift out of step with the node it is meant to be on. */}
         <span
@@ -59,12 +69,6 @@ export function Rail() {
           );
         })}
       </ol>
-
-      {/* The reading, in the site's data voice. Desktop only: on a phone it would cost
-          more width than it earns. */}
-      <p className="text-data mt-3 hidden text-muted lg:block" aria-live="polite">
-        {railLabel(active)}
-      </p>
     </nav>
   );
 }

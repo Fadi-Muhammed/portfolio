@@ -253,3 +253,17 @@ the site's look or content was not decided here — that is Part 2.
   gives a recruiter a GitHub 404 is worse than no link. Reversible if it is made public.
 - **Rubric's stack is `["TypeScript"]` only** — verified from the repository's language
   statistics. Next.js and Supabase were suspected but not confirmed, so not recorded.
+
+### 28 August 2026 — Part 5
+
+- **A7 confirmed as the default order**, A8 confirmed: Hero, Products, Engineering,
+  Achievements, Featured in, About, Contact. Seven hops.
+- **Peek teasers describe rather than count.** B3's examples count ("12 engineering
+  projects"), but with one product that would read "Next: 1 product", and a count needs
+  maintaining forever. Agreed in chat, revisitable later.
+- **Featured in stays in the deck despite having no rows.** In Part 5 every section is a
+  placeholder, so it is no emptier than the others. Whether it hides itself when empty is
+  a real decision, deferred to Part 11 where it becomes real.
+- **`--nav-h` added to the tokens.** The fixed nav's height is depended on by the deck's
+  scroll padding, the section height and the first section's offset. Three rules agreeing
+  on one number means it is a token, not a literal.
