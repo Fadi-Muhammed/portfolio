@@ -8,6 +8,138 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 
 ---
 
+## Part 4 — Data layer and content seeding · 28 August 2026
+
+Status: done, with a deliberately partial content set. Fadi supplied one item per
+category and will add the rest once the site is live, which the plan supports through
+Section E's add-content prompt and Studio editing.
+
+### What exists
+
+- `src/lib/content/schemas.ts` — zod mirrors of the database schema, validating the seed
+  files before anything reaches Postgres.
+- `content/seed/*.json` — one file per table, holding only real supplied content.
+- `scripts/seed.mts` (`npm run db:seed`) — idempotent upsert by slug, singleton for
+  `site_settings`. Verified: a second run produced identical counts.
+- `scripts/upload-assets.mts` (`npm run assets:upload`) — pushes `content/assets/**` to
+  the matching buckets, skipping files already there at the same size.
+- `src/lib/content/queries.ts` — the typed read layer, every fetcher cached with a tag
+  per table and a 300 second revalidate.
+- `src/app/api/revalidate/route.ts` — POST, constant-time secret check, revalidates one tag.
+- `src/app/debug/content/page.tsx` — development-only view of everything the data layer
+  returns.
+- Tests: 53 unit (30 new: schemas and fetchers) and 12 Playwright.
+
+### What is actually in the database
+
+| Table                | Seeded | Published |
+| -------------------- | ------ | --------- |
+| products             | 1      | 1         |
+| engineering_projects | 1      | 1         |
+| achievements         | 3      | 3         |
+| featured_in          | 0      | 0         |
+| skills               | 22     | 5         |
+| certifications       | 1      | 1         |
+| experience           | 4      | 3         |
+| site_settings        | 1      | —         |
+
+### How to test
+
+```
+npm run db:seed          # idempotent; run it twice, counts do not change
+npm run dev              # then open /debug/content
+npm run lint && npm run typecheck && npm test && npm run build
+npm run test:e2e
+```
+
+`/debug/content` shows every field the data layer returns, with gaps rendered as a red
+`null` so a missing field cannot be mistaken for an empty one.
+
+### Content gaps
+
+Everything below is null in the database and will render as missing until supplied.
+None of it was invented.
+
+**Blocking a section from looking finished**
+
+- **No CV.** `site_settings.cv_path` is null; the About and Contact download has nothing
+  to point at. Drop the PDF at `content/assets/documents/cv.pdf`.
+- **No images anywhere.** No product cover, no project photo, no talk photo. Parts 8, 9
+  and 10 will render card layouts with empty media wells.
+- **No featured-in entries at all.** Part 11 has nothing to build with.
+- **No degree row.** Fadi is a fourth-year telecom and network engineering student and
+  the experience timeline has no education entry. This is the spine of the positioning
+  and B2 explicitly asks for the degree with expected graduation.
+
+**Weakening an entry that exists**
+
+- **Web Summit talk has no date.** It is the strongest credibility item supplied and it
+  sorts below DMZ Basecamp because undated entries fall last on the timeline.
+- **National Cyber Drill CTF has no date, city or result.**
+- **Career Essentials certification has no issue date and no credential URL.** A
+  certification without a verification link is a claim.
+- **Rubric has no case-study body, no metrics and no outcome.** The product card will
+  render; the case-study page will be thin.
+- **Rubric's repo is private**, so `repo_url` is null rather than a link to a 404.
+- **No summaries or highlights on any experience row.**
+- **Work placement missing.** The curriculum shows a 9-credit, 40-hour-a-week placement
+  in semester 9. If it has been done, it is a strong row that is absent.
+
+**Open questions raised and not yet answered**
+
+- Rubric's full stack. Only TypeScript is verified, from the repo's own language stats.
+- Whether Quitifi is a shipped product. Fadi is Founder & CEO since March 2025 and there
+  is a Supabase project named Quitifiv2; if it ships, it belongs in Products.
+- Whether DMZ Basecamp should be an achievement, an experience row, or both. It is
+  currently seeded as both, with the experience row **unpublished** so only one shows.
+  Flipping it is one checkbox in Studio.
+- Whether Web Summit should also appear in `featured_in` as a stage.
+- Which of the 17 unpublished skills Fadi would defend in an interview.
+
+### Decided without asking
+
+- **Only 5 of 22 skills are published.** B2 makes skill tags filter the projects, so a
+  tag with no linked work filters to an empty list and turns the section into a course
+  list wearing a costume. The rest are seeded unpublished, ready to switch on as
+  projects land.
+- **Certificates of attendance were modelled as achievements, not certifications.** DMZ
+  Basecamp is a `program` and the National Cyber Drill is a `competition`. Listing
+  "certificate of attendance" beside a Microsoft credential undersells both events.
+- **Month-precision dates were stored as the first of the month**, and end dates as the
+  last. Supplied as "Jul 2025 - Aug 2025" and similar.
+- **`src/lib/supabase/queries.ts` was deleted.** It and `src/lib/content/queries.ts`
+  would have been two query layers doing one job.
+- **`/debug/content` is gated on `NODE_ENV`, not a flag** — no switch to turn on by
+  accident — and degrades to a legible message when no database is configured, so CI can
+  exercise it.
+- **`getAchievements` filters in memory.** The set is small and already cached, and the
+  filter chips need to re-layout without a round trip.
+- **The e2e suite now runs a second dev server** on port 3001, because `/debug/content`
+  does not exist in a production build and testing it needs one.
+
+### Known gaps in the tooling
+
+- **`npm run screens` cannot capture `/debug/content`.** A `SCREENS_DEV` mode was written
+  and reverted: the dev server serves the route correctly through three other paths but
+  returns 404 through the screens script on its port, and the cause was not found.
+  Shipping a half-working flag is worse than not having it. The page was reviewed by
+  driving Playwright against a dev server directly, and the e2e test covers it.
+- The review found and fixed a real bug: JSON values rendered through `text-data` were
+  uppercased, so socials displayed as `HTTPS://GITHUB.COM/...`. URL paths are
+  case-sensitive, so that was wrong rather than merely ugly.
+- **Ordering questions for later parts.** Experience sorts by `start_date` descending, so
+  a finished job can sit above a current one. Part 12 should decide whether current roles
+  lead.
+- **The revalidation webhook is not created yet.** It needs `REVALIDATE_SECRET` in Vercel
+  and one webhook per table in the dashboard; steps are in `docs/BACKEND.md`.
+
+### Next
+
+Part 5 — the deck engine, navigation and hop rail. It is the first part that renders real
+content, and the first where the missing images and dates will be visible.
+
+---
+
 ## Part 3 — Supabase backend · 28 August 2026
 
 Status: done.

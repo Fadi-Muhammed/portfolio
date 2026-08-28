@@ -56,7 +56,8 @@ describe("nulls versus missing", () => {
   });
 
   it("rejects an absent key, so a typo cannot pass as a gap", () => {
-    const { summary: _omitted, ...withoutSummary } = validProduct;
+    const withoutSummary: Record<string, unknown> = { ...validProduct };
+    delete withoutSummary.summary;
     expect(productSchema.safeParse(withoutSummary).success).toBe(false);
   });
 

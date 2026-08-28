@@ -228,3 +228,28 @@ the site's look or content was not decided here — that is Part 2.
   can never be bundled to the client, and that package is the mechanism: it fails the build at
   compile time if a client component imports it, however indirectly.
 - **`testimonials` was deliberately not created.** Optional in B11 and decided in Part 18.
+
+### 28 August 2026 — Part 4
+
+- **A22 answered partially, by choice.** Fadi supplied one item per category and will add
+  the rest once the site is live, using Section E's add-content prompt or Studio. Rough
+  final counts were requested to keep layouts honest at their real sizes; they were not
+  given, so Parts 8 to 12 should design for a range rather than for n=1.
+- **Copy was written from Fadi's own description, not invented.** The street light summary
+  was drafted from the components and behaviour he described, with no em dashes as asked,
+  and shown for approval before seeding.
+- **Concepts were derived conservatively.** Hysteresis was deliberately left off the street
+  light project: it is the obvious next concept for a light-threshold circuit, but he did
+  not say it was implemented, and a concept on the site is an invitation to be questioned.
+- **Certificates of attendance were remodelled as achievements.** DMZ Basecamp as a
+  `program`, the National Cyber Drill as a `competition`. Recommended and applied; the
+  underlying events are stronger than the certificates that evidence them.
+- **DMZ Basecamp is seeded in two tables**, with the experience row unpublished, because
+  Fadi supplied it as a certificate and then as an experience entry without choosing.
+  One checkbox in Studio flips it either way.
+- **Skills were derived from the degree curriculum Fadi supplied**, which is verifiable
+  rather than claimed. Only the five backed by supplied work are published.
+- **Rubric's `repo_url` is null.** The repository is private, and a "source" link that
+  gives a recruiter a GitHub 404 is worse than no link. Reversible if it is made public.
+- **Rubric's stack is `["TypeScript"]` only** — verified from the repository's language
+  statistics. Next.js and Supabase were suspected but not confirmed, so not recorded.

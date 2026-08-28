@@ -169,6 +169,89 @@ migration that adds it should be written when the decision is made.
 
 ---
 
+## Seeding content
+
+Content lives in two places, and the difference matters:
+
+- **`content/seed/*.json` in this repo** — version-controlled, reviewable, and the way
+  content gets loaded in bulk.
+- **Supabase Studio** — the way a single row gets edited day to day, with no deploy.
+
+Neither overwrites the other silently. Seeding upserts **by slug**, so it updates rows it
+already created and leaves anything else alone. Running it twice changes nothing.
+
+```bash
+npm run db:seed
+```
+
+It validates every file against the zod schemas in `src/lib/content/schemas.ts` before
+writing anything. A bad row fails the whole run with the file, row and field named,
+rather than getting halfway and leaving the database in a half-seeded state.
+
+The output prints two counts per table: how many rows were seeded, and how many are
+**published**. The second is what the site actually renders, and it is usually the
+surprising one.
+
+### Assets
+
+```bash
+npm run assets:upload            # skips files already uploaded at the same size
+npm run assets:upload -- --force # re-upload everything
+```
+
+Folder name is bucket name: `content/assets/media/rubric/cover.png` uploads to
+`media/rubric/cover.png`, which is the exact string that goes in `cover_image_path`.
+See `content/assets/README.md`.
+
+---
+
+## On-demand revalidation
+
+Pages cache their reads for 300 seconds. Without a webhook, an edit in Studio takes up
+to five minutes to appear. With one, it appears immediately.
+
+`POST /api/revalidate` drops the cache for one table. It is authenticated by a shared
+secret in the `x-revalidate-secret` header, compared in constant time.
+
+### Creating the webhook
+
+Once per content table, in the Supabase dashboard:
+
+1. **Database → Webhooks → Create a new hook**
+2. Name it after the table, e.g. `revalidate-products`
+3. **Table**: the content table
+4. **Events**: tick **Insert**, **Update** and **Delete**
+5. **Type**: HTTP Request
+6. **Method**: `POST`
+7. **URL**: `https://<your-domain>/api/revalidate`
+8. **HTTP Headers**: add `x-revalidate-secret` with the value of `REVALIDATE_SECRET`
+9. Create
+
+The webhook already sends `{ type, table, record, old_record, schema }`, and the route
+reads `table` from it, so no custom payload is needed.
+
+`REVALIDATE_SECRET` must be set in Vercel as a **Secret**, matching `.env.local`.
+Generate one with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+If it is not set, the route answers 503 rather than revalidating freely — an unset
+secret is a misconfiguration, and treating it as "no auth needed" would be the worst
+possible default.
+
+### Checking it works
+
+```bash
+curl -X POST https://<your-domain>/api/revalidate   -H "x-revalidate-secret: <the secret>"   -H "Content-Type: application/json"   -d '{"table":"products"}'
+```
+
+Expect `{"revalidated":"products"}`. A wrong secret gives 401; an unknown table gives
+400 without echoing what was sent.
+
+---
+
 ## Health check
 
 `GET /api/health` returns `{"status":"ok","database":"reachable"}` when the anon key can
