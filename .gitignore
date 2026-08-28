@@ -22,6 +22,10 @@ test-results/
 blob-report/
 .playwright/
 
+# Content assets — real binaries live in Supabase Storage, not in git
+content/assets/**
+!content/assets/README.md
+
 # Design screenshots (npm run screens)
 .screens/
 

@@ -1,0 +1,178 @@
+[
+  {
+    "slug": "network-fundamentals",
+    "sort_order": 10,
+    "published": false,
+    "name": "Network fundamentals",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "switching-and-routing",
+    "sort_order": 20,
+    "published": false,
+    "name": "Switching and routing",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "enterprise-networks",
+    "sort_order": 30,
+    "published": false,
+    "name": "Enterprise networks",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "network-management",
+    "sort_order": 40,
+    "published": false,
+    "name": "Network management",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "unified-communications",
+    "sort_order": 50,
+    "published": false,
+    "name": "Unified communications",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "network-security",
+    "sort_order": 60,
+    "published": false,
+    "name": "Network security",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "analog-and-digital-communication",
+    "sort_order": 70,
+    "published": false,
+    "name": "Analog and digital communication",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "wireless-communication-systems",
+    "sort_order": 80,
+    "published": false,
+    "name": "Wireless communication systems",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "antennas-and-wave-propagation",
+    "sort_order": 90,
+    "published": false,
+    "name": "Antennas and wave propagation",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "microwave-engineering",
+    "sort_order": 100,
+    "published": false,
+    "name": "Microwave engineering",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "applied-electromagnetics",
+    "sort_order": 110,
+    "published": false,
+    "name": "Applied electromagnetics",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "signals-and-systems",
+    "sort_order": 120,
+    "published": false,
+    "name": "Signals and systems",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "digital-electronics",
+    "sort_order": 130,
+    "published": false,
+    "name": "Digital electronics",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "analog-electronics",
+    "sort_order": 140,
+    "published": false,
+    "name": "Analog electronics",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "embedded-systems",
+    "sort_order": 150,
+    "published": true,
+    "name": "Embedded systems",
+    "category": "telecom",
+    "linked_slugs": ["intelligent-street-light-system"]
+  },
+  {
+    "slug": "instrumentation",
+    "sort_order": 160,
+    "published": true,
+    "name": "Instrumentation",
+    "category": "telecom",
+    "linked_slugs": ["intelligent-street-light-system"]
+  },
+  {
+    "slug": "electronic-fabrication",
+    "sort_order": 170,
+    "published": false,
+    "name": "Electronic fabrication",
+    "category": "telecom",
+    "linked_slugs": []
+  },
+  {
+    "slug": "typescript",
+    "sort_order": 180,
+    "published": true,
+    "name": "TypeScript",
+    "category": "software",
+    "linked_slugs": ["rubric"]
+  },
+  {
+    "slug": "micropython",
+    "sort_order": 190,
+    "published": true,
+    "name": "MicroPython",
+    "category": "software",
+    "linked_slugs": ["intelligent-street-light-system"]
+  },
+  {
+    "slug": "applied-programming",
+    "sort_order": 200,
+    "published": true,
+    "name": "Applied programming",
+    "category": "software",
+    "linked_slugs": ["intelligent-street-light-system"]
+  },
+  {
+    "slug": "linux",
+    "sort_order": 210,
+    "published": false,
+    "name": "Linux",
+    "category": "software",
+    "linked_slugs": []
+  },
+  {
+    "slug": "probability-and-statistics",
+    "sort_order": 220,
+    "published": false,
+    "name": "Probability and statistics",
+    "category": "software",
+    "linked_slugs": []
+  }
+]

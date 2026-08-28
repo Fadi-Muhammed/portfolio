@@ -1,0 +1,53 @@
+[
+  {
+    "slug": "web-summit-qatar-2026-talk",
+    "sort_order": 10,
+    "published": true,
+    "title": "Students turning challenges into solutions",
+    "type": "talk",
+    "event_name": "Web Summit Qatar 2026",
+    "role": "Speaker",
+    "result": null,
+    "date": null,
+    "city": "Doha",
+    "country": "Qatar",
+    "summary": "A 20 minute talk at the UDST booth on students turning challenges into solutions.",
+    "links": {},
+    "media": {},
+    "featured": true
+  },
+  {
+    "slug": "dmz-basecamp-2025",
+    "sort_order": 20,
+    "published": true,
+    "title": "DMZ Basecamp 2025",
+    "type": "program",
+    "event_name": "DMZ Basecamp",
+    "role": "Health-tech entrepreneur",
+    "result": "Completed",
+    "date": "2025-07-01",
+    "city": null,
+    "country": null,
+    "summary": null,
+    "links": {},
+    "media": {},
+    "featured": false
+  },
+  {
+    "slug": "national-cyber-drill-ctf",
+    "sort_order": 30,
+    "published": true,
+    "title": "National Cyber Drill CTF",
+    "type": "competition",
+    "event_name": "National Cyber Drill",
+    "role": "Participant",
+    "result": null,
+    "date": null,
+    "city": null,
+    "country": "Qatar",
+    "summary": null,
+    "links": {},
+    "media": {},
+    "featured": false
+  }
+]

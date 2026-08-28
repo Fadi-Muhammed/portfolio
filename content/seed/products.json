@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "rubric",
+    "sort_order": 10,
+    "published": true,
+    "title": "Rubric",
+    "summary": "One shared pool of applicants, ranked and conflict-free for every open role at your company, instead of screening one job description at a time.",
+    "body": null,
+    "stack": ["TypeScript"],
+    "tags": [],
+    "cover_image_path": null,
+    "gallery": [],
+    "live_url": "https://rubric-gamma.vercel.app",
+    "repo_url": null,
+    "demo_video_url": null,
+    "status_check_url": "https://rubric-gamma.vercel.app",
+    "outcome": null,
+    "metrics": {}
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "intelligent-street-light-system",
+    "sort_order": 10,
+    "published": true,
+    "title": "Intelligent street light system",
+    "summary": "An ESP32 reads ambient light through an LDR and switches a relay-driven lamp on at nightfall, with a potentiometer setting the darkness threshold.",
+    "body": null,
+    "type": "lab",
+    "concepts": [
+      "Analogue-to-digital conversion",
+      "Voltage divider sensing",
+      "Ambient light sensing",
+      "Threshold detection",
+      "Relay switching",
+      "GPIO control"
+    ],
+    "tools": ["ESP32", "MicroPython", "LDR", "Potentiometer", "Relay", "LED"],
+    "cover_image_path": null,
+    "gallery": [],
+    "report_path": null,
+    "repo_url": null,
+    "interactive_widget": null,
+    "data": {}
+  }
+]
