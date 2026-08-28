@@ -22,10 +22,23 @@ const publicSchema = z.object({
     .enum(["true", "false"])
     .default("false")
     .transform((value) => value === "true"),
+  // Public by design. The anon key ships in the client bundle; Row Level Security is
+  // what makes that safe, not secrecy.
+  NEXT_PUBLIC_SUPABASE_URL: z.url({
+    error: "NEXT_PUBLIC_SUPABASE_URL must be the project base URL, https://<ref>.supabase.co",
+  }),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z
+    .string()
+    .min(20, { error: "NEXT_PUBLIC_SUPABASE_ANON_KEY looks too short to be a real key" }),
 });
 
 const serverSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  // Bypasses every RLS policy. Server only — it must never gain a NEXT_PUBLIC_ prefix,
+  // which is why it lives in this schema and not the one above.
+  SUPABASE_SERVICE_ROLE_KEY: z
+    .string()
+    .min(20, { error: "SUPABASE_SERVICE_ROLE_KEY looks too short to be a real key" }),
 });
 
 export type PublicEnv = z.infer<typeof publicSchema>;
@@ -52,13 +65,18 @@ export function parsePublicEnv(source: Record<string, string | undefined>): Publ
   const result = publicSchema.safeParse({
     NEXT_PUBLIC_SITE_URL: source.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: source.NEXT_PUBLIC_ENABLE_DESIGN_ROUTE,
+    NEXT_PUBLIC_SUPABASE_URL: source.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: source.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   });
   if (!result.success) throw new EnvError(issuesOf(result.error));
   return result.data;
 }
 
 export function parseServerEnv(source: Record<string, string | undefined>): ServerEnv {
-  const result = serverSchema.safeParse({ NODE_ENV: source.NODE_ENV });
+  const result = serverSchema.safeParse({
+    NODE_ENV: source.NODE_ENV,
+    SUPABASE_SERVICE_ROLE_KEY: source.SUPABASE_SERVICE_ROLE_KEY,
+  });
   if (!result.success) throw new EnvError(issuesOf(result.error));
   return result.data;
 }
