@@ -30,9 +30,6 @@ export function PeekStrip({ href, name, teaser }: PeekProps) {
         <span className="text-data text-muted">Next · {name}</span>
         <span className="truncate text-small text-ink">{teaser}</span>
       </span>
-      <span aria-hidden="true" className="text-data text-muted">
-        ↑
-      </span>
     </a>
   );
 }

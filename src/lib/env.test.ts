@@ -5,12 +5,14 @@ describe("parsePublicEnv", () => {
   it("accepts a full origin", () => {
     expect(parsePublicEnv({ NEXT_PUBLIC_SITE_URL: "https://fadimuhammed.work" })).toEqual({
       NEXT_PUBLIC_SITE_URL: "https://fadimuhammed.work",
+      NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: false,
     });
   });
 
   it("accepts localhost for local development", () => {
     expect(parsePublicEnv({ NEXT_PUBLIC_SITE_URL: "http://localhost:3000" })).toEqual({
       NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
+      NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: false,
     });
   });
 
@@ -25,6 +27,30 @@ describe("parsePublicEnv", () => {
 
   it("points at .env.example so the failure is actionable", () => {
     expect(() => parsePublicEnv({})).toThrow(/\.env\.example/);
+  });
+});
+
+describe("the /design flag", () => {
+  const site = "https://fadimuhammed.work";
+
+  it("defaults to off when unset", () => {
+    expect(parsePublicEnv({ NEXT_PUBLIC_SITE_URL: site }).NEXT_PUBLIC_ENABLE_DESIGN_ROUTE).toBe(
+      false,
+    );
+  });
+
+  it('is on only for the exact string "true"', () => {
+    const on = parsePublicEnv({
+      NEXT_PUBLIC_SITE_URL: site,
+      NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: "true",
+    });
+    expect(on.NEXT_PUBLIC_ENABLE_DESIGN_ROUTE).toBe(true);
+  });
+
+  it("rejects a value that is neither true nor false rather than guessing", () => {
+    expect(() =>
+      parsePublicEnv({ NEXT_PUBLIC_SITE_URL: site, NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: "yes" }),
+    ).toThrow(EnvError);
   });
 });
 

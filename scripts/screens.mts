@@ -2,7 +2,7 @@
  * Design-review screenshots.
  *
  *   npm run screens                 # captures /
- *   npm run screens -- / /design    # captures the routes given
+ *   npm run screens -- design       # captures / and /design
  *
  * Every route is captured at 390, 768 and 1440 px in both themes, into ./.screens
  * (gitignored). These exist to be looked at and critiqued against the frontend-design
@@ -33,7 +33,32 @@ const VIEWPORTS = [
 
 const THEMES = ["light", "dark"] as const;
 
-const routes = process.argv.slice(2).length > 0 ? process.argv.slice(2) : ["/"];
+/**
+ * Routes are given without a leading slash. Git Bash rewrites a leading "/" into a
+ * filesystem path before Node ever sees it, which used to surface as an unreadable
+ * "cannot navigate to invalid URL" — so a mangled argument is caught and explained.
+ */
+function toRoute(argument: string): string {
+  if (/^[A-Za-z]:[\/]/.test(argument)) {
+    throw new Error(
+      `"${argument}" is a filesystem path, not a route. Git Bash rewrites a leading "/". ` +
+        `Pass routes without it (npm run screens -- design), or prefix the command with ` +
+        `MSYS_NO_PATHCONV=1.`,
+    );
+  }
+  const trimmed = argument.replace(/^\/+/, "").replace(/\/+$/, "");
+  return trimmed === "" ? "/" : `/${trimmed}`;
+}
+
+// "/" is always captured; arguments add to it rather than replacing it.
+const routes = [...new Set(["/", ...process.argv.slice(2).map(toRoute)])];
+
+/**
+ * Viewport-only by default, because the deck is designed one viewport at a time and a
+ * full-page shot of it would be meaningless. Set SCREENS_FULL_PAGE=1 to capture whole
+ * documents instead, which is what a long page like /design needs to be reviewed.
+ */
+const fullPage = process.env.SCREENS_FULL_PAGE === "1";
 
 function slugOf(route: string): string {
   const cleaned = route.replace(/^\/+|\/+$/g, "");
@@ -112,7 +137,7 @@ async function main(): Promise<void> {
             }
 
             const file = path.join(OUT_DIR, `${slugOf(route)}__${viewport.width}__${theme}.png`);
-            await page.screenshot({ path: file });
+            await page.screenshot({ path: file, fullPage });
             await context.close();
             captured += 1;
             console.log(`  ${path.relative(ROOT, file)}`);

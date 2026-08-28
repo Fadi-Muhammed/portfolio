@@ -16,6 +16,12 @@ const publicSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.url({
     error: "NEXT_PUBLIC_SITE_URL must be a full URL, for example https://fadimuhammed.work",
   }),
+  // Gates the /design token playground. Off unless explicitly turned on, so it can be
+  // opened on the deployed site when reviewing but is absent by default.
+  NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
 });
 
 const serverSchema = z.object({
@@ -45,6 +51,7 @@ export function parsePublicEnv(source: Record<string, string | undefined>): Publ
   // statically, so `source.NEXT_PUBLIC_SITE_URL` must appear literally.
   const result = publicSchema.safeParse({
     NEXT_PUBLIC_SITE_URL: source.NEXT_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: source.NEXT_PUBLIC_ENABLE_DESIGN_ROUTE,
   });
   if (!result.success) throw new EnvError(issuesOf(result.error));
   return result.data;

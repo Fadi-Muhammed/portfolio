@@ -6,14 +6,20 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
-
-export type ThemePreference = "system" | "light" | "dark";
-export type ResolvedTheme = "light" | "dark";
-
-const STORAGE_KEY = "theme";
+import {
+  getPreference,
+  getServerPreference,
+  getServerSystemTheme,
+  getSystemTheme,
+  subscribePreference,
+  subscribeSystemTheme,
+  writePreference,
+  type ResolvedTheme,
+  type ThemePreference,
+} from "@/components/theme/theme-store";
 
 type ThemeContextValue = {
   /** What the visitor chose. "system" until they choose otherwise. */
@@ -27,59 +33,25 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function prefersDark(): boolean {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
-function readStoredPreference(): ThemePreference {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored === "light" || stored === "dark" ? stored : "system";
-  } catch {
-    return "system";
-  }
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Both start at their server-render values and are corrected on mount. The page
-  // colours are already right by then — ThemeScript set them before paint — so this
-  // only settles the control's own state, with nothing visible to flash.
-  const [preference, setPreferenceState] = useState<ThemePreference>("system");
-  const [theme, setTheme] = useState<ResolvedTheme>("light");
+  const preference = useSyncExternalStore(subscribePreference, getPreference, getServerPreference);
 
-  useEffect(() => {
-    const stored = readStoredPreference();
-    setPreferenceState(stored);
-    setTheme(stored === "system" ? (prefersDark() ? "dark" : "light") : stored);
-  }, []);
+  const systemTheme = useSyncExternalStore(
+    subscribeSystemTheme,
+    getSystemTheme,
+    getServerSystemTheme,
+  );
 
-  // Only track the system while the visitor has not made a choice.
-  useEffect(() => {
-    if (preference !== "system") return;
-    const query = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = (event: MediaQueryListEvent) => setTheme(event.matches ? "dark" : "light");
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
-  }, [preference]);
+  const theme: ResolvedTheme = preference === "system" ? systemTheme : preference;
 
+  // The only side effect: mirror the resolved theme onto <html>. ThemeScript already
+  // set it before first paint, so this is keeping it current, not establishing it.
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
-  const setPreference = useCallback((next: ThemePreference) => {
-    setPreferenceState(next);
-    setTheme(next === "system" ? (prefersDark() ? "dark" : "light") : next);
-    try {
-      if (next === "system") localStorage.removeItem(STORAGE_KEY);
-      else localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      // Storage unavailable: the choice still applies for this page view.
-    }
-  }, []);
-
-  const toggle = useCallback(() => {
-    setPreference(theme === "dark" ? "light" : "dark");
-  }, [theme, setPreference]);
+  const setPreference = useCallback((next: ThemePreference) => writePreference(next), []);
+  const toggle = useCallback(() => writePreference(theme === "dark" ? "light" : "dark"), [theme]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({ preference, theme, setPreference, toggle }),
