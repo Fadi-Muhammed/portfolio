@@ -39,17 +39,19 @@
     "slug": "national-cyber-drill-ctf",
     "sort_order": 30,
     "published": true,
-    "title": "National Cyber Drill CTF",
+    "title": "Capture the flag, second edition",
     "type": "competition",
-    "event_name": "National Cyber Drill",
+    "event_name": "12th National Cyber Drill 2025",
     "role": "Participant",
     "result": null,
     "date": null,
     "city": null,
     "country": "Qatar",
-    "summary": null,
+    "summary": "Took part in the capture the flag event at the 12th National Cyber Drill, run by the National Cyber Security Agency.",
     "links": {},
-    "media": {},
+    "media": {
+      "cover": "national-cyber-drill-ctf/cover.jpeg"
+    },
     "featured": false
   }
 ]

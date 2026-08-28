@@ -16,7 +16,7 @@
       "GPIO control"
     ],
     "tools": ["ESP32", "MicroPython", "LDR", "Potentiometer", "Relay", "LED"],
-    "cover_image_path": null,
+    "cover_image_path": "intelligent-street-light-system/cover.jpeg",
     "gallery": [],
     "report_path": null,
     "repo_url": null,
