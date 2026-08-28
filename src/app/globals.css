@@ -1,1 +1,55 @@
 @import "tailwindcss";
+
+/*
+ * TEMPORARY holding-page palette — Part 1 only.
+ *
+ * Part 2 replaces this wholesale with the real token system in src/styles/tokens.css.
+ * Two neutral values and nothing else: no identity is decided here, because the visual
+ * identity is Part 2's approval gate. Do not grow this into a palette.
+ *
+ * The mechanism is deliberate, though: runtime custom properties referenced through
+ * @theme inline, switched by prefers-color-scheme with a data-theme override. Part 2
+ * extends exactly this shape, so the token work is a substitution, not a rewrite.
+ */
+
+:root {
+  --bg: #fafafa;
+  --ink: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101010;
+    --ink: #e8e8e8;
+  }
+}
+
+[data-theme="dark"] {
+  --bg: #101010;
+  --ink: #e8e8e8;
+}
+
+[data-theme="light"] {
+  --bg: #fafafa;
+  --ink: #1a1a1a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
