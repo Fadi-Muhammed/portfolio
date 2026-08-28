@@ -7,6 +7,7 @@ import { useTheme } from "@/components/theme/theme-provider";
 import {
   buildItems,
   groupItems,
+  scoreItem,
   type PaletteAction,
   type PaletteContent,
   type PaletteItem,
@@ -118,6 +119,7 @@ export function Palette({ open, onOpenChange, content }: PaletteProps) {
       onOpenChange={onOpenChange}
       label="Search the site"
       shouldFilter
+      filter={(value, search, keywords) => scoreItem(value, search, keywords ?? [])}
       className="palette"
       overlayClassName="palette-scrim"
       contentClassName="palette-panel"
@@ -143,7 +145,12 @@ export function Palette({ open, onOpenChange, content }: PaletteProps) {
             {groupItems.map((item) => (
               <Command.Item
                 key={item.id}
-                value={`${item.label} ${item.keywords.join(" ")}`}
+                // Label and keywords are given separately rather than concatenated:
+                // cmdk scores the value first and keywords second, so an exact label
+                // match wins. Concatenated, "ping" fuzzy-matched the letters of
+                // "competitions and programmes" and ranked Achievements above it.
+                value={item.label}
+                keywords={item.keywords}
                 onSelect={() => run(item)}
                 className="palette-item"
               >

@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -46,10 +47,36 @@ export function PaletteProvider({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
+  /**
+   * Whatever had focus when the palette opened, so it can be given back.
+   *
+   * The dialog library is supposed to restore focus itself, and measurably did not —
+   * focus landed on <body>, which strands a keyboard visitor at the top of the document.
+   * Remembering the element ourselves makes the guarantee ours rather than inherited.
+   */
+  const opener = useRef<HTMLElement | null>(null);
+
+  const remember = useCallback(() => {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement)) return;
+    // Ignore focus that is already inside the palette, so re-triggering the shortcut
+    // while it is open cannot overwrite the opener with the palette's own input.
+    if (active.closest("[cmdk-root]")) return;
+    opener.current = active;
+  }, []);
 
   const open = useCallback(() => {
+    remember();
     setHasOpened(true);
     setIsOpen(true);
+  }, [remember]);
+
+  const setOpen = useCallback((next: boolean) => {
+    setIsOpen(next);
+    if (!next) {
+      // After the dialog has finished unwinding, not during it.
+      window.setTimeout(() => opener.current?.focus(), 0);
+    }
   }, []);
 
   useEffect(() => {
@@ -58,6 +85,7 @@ export function PaletteProvider({
 
       if (meta && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        remember();
         setHasOpened(true);
         setIsOpen((value) => !value);
         return;
@@ -67,6 +95,7 @@ export function PaletteProvider({
       // meant for a field.
       if (event.key === "/" && !meta && !event.altKey && !isTyping(event.target)) {
         event.preventDefault();
+        remember();
         setHasOpened(true);
         setIsOpen(true);
       }
@@ -74,14 +103,14 @@ export function PaletteProvider({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [remember]);
 
   const value = useMemo<PaletteContextValue>(() => ({ open, isOpen }), [open, isOpen]);
 
   return (
     <PaletteContext.Provider value={value}>
       {children}
-      {hasOpened ? <Palette open={isOpen} onOpenChange={setIsOpen} content={content} /> : null}
+      {hasOpened ? <Palette open={isOpen} onOpenChange={setOpen} content={content} /> : null}
     </PaletteContext.Provider>
   );
 }

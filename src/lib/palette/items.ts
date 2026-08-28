@@ -208,3 +208,41 @@ export function groupItems(items: PaletteItem[]): Array<[PaletteGroup, PaletteIt
     )
     .filter(([, groupItems]) => groupItems.length > 0);
 }
+
+/** True when every character of `needle` appears in `haystack`, in order. */
+function isSubsequence(needle: string, haystack: string): boolean {
+  let index = 0;
+  for (const character of haystack) {
+    if (character === needle[index]) index += 1;
+    if (index === needle.length) return true;
+  }
+  return needle.length === 0;
+}
+
+/**
+ * How well an item matches what was typed, from 0 (no match) to 1.
+ *
+ * cmdk's default scoring is a fuzzy subsequence match over the whole searchable string,
+ * which ranked "Achievements" above "ping" for the query "ping" — the letters p, i, n, g
+ * all appear in "competitions and programmes". A palette where typing a command's exact
+ * name does not find it is broken, so the label is scored decisively above keywords and
+ * exact matches decisively above fuzzy ones.
+ */
+export function scoreItem(label: string, search: string, keywords: readonly string[]): number {
+  const query = search.trim().toLowerCase();
+  if (!query) return 1;
+
+  const name = label.toLowerCase();
+  if (name === query) return 1;
+  if (name.startsWith(query)) return 0.9;
+  if (name.includes(query)) return 0.7;
+
+  for (const keyword of keywords) {
+    const word = keyword.toLowerCase();
+    if (word === query) return 0.5;
+    if (word.startsWith(query)) return 0.4;
+  }
+
+  // Last resort, so an initialism like "isls" still finds a long title.
+  return isSubsequence(query, name) ? 0.2 : 0;
+}
