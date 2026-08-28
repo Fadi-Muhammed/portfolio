@@ -1,9 +1,34 @@
+import { Deck, DeckSection } from "@/components/deck/deck";
+import { DeckProvider } from "@/components/deck/deck-provider";
+import { Rail } from "@/components/deck/rail";
+import { HeroPlaceholder, SectionPlaceholder } from "@/components/deck/section-placeholder";
+import { SiteNav } from "@/components/deck/site-nav";
+import { SkipLink } from "@/components/deck/skip-link";
+import { SECTIONS } from "@/lib/deck/sections";
+
 export default function Home() {
   return (
-    <main className="flex min-h-dvh flex-col justify-end px-6 pb-10 sm:px-10 sm:pb-12 lg:px-16 lg:pb-16">
-      <h1 className="text-3xl leading-tight font-medium tracking-tight sm:text-4xl lg:text-5xl">
-        Building. Back soon.
-      </h1>
-    </main>
+    <DeckProvider>
+      <SkipLink />
+      <SiteNav />
+      <Rail />
+
+      <Deck>
+        {SECTIONS.map((section, index) => (
+          <DeckSection
+            key={section.id}
+            section={section}
+            // The hero has nothing above it, so it needs no peek header of its own.
+            showHeader={index > 0}
+          >
+            {section.id === "hero" ? (
+              <HeroPlaceholder section={section} />
+            ) : (
+              <SectionPlaceholder section={section} />
+            )}
+          </DeckSection>
+        ))}
+      </Deck>
+    </DeckProvider>
   );
 }

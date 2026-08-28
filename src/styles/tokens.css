@@ -70,11 +70,15 @@
   /* ---- Layout -------------------------------------------------------------- */
   --measure: 68ch;
   --peek: 72px;
+  /* The fixed nav's height. The deck reserves it so a snapped section lands below the
+     nav instead of behind it. */
+  --nav-h: 56px;
 }
 
 @media (min-width: 768px) {
   :root {
     --peek: 96px;
+    --nav-h: 64px;
   }
 }
 

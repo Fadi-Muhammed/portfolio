@@ -3,6 +3,7 @@
  *
  *   npm run screens                 # captures /
  *   npm run screens -- design       # captures / and /design
+ *   npm run screens -- "#products"  # captures the deck parked on a section
  *
  * Every route is captured at 390, 768 and 1440 px in both themes, into ./.screens
  * (gitignored). These exist to be looked at and critiqued against the frontend-design
@@ -39,6 +40,9 @@ const THEMES = ["light", "dark"] as const;
  * "cannot navigate to invalid URL" — so a mangled argument is caught and explained.
  */
 function toRoute(argument: string): string {
+  // "#products" captures the deck deep-linked to a section rather than a separate page.
+  if (argument.startsWith("#")) return `/${argument}`;
+
   if (/^[A-Za-z]:[\/]/.test(argument)) {
     throw new Error(
       `"${argument}" is a filesystem path, not a route. Git Bash rewrites a leading "/". ` +
@@ -61,6 +65,7 @@ const routes = [...new Set(["/", ...process.argv.slice(2).map(toRoute)])];
 const fullPage = process.env.SCREENS_FULL_PAGE === "1";
 
 function slugOf(route: string): string {
+  if (route.startsWith("/#")) return `deck-${route.slice(2)}`;
   const cleaned = route.replace(/^\/+|\/+$/g, "");
   return cleaned === "" ? "home" : cleaned.replace(/\//g, "-");
 }
@@ -93,8 +98,16 @@ async function waitForServer(url: string, timeoutMs = 60_000): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  if (!existsSync(path.join(ROOT, ".next", "BUILD_ID"))) {
-    console.log("No production build found — building first.");
+  /*
+   * Always rebuild. The previous version built only when .next was missing, which meant
+   * it silently photographed stale code after every edit — a screenshot that looks like
+   * evidence and is not. SCREENS_SKIP_BUILD=1 opts out when nothing has changed.
+   */
+  if (process.env.SCREENS_SKIP_BUILD === "1") {
+    if (!existsSync(path.join(ROOT, ".next", "BUILD_ID"))) {
+      throw new Error("SCREENS_SKIP_BUILD is set but there is no build to screenshot.");
+    }
+  } else {
     await run(["build"]);
   }
 
@@ -135,6 +148,10 @@ async function main(): Promise<void> {
             if (!response || !response.ok()) {
               throw new Error(`${route} returned ${response?.status() ?? "no response"}`);
             }
+
+            // A hash route lands via a client-side scroll, so give the deck a moment to
+            // settle on the section before capturing it mid-hop.
+            if (route.includes("#")) await page.waitForTimeout(700);
 
             const file = path.join(OUT_DIR, `${slugOf(route)}__${viewport.width}__${theme}.png`);
             await page.screenshot({ path: file, fullPage });

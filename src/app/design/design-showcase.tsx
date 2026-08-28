@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/field";
 import { Link } from "@/components/ui/link";
-import { PeekStrip } from "@/components/ui/section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Chip, Tag } from "@/components/ui/tag";
 import { Toast } from "@/components/ui/toast";
@@ -244,16 +243,19 @@ export function DesignShowcase() {
         </div>
       </Block>
 
-      <Block label="Section shell and peek strip">
+      <Block label="Deck section header and peek strip">
+        <p className="text-small text-muted">
+          The same bar does two jobs: it is the peek strip while the previous section is active, and
+          that section&rsquo;s own heading once you arrive. Its height is the --peek token, which is
+          what makes the next section visible below the current one.
+        </p>
         <div className="overflow-hidden rounded-md border border-line">
-          <div className="flex flex-col gap-3 p-6">
-            <p className="text-data text-muted">Hop 2 of 7 · Products</p>
-            <h3 className="text-h2 text-ink">Products</h3>
-            <p className="measure text-body text-muted">
-              Four things I built, shipped, and still maintain.
-            </p>
+          <div className="deck-section-header">
+            <span className="deck-section-name text-h3 text-ink">Engineering</span>
+            <span className="deck-section-teaser text-small text-muted">
+              Hardware and network work from the lab.
+            </span>
           </div>
-          <PeekStrip href="engineering" name="Engineering" teaser="12 lab and capstone projects" />
         </div>
       </Block>
 

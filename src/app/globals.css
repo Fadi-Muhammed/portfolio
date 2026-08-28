@@ -191,3 +191,203 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * The deck (B3). One section at a time, with the top of the next one showing.
+ *
+ * Snapping is entirely CSS: a scroll container with mandatory snap, sections one
+ * viewport minus the peek tall. That last part is what produces the peek — the next
+ * section's header bar is what remains visible below the active section. Snap type is a
+ * property of the container, so it is decided once here and never mixed per section.
+ *
+ * No JavaScript touches the wheel. B3 forbids it, and a hijacked wheel is the single
+ * fastest way to make a site feel broken on hardware you did not test on.
+ */
+@layer components {
+  .deck {
+    height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    /* Snap below the fixed nav. Without this a snapped section's header lands behind
+       the nav and the two overlap, which is exactly what the first screenshots showed. */
+    scroll-padding-top: var(--nav-h);
+  }
+
+  .deck-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - var(--peek) - var(--nav-h));
+    scroll-snap-align: start;
+    /* A fast flick cannot skip a section. */
+    scroll-snap-stop: always;
+  }
+
+  /* Nothing peeks after the last one, so it takes the rest of the viewport. */
+  .deck-section:last-child {
+    height: calc(100dvh - var(--nav-h));
+  }
+
+  /* The first section starts under the nav rather than beneath it. */
+  .deck-section:first-child {
+    padding-top: var(--nav-h);
+  }
+
+  .deck-section-header {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.125rem;
+    height: var(--peek);
+    padding-inline: 1.5rem;
+    border-top: var(--hairline) solid var(--line);
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .deck-section-header:hover {
+    background-color: var(--ghost-hover);
+  }
+
+  .deck-section-teaser {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  /*
+   * Keepalive (B3): near the bottom of the current section the next teaser draws
+   * slightly upward. Two pixels — enough to register as the page acknowledging you,
+   * not enough to read as an animation.
+   */
+  .deck-section-header[data-lift] .deck-section-teaser {
+    transform: translateY(-2px);
+  }
+
+  .deck-section-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 1.5rem;
+  }
+
+  .deck-section-body--full {
+    padding-block: 0;
+  }
+
+  /* Entrance on hop: transform and opacity only, one easing, inside the duration scale. */
+  .deck-section[data-active] .deck-section-body {
+    animation: hop-in var(--dur-hop) var(--ease) both;
+  }
+
+  @media (min-width: 640px) {
+    .deck-section-header {
+      padding-inline: 2.5rem;
+    }
+    .deck-section-body {
+      padding: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .deck-section-header {
+      padding-inline: 4rem;
+    }
+    .deck-section-body {
+      padding: 4rem;
+    }
+  }
+}
+
+@keyframes hop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * The rail. A route drawn as a line, nodes on it, and the packet travelling beside them.
+ * Same vocabulary as the hero topology and the contact handshake, so the three read as
+ * one system rather than three effects.
+ */
+@layer components {
+  /* Decorative and layered over the node buttons, so it must not take clicks. */
+  .rail-line,
+  .rail-packet {
+    pointer-events: none;
+  }
+
+  .rail-line {
+    position: absolute;
+    top: 22px;
+    bottom: 22px;
+    left: 50%;
+    width: var(--hairline);
+    background-color: var(--line);
+    transform: translateX(-50%);
+  }
+
+  .rail-node {
+    display: block;
+    width: 5px;
+    height: 5px;
+    border: var(--hairline) solid var(--muted);
+    border-radius: 999px;
+    background-color: var(--bg);
+    transition:
+      background-color var(--dur-fast) var(--ease),
+      border-color var(--dur-fast) var(--ease);
+  }
+
+  .rail-node[data-active] {
+    background-color: var(--signal);
+    border-color: var(--signal);
+  }
+
+  button:hover .rail-node {
+    border-color: var(--ink);
+  }
+
+  /*
+   * The packet rides to the left of the line. Its position is index * 44px, matching the
+   * node buttons, so it is always exactly on a node rather than approximately near one.
+   */
+  .rail-packet {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 3.5px;
+    height: 3.5px;
+    margin-top: 20.25px;
+    margin-left: -11px;
+    background-color: var(--signal);
+    transition: transform var(--dur-hop) var(--ease);
+  }
+
+  /* One pulse as the visitor nears the bottom of a section. A keepalive, not a loop. */
+  .rail-packet[data-pulse] {
+    animation: packet var(--dur-slow) var(--ease) 1;
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    padding: 0.75rem 1rem;
+    background-color: var(--surface);
+    color: var(--ink);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+    transform: translateY(-150%);
+    transition: transform var(--dur-fast) var(--ease);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0.5rem);
+  }
+}
