@@ -8,6 +8,114 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 
 ---
 
+## Part 6 — Command palette · 29 August 2026
+
+Status: done.
+
+### What exists
+
+- `src/lib/palette/items.ts` — what the palette offers, as data: the item list, the
+  grouping, and the match scorer. Pure, so the decisions are testable without a UI.
+- `src/lib/palette/content.ts` — server-side assembly of what the palette lists, sending
+  only the fields it shows rather than whole rows.
+- `src/components/palette/palette-provider.tsx` — open state, both shortcuts, lazy
+  loading, and focus restoration.
+- `src/components/palette/palette.tsx` — the palette itself, built on cmdk.
+- Palette styles in `globals.css`; a `--scrim` token added.
+- The nav Search button is live at every size and shows `⌘K` from 1024 up.
+- Tests: 95 unit (26 new) and 30 Playwright (10 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+Then `Ctrl/⌘ K` or `/` or the Search button. Try: `contact` (hops), `rubric` (hops to
+Products), `lab` (finds Engineering, though "lab" is not in its name), `ping`, `zzzz`
+(the empty state).
+
+```
+SCREENS_PALETTE=1 npm run screens   # captures with the palette open
+```
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes.
+
+- **Not a stock palette.** Three things do that work: the selected row is marked by the
+  packet square rather than a highlight bar, so the object that moves in the rail marks
+  your place here too; group headings are set in the data voice; and there is no shadow,
+  so it sits on the page as a plane instead of floating above it.
+- **Tokens only.** One new token, `--scrim`, added for a reason given below.
+- **Copy is real**: the empty state says "No route to that." and suggests what to try,
+  in the site's routing vocabulary.
+- **Interaction**: 44 px rows, full keyboard control, Escape closes and returns focus,
+  the mobile sheet is full height.
+- **Accessibility**: zero serious or critical axe violations with the palette open.
+
+**Four faults, two from looking and two from tests:**
+
+1. **The scrim lightened the page on the dark theme.** It was mixed from `--ink`, which is
+   a light colour there, so the dialog washed the page out instead of dimming it. A scrim
+   must always darken, so `--scrim` is now stated per theme rather than derived.
+2. **Section teasers shown as hints were noise** — full sentences, uppercased, truncated
+   mid-word, competing with the label they were meant to support. Dropped from view, kept
+   searchable. On phones all hints are dropped, because keeping them truncated the label
+   to make room for a truncated hint.
+3. **Typing "ping" ranked the ping command third**, behind Achievements and Rubric. cmdk's
+   default scoring is a fuzzy subsequence over the whole searchable string, and the letters
+   p, i, n, g all appear in "competitions and programmes". A palette where typing a
+   command's exact name does not find it is broken. Replaced with a scorer that puts the
+   label decisively above keywords, unit tested against that exact case.
+4. **Closing the palette left focus on `<body>`**, stranding a keyboard visitor at the top
+   of the document and failing B6's focus-return requirement. The dialog library is
+   supposed to handle this and measurably did not, so the provider remembers the opener
+   itself.
+
+**Remove one accessory.** "Opens in a new tab" as a visible hint on LinkedIn and GitHub
+took half a row to say what an arrow says in one character. Now a `↗` glyph, with the
+words kept for screen readers.
+
+### Decided without asking
+
+- **The ping easter egg is real.** B6 asked for a mock reply; it measures the actual round
+  trip to `/api/health` and prints it. Approved in chat. A fake ping is a joke about being
+  a network engineer; a real one is the thing itself, and it cannot drift into being an
+  invented number.
+- **Products and engineering projects hop to their section rather than navigating.**
+  `/products/[slug]` arrives in Part 8 and `/engineering/[slug]` in Part 9. Sending people
+  to a 404 would be worse than taking them to the right section. Those parts change the
+  `action` in `items.ts` and nothing else.
+- **No X entry in the Links group.** B6 lists one; A19 records no X account, so it is
+  absent rather than present and dead.
+- **`/` opens the palette**, ignored whenever focus is in a field — the same guard the
+  deck's arrow keys use.
+- **Answers stay in the palette; departures close it.** Copy, theme and ping print below
+  the input and leave it open, because that is where the answer belongs. B6 mentions a
+  toast for Copy email; an inline line is the same information without building a toast
+  system that nothing else needs yet.
+- **The palette is loaded on first open.** cmdk and a dialog are real weight for something
+  most visitors never open, and B12's budget is tight.
+
+### Known gaps
+
+- **The "routing to…" line is brief.** The hop happens immediately and the palette closes
+  220 ms later, so the line is glimpsed rather than read. Deliberate: delaying navigation
+  to make a label readable would be the wrong trade.
+- **`Command.Dialog` renders its own focus trap**, so the deck's keyboard paging is
+  inactive while the palette is open. That is correct, but it means PageDown does nothing
+  there — worth confirming it feels right on a real device.
+- **Achievements have no detail pages** by design, so those items always hop.
+
+### Next
+
+Part 7 — the hero: the routing topology, tagline and quote. It is the first section with
+real content, it needs the Supabase environment variables in Vercel to render on the
+deployed site, and it is where the design's single signature gets built.
+
+---
+
 ## Part 5 — Deck engine, navigation and hop rail · 28 August 2026
 
 Status: done. Needs a real-device check before Part 6 — see "What Fadi needs to test".

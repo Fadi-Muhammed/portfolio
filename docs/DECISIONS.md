@@ -288,3 +288,29 @@ the site's look or content was not decided here — that is Part 2.
   The cost: when the URL bar hides, each section is slightly shorter than the glass and a
   little more of the next section peeks through. That is the site's own motif rather than
   a defect. Revisit if Fadi reports the peek looking too tall.
+
+### 29 August 2026 — Part 6
+
+- **The ping easter egg measures a real round trip.** B6 specified a mock reply. Proposed
+  and approved in chat: the palette times an actual request to `/api/health` and prints
+  the measured milliseconds. A fake reply is a joke about being a network engineer; a real
+  one is the thing itself, and it cannot quietly become an invented number the way a fixed
+  string could.
+- **Palette items for products and engineering projects hop to their section.** Detail
+  pages arrive in Parts 8 and 9; until they exist, navigating would send visitors to a 404.
+  Recommended and accepted. Those parts change the `action` in `src/lib/palette/items.ts`.
+- **No X entry in the Links group.** B6 lists LinkedIn, GitHub, X, email and CV; A19
+  records no X account, so it is omitted rather than listed dead.
+- **`/` is a second shortcut for the palette**, guarded so it never steals a keystroke
+  meant for a field.
+- **A `--scrim` token was added, stated per theme rather than derived from `--ink`.** The
+  first version mixed ink into the overlay, which lightened the page on the dark theme
+  because ink is a light colour there. A scrim must always darken, so it cannot be
+  derived from a role that inverts between themes.
+- **cmdk's default match scoring was replaced.** Its fuzzy subsequence scoring ranked
+  "Achievements" above "ping" for the query "ping". `scoreItem` in
+  `src/lib/palette/items.ts` scores the label decisively above keywords and exact matches
+  above fuzzy ones, and is unit tested against that case.
+- **Focus restoration is handled by the provider, not the dialog library.** Closing left
+  focus on `<body>`, which fails B6. The provider records whatever had focus when the
+  palette opened and restores it on close.
