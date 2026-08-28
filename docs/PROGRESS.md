@@ -66,7 +66,15 @@ None of it was invented.
   to point at. Drop the PDF at `content/assets/documents/cv.pdf`.
 - **No images anywhere.** No product cover, no project photo, no talk photo. Parts 8, 9
   and 10 will render card layouts with empty media wells.
-- **No featured-in entries at all.** Part 11 has nothing to build with.
+- **Featured in: seven logos uploaded, zero rows.** The files are in the `logos` bucket
+  (`alfekra`, `dmz`, `qatar-innovation`, `qatar-university`, `uc-berkeley`, `uhub`,
+  `web-summit-qatar`) but `featured_in` is still empty, because B8 makes each logo a link
+  to real coverage and no links or categories have been supplied. Logos without links are
+  decoration. Two further problems found by inspecting the pixels: `alfekra.png` and
+  `dmz.png` are solid black on transparent and will be **invisible on the dark theme**
+  (fix: source an SVG or a reversed version, or add a per-row invert flag in Part 11), and
+  `alfekra.png` is a stacked vertical lockup at 1:2.7 that cannot sit in a row normalised
+  to a common height — a horizontal variant is needed.
 - **No degree row.** Fadi is a fourth-year telecom and network engineering student and
   the experience timeline has no education entry. This is the spine of the positioning
   and B2 explicitly asks for the degree with expected graduation.
