@@ -55,14 +55,16 @@ export function Palette({ open, onOpenChange, content }: PaletteProps) {
 
     const started = performance.now();
     try {
-      const response = await fetch("/api/health", { cache: "no-store" });
+      // Any HTTP response means the packet came back. The status code describes the
+      // database, not reachability — a 503 from the health check is still a reply, and
+      // counting it as packet loss would be measuring the wrong thing.
+      await fetch("/api/health", { cache: "no-store" });
       const elapsed = Math.round(performance.now() - started);
       setStatus(
-        response.ok
-          ? `PING ${host} — 64 bytes, time=${elapsed} ms\n1 packet transmitted, 1 received, 0% loss`
-          : `PING ${host} — no reply (${response.status})\n1 packet transmitted, 0 received, 100% loss`,
+        `PING ${host} — 64 bytes, time=${elapsed} ms\n1 packet transmitted, 1 received, 0% loss`,
       );
     } catch {
+      // Only a network failure is real loss.
       setStatus(`PING ${host} — unreachable\n1 packet transmitted, 0 received, 100% loss`);
     }
   }, []);
