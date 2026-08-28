@@ -39,6 +39,11 @@ const serverSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z
     .string()
     .min(20, { error: "SUPABASE_SERVICE_ROLE_KEY looks too short to be a real key" }),
+  // Shared secret for POST /api/revalidate, called by the Supabase database webhook.
+  // Long because it is checked by anyone who finds the endpoint.
+  REVALIDATE_SECRET: z
+    .string()
+    .min(32, { error: "REVALIDATE_SECRET should be at least 32 characters" }),
 });
 
 export type PublicEnv = z.infer<typeof publicSchema>;
@@ -76,6 +81,7 @@ export function parseServerEnv(source: Record<string, string | undefined>): Serv
   const result = serverSchema.safeParse({
     NODE_ENV: source.NODE_ENV,
     SUPABASE_SERVICE_ROLE_KEY: source.SUPABASE_SERVICE_ROLE_KEY,
+    REVALIDATE_SECRET: source.REVALIDATE_SECRET,
   });
   if (!result.success) throw new EnvError(issuesOf(result.error));
   return result.data;

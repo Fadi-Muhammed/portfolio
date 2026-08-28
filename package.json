@@ -16,7 +16,8 @@
     "db:new": "node scripts/supabase.mts migration new",
     "db:push": "node scripts/supabase.mts db push",
     "db:types": "node scripts/supabase.mts gen types --lang=typescript --linked > src/lib/supabase/types.ts",
-    "db:seed": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seed.mts"
+    "db:seed": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seed.mts",
+    "assets:upload": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/upload-assets.mts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
