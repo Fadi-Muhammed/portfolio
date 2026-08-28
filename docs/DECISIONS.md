@@ -183,3 +183,24 @@ the site's look or content was not decided here — that is Part 2.
   job; the abstract packet-on-a-link glyph is kept for the social avatar. The one-superfamily type
   call stands, and is judged at Part 2 step 5 against the screenshots rather than in prose — if it
   reads as timid there, the display face is the first thing to change.
+
+### 28 August 2026 — Part 2 implementation
+
+- **A `danger` palette role was added after approval.** Recorded in full in `docs/DESIGN.md`
+  section 10. The approved palette had no error colour and B10 requires designed error states.
+- **Hover states are derived, not new colours.** `--accent-hover`, `--surface-hover` and
+  `--ghost-hover` are `color-mix` of an existing role toward the ink, so they cannot drift from the
+  palette and stay correct in both themes without a second set of values.
+- **Tailwind's default palette is removed, not avoided.** `--color-*: initial` in the `@theme inline`
+  block deletes it; only the token roles are added back. Verified by probe: `bg-blue-500` and
+  `text-gray-400` emit zero CSS rules.
+- **The theme is modelled as an external store.** `useSyncExternalStore` over localStorage and the
+  `prefers-color-scheme` media query, rather than `setState` inside an effect. The Next lint rule
+  flagged the original and was right — the theme lives outside React, and copying it into component
+  state means keeping the copy in sync forever.
+- **`npm run screens` takes routes without a leading slash.** Git Bash rewrites a leading `/` into a
+  filesystem path before Node sees it, which surfaced as an unreadable navigation error. `/` is now
+  always captured and extra routes are added to it; a mangled argument fails with an explanation.
+  `SCREENS_FULL_PAGE=1` captures whole documents, which a long page like `/design` needs.
+- **The `/design` flag is set in CI.** The route is inlined at build time, so the e2e suite that
+  covers it must be built with the flag on. Production leaves it unset and the route is absent there.

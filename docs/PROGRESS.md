@@ -8,6 +8,122 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 
 ---
 
+## Part 2 — Design tokens and foundations · 28 August 2026
+
+Status: done. The written plan was approved before any code was written.
+
+### What exists
+
+- `docs/DESIGN.md` — the approved design plan. Palette with a measured contrast ratio for every
+  text/background pair, type scale, layout concept with ASCII wireframes at 390 and 1440, the hero
+  topology spec, motion tokens, and the self-critique against the three AI-default looks.
+- `src/styles/tokens.css` — every visual value on the site, both themes, switched by `data-theme`
+  with a `prefers-color-scheme` fallback.
+- `src/app/globals.css` — Tailwind bound to the tokens. The default palette is removed with
+  `--color-*: initial` and only the token roles are added back.
+- `src/lib/fonts.ts` — Archivo (variable, including its width axis) and IBM Plex Mono via
+  `next/font/google`. Both SIL OFL 1.1, self-hosted at build, nothing paid for.
+- `src/components/theme/` — the store, provider, no-flash inline script and toggle.
+- `src/lib/hooks/use-reduced-motion.ts`.
+- `src/components/ui/` — Button (primary/secondary/quiet), Link, Input, Textarea, Card, Tag, Chip,
+  Toast, Section with PeekStrip, Skeleton, VisuallyHidden.
+- `/design` — the token playground, gated behind `NEXT_PUBLIC_ENABLE_DESIGN_ROUTE`, `noindex`.
+- Tests: 20 unit (8 on the theme provider, 12 on env) and 5 Playwright, including axe over `/design`
+  in both themes.
+
+### How to test
+
+```
+npm install
+NEXT_PUBLIC_ENABLE_DESIGN_ROUTE=true npm run dev     # then open /design
+npm run lint && npm run typecheck && npm test && npm run build
+npm run test:e2e
+SCREENS_FULL_PAGE=1 npm run screens -- design        # 12 images in .screens/
+```
+
+On Windows, note that `npm run screens` takes routes **without** a leading slash — Git Bash rewrites
+`/design` into a filesystem path before Node sees it. `/` is always captured.
+
+To check `/design` on a phone, set `NEXT_PUBLIC_ENABLE_DESIGN_ROUTE=true` in the Vercel dashboard and
+redeploy; unset it afterwards so the route is absent from production.
+
+### B13 "not vibe-coded" checklist
+
+Run against `/design` at 390/768/1440 in both themes, full-page.
+
+- **Tokens**: every colour, space, radius and type value resolves to `tokens.css`. Verified by
+  building a probe component using `bg-blue-500` and `text-gray-400`: **zero** CSS rules were
+  emitted for either, and no `oklch()` values from Tailwind's default palette appear in the built
+  stylesheet. The default palette does not exist in this project rather than merely being
+  discouraged.
+- **Typography**: Archivo Expanded display against Archivo body against IBM Plex Mono for data. Not
+  Inter-for-everything. The one-superfamily decision was flagged in the plan as the riskiest call and
+  was to be judged on screen — at display size it reads as engineered and confident, not timid, so it
+  stands.
+- **Layout**: left-aligned to a strong column, hairline dividers, no centred `max-w-4xl` stack, no
+  card-in-card. Radius tops out at 8 px.
+- **Copy**: real throughout. The samples use the actual tagline and real section names; error
+  messages say what is wrong and what to do.
+- **Motion**: one curve, four durations inside B5's 200–500 ms band, no bounce, reduced motion
+  neutralises everything declaratively and the packet indicators hold still rather than fading — a
+  frozen fade reads as "dimmed", which is the wrong signal for "working".
+- **Icons**: Lucide only, 1.5 stroke.
+- **Interaction**: focus ring 2 px accent at 2 px offset, never removed; 5.28:1 on light and 9.25:1
+  on dark against the ground. Hit targets 44 px. Zero serious or critical axe violations in both
+  themes.
+- **Not the three defaults**: cool blue-grey ground rather than cream, no serif anywhere; the dark
+  theme is a blue-slate (`#0E1419`) rather than near-black and the accent is amber rather than acid
+  green — and light is the default and the theme designed first, which is the structural defence
+  against the terminal trap.
+
+**What the critique changed.** Three faults were found by looking at the screenshots, not by
+reasoning:
+
+1. The theme toggle was stranded mid-air at 1440 and orphaned onto its own line at 390. Moved into
+   its own top bar above the title.
+2. Viewport-only screenshots cannot review a long spec page — only the top was visible. Added
+   `SCREENS_FULL_PAGE=1`.
+3. The spacing swatch labels crowded together at the small end. Given fixed-width columns.
+
+Earlier, during the plan itself, measuring caught what the eye did not: the first signal amber was
+2.39:1 on light, under the 3:1 floor, which would have made a status LED indiscernible for many
+people.
+
+**Remove one accessory.** Cut the `↑` arrow from the peek strip. It encoded nothing the label "Next ·
+Engineering" did not already carry, and it pointed the wrong way — the next section is below, not
+above. Decoration that is also wrong is an easy cut.
+
+### Decided without asking
+
+- **A `danger` role was added to the approved palette.** The plan had six roles and no error colour,
+  but B10 requires designed error states. Reusing `accent` (which means interactive) or `signal`
+  (which means live) would have made an invalid field look like a link. Measured, added, and recorded
+  as an amendment in `docs/DESIGN.md` section 10.
+- Hover states are derived from the roles with `color-mix` rather than being new hues, so they stay
+  correct in both themes automatically.
+- The theme store and reduced-motion hook use `useSyncExternalStore`, not `setState` in an effect —
+  the lint rule flagged the latter and it was right: the theme genuinely lives outside React.
+- The root layout types its own props; `LayoutProps<"/">` only exists after a build.
+
+### Known gaps
+
+- The favicon is decided in principle ("F" plus the packet square) but not drawn. It arrives with the
+  real metadata in Part 15.
+- `Toast` is presentational only. The viewport, queue and dismissal behaviour belong to Part 13, where
+  there is a real message to show.
+- `Section` is the shell only. Scroll-snap, `inert` on inactive sections, the rail and `hopTo` are
+  Part 5.
+- The `--spacing` base allows off-scale steps such as `p-5`. Discipline, not enforcement.
+- `/design` is off in production. Turn the flag on in Vercel when reviewing, then off again.
+
+### Next
+
+Part 3 — the Supabase backend. It needs the Supabase project created first (A14), and Prompt 3 walks
+through it. Part 4 then needs the content inventory (A22), which is still the one input that cannot
+be derived or invented.
+
+---
+
 ## Part 1 — Scaffold, tooling, CI and preview deployments · 28 August 2026
 
 Status: done.
