@@ -13,7 +13,9 @@
     "country": "Qatar",
     "summary": "A 20 minute talk at the UDST booth on students turning challenges into solutions.",
     "links": {},
-    "media": {},
+    "media": {
+      "cover": "web-summit-qatar-2026-talk/cover.jpeg"
+    },
     "featured": true
   },
   {
