@@ -79,3 +79,16 @@ displayed attribution (Part 7).
   `frontend-design`, so the name is ambiguous when invoked as a slash command. To remove the ambiguity,
   every UI part reads `.claude/skills/frontend-design/SKILL.md` from the repo path directly and follows
   that text. If the two ever disagree, the repo file wins.
+
+### 28 August 2026 — before Part 1
+
+- **CI runs on every push and every pull request.** Confirmed in chat after asking whether to narrow
+  the GitHub Actions workflow to `main` only to conserve free-tier minutes on the private repo. The
+  answer was to keep the full trigger — the minutes are affordable. So Part 1 step 6 is built as
+  specced: install, lint, typecheck, test, build and Playwright/axe on `push` and `pull_request`,
+  with dependency caching.
+- **The design skill is discoverable.** The Part 0 known gap is closed. In this session the project
+  skill at `.claude/skills/frontend-design/SKILL.md` is listed as `frontend-design`, next to the
+  built-in one, which is listed under a plugin prefix. Their `description:` frontmatter is identical,
+  so the listing alone does not disambiguate them; the standing rule above still holds — every UI part
+  reads the repo file directly and the repo file wins.
