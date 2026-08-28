@@ -177,3 +177,9 @@ the site's look or content was not decided here — that is Part 2.
 - **`/design` route: behind an environment flag,** not restricted to non-production. Chosen because
   Part 2 step 7 asks Fadi to review `/design` on his phone; a flag means opening the deployed URL
   rather than running a dev server over the local network. It stays `noindex` either way.
+- **Design plan approved, 28 August 2026.** `docs/DESIGN.md` approved as written, without changes.
+  Two follow-ups were delegated rather than decided in chat: the favicon is candidate (a), the
+  "F + packet" reduction, chosen because legibility in a crowded tab strip is the favicon's whole
+  job; the abstract packet-on-a-link glyph is kept for the social avatar. The one-superfamily type
+  call stands, and is judged at Part 2 step 5 against the screenshots rather than in prose — if it
+  reads as timid there, the display face is the first thing to change.

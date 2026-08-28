@@ -3,7 +3,7 @@
 The written plan for the site's visual identity, produced in Part 2 before any code, following the
 method in `.claude/skills/frontend-design/SKILL.md`.
 
-Status: awaiting approval. No code is written against this document until Fadi approves it.
+Status: **approved by Fadi on 28 August 2026.** Implementation follows this document exactly.
 
 Every value here is a token. `docs/BUILD_PLAN.md` B13 forbids any colour, spacing, radius or type
 value that is not in this document.
