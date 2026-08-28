@@ -81,6 +81,16 @@ two markers for one state, reading as a smudge rather than an indicator. The fil
 The packet alone marks position, which also gives the packet a job — it is the thing that
 moves, which is the whole connective idea in B5.
 
+**A fourth fault, found only by CI.** The axe check passed locally and failed on the
+runner with a colour-contrast violation: foreground `#6c7681` at 4.11:1, which is not a
+token. It is `--muted` rendered mid-fade — CI is slow enough that axe measured a section
+while its entrance animation was still running. Not an accessibility defect, since the
+colour exists for 360 ms and is not the design, but the test was wrong to judge an
+unsettled page. Both the axe check and the interactive tests now wait for hydration (the
+provider writes the hash on mount) and for `document.getAnimations()` to finish. The same
+slowness exposed a hydration race in the keyboard test, where a keypress landed before the
+listener was attached.
+
 **A tooling fault worth recording.** `npm run screens` only built when `.next` was
 missing, so after an edit it silently photographed stale code. It produced a screenshot
 that looked like proof a fix had worked when the fix had never been compiled. It now
