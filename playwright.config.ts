@@ -10,7 +10,10 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
-  reporter: isCI ? "github" : "list",
+  // In CI, the GitHub reporter annotates the run and the HTML reporter leaves a
+  // report to download when something fails. Without the second one the upload
+  // step has nothing to collect.
+  reporter: isCI ? [["github"], ["html", { open: "never" }]] : [["list"]],
   use: {
     baseURL,
     trace: "on-first-retry",
