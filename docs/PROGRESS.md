@@ -28,6 +28,7 @@ Status: done. Needs a real-device check before Part 6 — see "What Fadi needs t
 - `src/components/deck/site-nav.tsx`, `skip-link.tsx`, `section-placeholder.tsx`.
 - Deck and rail styles in `globals.css`; `--nav-h` added to the tokens.
 - Tests: 71 unit (18 new on deck state) and 20 Playwright (10 new on the deck).
+- `part05-done` was tagged before the last two fixes landed; see the note in the report.
 
 ### How to test
 
@@ -90,6 +91,15 @@ unsettled page. Both the axe check and the interactive tests now wait for hydrat
 provider writes the hash on mount) and for `document.getAnimations()` to finish. The same
 slowness exposed a hydration race in the keyboard test, where a keypress landed before the
 listener was attached.
+
+**A fifth fault, also from CI: rapid keyboard paging got stuck.** Pressing PageDown twice
+quickly landed on section 2 instead of 3. `hopTo` sets the active section immediately so a
+keypress feels answered, but a smooth scroll takes time, and during it the observer still
+reported the section being left as most visible — dragging `active` backwards. A second
+press inside that window then computed "next" from the old section and hopped to where it
+already was. While a hop is in flight the observer may now confirm the destination but not
+contradict it, with a timeout so it can never stay muted. This is a real defect for anyone
+paging quickly, not only for the test.
 
 **A tooling fault worth recording.** `npm run screens` only built when `.next` was
 missing, so after an edit it silently photographed stale code. It produced a screenshot
