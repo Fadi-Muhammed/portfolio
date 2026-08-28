@@ -10,9 +10,7 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 
 ## Part 1 — Scaffold, tooling, CI and preview deployments · 28 August 2026
 
-Status: steps 1–6 and 8 done and green. Step 7 (Vercel) is waiting on the account holder — see
-"Known gaps". Not tagged `part01-done` yet, because the preview URL is part of the part's
-definition of done.
+Status: done.
 
 ### What exists
 
@@ -31,6 +29,11 @@ definition of done.
 - `.github/workflows/ci.yml` — lint, typecheck, unit tests, build, Playwright + axe. Green, no
   annotations.
 - Tests: `src/lib/env.test.ts` (8 cases) and `e2e/home.spec.ts` (renders, 200, no console errors).
+- **Deployed on Vercel**, connected to the GitHub repo so every push to `main` deploys automatically:
+  <https://portfolio-jade-nu-54.vercel.app/>. `NEXT_PUBLIC_SITE_URL` is set in the Vercel dashboard
+  for all three environments. The custom domain is deliberately NOT connected — that is Part 17.
+  Note the plan's step 7 says "preview deployment": because we work directly on `main`, pushes
+  produce Production deployments. Previews will appear once a branch or pull request exists.
 
 ### How to test
 
@@ -45,6 +48,9 @@ npm run screens -- / /design    # any routes can be passed as arguments
 
 - `git check-ignore .env.local` prints the path; `git status` stays clean without it.
 - CI: `gh run list --limit 1` shows the latest push green.
+- Live: <https://portfolio-jade-nu-54.vercel.app/> returns 200 and serves the line in the HTML source
+  (prerendered, not painted by client JavaScript). Verified against commit `5451451` with
+  `gh api repos/Fadi-Muhammed/portfolio/deployments`.
 
 ### B13 "not vibe-coded" checklist — holding page
 
@@ -80,17 +86,19 @@ Recorded in full in `docs/DECISIONS.md` under 28 August 2026. The ones that chan
 
 ### Known gaps
 
-- **Vercel (step 7) not done.** No preview URL yet. It needs the account holder in the dashboard —
-  it cannot be done from here.
+- `.env.local` does not exist locally. Nothing reads `env.ts` yet so nothing breaks, but Part 3 will
+  need the file when the Supabase keys arrive: `cp .env.example .env.local`, then set
+  `NEXT_PUBLIC_SITE_URL=http://localhost:3000`.
 - `NEXT_PUBLIC_SITE_URL` is validated but nothing imports `env.ts` yet, so a missing value does not
   fail the build. The first consumer arrives with real metadata in Part 15.
 - No `/design` route yet; that is Part 2 step 4.
 
 ### Next
 
-Finish step 7 (Vercel), note the preview URL here, then tag `part01-done`. After that, Part 2 —
-design tokens and foundations, which opens with a question batch and an approval gate on
-`docs/DESIGN.md` before any code.
+Part 2 — design tokens and foundations. It opens with a question batch (A23 aesthetic constraints,
+A1 now a “Fadi” mark, A24 icons, light/dark default) and then stops at an approval gate: the written
+plan in `docs/DESIGN.md` must be approved before any code is written. This is the part that decides
+whether the site looks designed or generated.
 
 ---
 
