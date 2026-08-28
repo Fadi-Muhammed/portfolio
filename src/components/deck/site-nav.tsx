@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useDeck } from "@/components/deck/deck-provider";
+import { usePalette } from "@/components/palette/palette-provider";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 
@@ -18,6 +19,7 @@ import { Button } from "@/components/ui/button";
  */
 export function SiteNav() {
   const { hopTo } = useDeck();
+  const { open: openPalette } = usePalette();
 
   return (
     <header className="fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 sm:px-10 lg:px-16">
@@ -35,15 +37,10 @@ export function SiteNav() {
       </a>
 
       <nav aria-label="Primary" className="flex items-center gap-1">
-        <Button
-          variant="quiet"
-          aria-label="Search the site"
-          // Part 6 replaces this with the command palette.
-          disabled
-          className="px-3"
-        >
+        <Button variant="quiet" onClick={openPalette} aria-label="Search the site" className="px-3">
           <Search size={20} strokeWidth={1.5} aria-hidden="true" />
           <span className="text-data hidden sm:inline">Search</span>
+          <kbd className="text-data hidden text-muted lg:inline">⌘K</kbd>
         </Button>
 
         {/* Wrapped rather than given `hidden` directly: the Button base sets a display

@@ -4,6 +4,7 @@
  *   npm run screens                 # captures /
  *   npm run screens -- design       # captures / and /design
  *   npm run screens -- "#products"  # captures the deck parked on a section
+ *   SCREENS_PALETTE=1 npm run screens   # captures with the command palette open
  *
  * Every route is captured at 390, 768 and 1440 px in both themes, into ./.screens
  * (gitignored). These exist to be looked at and critiqued against the frontend-design
@@ -63,6 +64,9 @@ const routes = [...new Set(["/", ...process.argv.slice(2).map(toRoute)])];
  * documents instead, which is what a long page like /design needs to be reviewed.
  */
 const fullPage = process.env.SCREENS_FULL_PAGE === "1";
+
+/** Opens the command palette before capturing, for reviewing it at every size. */
+const openPalette = process.env.SCREENS_PALETTE === "1";
 
 function slugOf(route: string): string {
   if (route.startsWith("/#")) return `deck-${route.slice(2)}`;
@@ -153,7 +157,18 @@ async function main(): Promise<void> {
             // settle on the section before capturing it mid-hop.
             if (route.includes("#")) await page.waitForTimeout(700);
 
-            const file = path.join(OUT_DIR, `${slugOf(route)}__${viewport.width}__${theme}.png`);
+            if (openPalette) {
+              await page.keyboard.press("Control+k");
+              // The palette is loaded on first open, so wait for it rather than guessing.
+              await page.waitForSelector("[cmdk-input]", { timeout: 15_000 });
+              await page.waitForTimeout(300);
+            }
+
+            const suffix = openPalette ? "-palette" : "";
+            const file = path.join(
+              OUT_DIR,
+              `${slugOf(route)}${suffix}__${viewport.width}__${theme}.png`,
+            );
             await page.screenshot({ path: file, fullPage });
             await context.close();
             captured += 1;

@@ -33,6 +33,13 @@
   --surface-hover: color-mix(in oklab, var(--surface) 94%, var(--ink));
   --ghost-hover: color-mix(in oklab, var(--bg) 94%, var(--ink));
 
+  /*
+   * The scrim behind a dialog. Not derived from --ink: on the dark theme ink is a light
+   * colour, so mixing it in lightens the page instead of dimming it. A scrim must always
+   * darken, so each theme states its own.
+   */
+  --scrim: rgb(15 21 27 / 0.45);
+
   /* ---- Type ---------------------------------------------------------------- */
   /* Fluid between 390px and 1440px. Weights and tracking live in the utilities. */
   --text-display: clamp(2.5rem, 1.757rem + 3.048vw, 4.5rem);
@@ -93,6 +100,7 @@
     --signal: #ffb84d;
     --line: #28323c;
     --danger: #ff9a8f;
+    --scrim: rgb(0 0 0 / 0.6);
 
     /* 9.25:1 on dark accent. */
     --on-accent: #0e1419;
@@ -109,6 +117,7 @@
   --signal: #ffb84d;
   --line: #28323c;
   --danger: #ff9a8f;
+  --scrim: rgb(0 0 0 / 0.6);
   --on-accent: #0e1419;
 }
 
@@ -121,5 +130,6 @@
   --signal: #c06400;
   --line: #cfd6dd;
   --danger: #b3261e;
+  --scrim: rgb(15 21 27 / 0.45);
   --on-accent: #ffffff;
 }

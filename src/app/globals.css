@@ -425,3 +425,167 @@
     transform: translateY(0.5rem);
   }
 }
+
+/*
+ * The command palette (B6).
+ *
+ * Deliberately not a stock palette. Three things do that work: the selected row is marked
+ * by the packet square rather than a highlight bar, so the same object that moves in the
+ * rail and the topology also marks your place here; group headings are set in the data
+ * voice; and there is no shadow, so it sits on the page as a plane rather than floating
+ * above it.
+ */
+@layer components {
+  .palette-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background-color: var(--scrim);
+  }
+
+  .palette-panel {
+    position: fixed;
+    z-index: 61;
+    top: 12vh;
+    left: 50%;
+    display: flex;
+    width: min(40rem, calc(100vw - 2rem));
+    max-height: 70svh;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateX(-50%);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface);
+  }
+
+  /*
+   * A full-height sheet on a phone. dvh rather than svh here, unlike the deck: this is
+   * not a snap container, and when the software keyboard opens the panel should shrink
+   * with the visible area instead of hiding its results behind it.
+   */
+  @media (max-width: 639px) {
+    .palette-panel {
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100dvh;
+      max-height: none;
+      transform: none;
+      border: 0;
+      border-radius: 0;
+    }
+  }
+
+  .palette-input-row {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: var(--hairline) solid var(--line);
+    padding: 0 1rem;
+  }
+
+  .palette-input {
+    min-height: 56px;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .palette-input::placeholder {
+    color: var(--muted);
+  }
+
+  .palette-kbd {
+    flex: none;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 0.125rem 0.375rem;
+    color: var(--muted);
+  }
+
+  .palette-list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: 0.5rem;
+  }
+
+  .palette-group [cmdk-group-heading] {
+    padding: 1rem 1rem 0.5rem;
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: var(--text-data);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .palette-item {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1rem;
+    cursor: pointer;
+  }
+
+  /* The packet marks the selected row — the same object as the rail and the topology. */
+  .palette-packet {
+    flex: none;
+    width: 4px;
+    height: 4px;
+    background-color: transparent;
+    transition: background-color var(--dur-fast) var(--ease);
+  }
+
+  .palette-item[data-selected="true"] {
+    background-color: var(--ghost-hover);
+  }
+
+  .palette-item[data-selected="true"] .palette-packet {
+    background-color: var(--signal);
+  }
+
+  .palette-label {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /*
+   * Hints are supplementary, so on a phone they are dropped rather than shrunk. Keeping
+   * them there truncated the label mid-word to make room for a truncated hint, which
+   * costs the reader the one thing on the row they actually need.
+   */
+  .palette-hint {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .palette-hint {
+      display: block;
+      flex: none;
+      max-width: 45%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .palette-empty {
+    padding: 2rem 1rem;
+  }
+
+  .palette-status {
+    flex: none;
+    white-space: pre-line;
+    border-top: var(--hairline) solid var(--line);
+    padding: 0.75rem 1rem;
+  }
+}

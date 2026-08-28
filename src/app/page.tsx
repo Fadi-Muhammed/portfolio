@@ -4,31 +4,39 @@ import { Rail } from "@/components/deck/rail";
 import { HeroPlaceholder, SectionPlaceholder } from "@/components/deck/section-placeholder";
 import { SiteNav } from "@/components/deck/site-nav";
 import { SkipLink } from "@/components/deck/skip-link";
+import { PaletteProvider } from "@/components/palette/palette-provider";
 import { SECTIONS } from "@/lib/deck/sections";
+import { getPaletteContent } from "@/lib/palette/content";
 
-export default function Home() {
+export default async function Home() {
+  // Fetched on the server so the palette's list is current without the client querying
+  // the database, and so nothing is fetched for a palette that is never opened.
+  const paletteContent = await getPaletteContent();
+
   return (
     <DeckProvider>
-      <SkipLink />
-      <SiteNav />
-      <Rail />
+      <PaletteProvider content={paletteContent}>
+        <SkipLink />
+        <SiteNav />
+        <Rail />
 
-      <Deck>
-        {SECTIONS.map((section, index) => (
-          <DeckSection
-            key={section.id}
-            section={section}
-            // The hero has nothing above it, so it needs no peek header of its own.
-            showHeader={index > 0}
-          >
-            {section.id === "hero" ? (
-              <HeroPlaceholder section={section} />
-            ) : (
-              <SectionPlaceholder section={section} />
-            )}
-          </DeckSection>
-        ))}
-      </Deck>
+        <Deck>
+          {SECTIONS.map((section, index) => (
+            <DeckSection
+              key={section.id}
+              section={section}
+              // The hero has nothing above it, so it needs no peek header of its own.
+              showHeader={index > 0}
+            >
+              {section.id === "hero" ? (
+                <HeroPlaceholder section={section} />
+              ) : (
+                <SectionPlaceholder section={section} />
+              )}
+            </DeckSection>
+          ))}
+        </Deck>
+      </PaletteProvider>
     </DeckProvider>
   );
 }
