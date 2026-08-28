@@ -1,0 +1,108 @@
+/*
+ * Design tokens — the single source of truth for every visual value on this site.
+ *
+ * Implements docs/DESIGN.md. BUILD_PLAN B13 forbids any colour, spacing, radius or
+ * type value that is not defined here. If a value is needed and is not in this file,
+ * the design plan changes first.
+ *
+ * Themes: light is the default and the theme designed first. `data-theme` on <html>
+ * is authoritative when present; otherwise the system preference decides. The
+ * attribute is written by an inline script before first paint, so there is no flash.
+ */
+
+:root {
+  /* ---- Colour: light (DESIGN.md section 2) ---------------------------------- */
+  --bg: #eff2f5;
+  --surface: #fafbfc;
+  --ink: #0f151b;
+  --muted: #5b6672;
+  --accent: #a34a00;
+  --signal: #c06400;
+  --line: #cfd6dd;
+
+  /* Label colour for a filled accent button. 5.94:1 on light accent. */
+  --on-accent: #ffffff;
+
+  /* ---- Type ---------------------------------------------------------------- */
+  /* Fluid between 390px and 1440px. Weights and tracking live in the utilities. */
+  --text-display: clamp(2.5rem, 1.757rem + 3.048vw, 4.5rem);
+  --text-h1: clamp(2.25rem, 1.971rem + 1.143vw, 3rem);
+  --text-h2: clamp(1.75rem, 1.564rem + 0.762vw, 2.25rem);
+  --text-h3: clamp(1.25rem, 1.157rem + 0.381vw, 1.5rem);
+  --text-body: clamp(1rem, 0.977rem + 0.095vw, 1.0625rem);
+  --text-small: 0.875rem;
+  --text-data: 0.75rem;
+
+  /* Width axis settings for Archivo (range 62-125). Display type is wider, not louder. */
+  --wdth-display: 118;
+  --wdth-body: 100;
+
+  /* ---- Radius (deliberately small) ----------------------------------------- */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* ---- Border and focus ---------------------------------------------------- */
+  --hairline: 1px;
+  --focus-width: 2px;
+  --focus-offset: 2px;
+
+  /* ---- Motion (DESIGN.md section 7) ---------------------------------------- */
+  /* One curve everywhere: leaves immediately, settles slowly. */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 200ms;
+  --dur: 280ms;
+  --dur-hop: 360ms;
+  --dur-slow: 480ms;
+  --stagger: 40ms;
+
+  /* ---- Layout -------------------------------------------------------------- */
+  --measure: 68ch;
+  --peek: 72px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --peek: 96px;
+  }
+}
+
+/* Dark by system preference, unless light has been chosen explicitly. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1419;
+    --surface: #161d24;
+    --ink: #e4e9ee;
+    --muted: #94a0ac;
+    --accent: #f0a94a;
+    --signal: #ffb84d;
+    --line: #28323c;
+
+    /* 9.25:1 on dark accent. */
+    --on-accent: #0e1419;
+  }
+}
+
+/* Explicit choice wins over the system preference, in both directions. */
+[data-theme="dark"] {
+  --bg: #0e1419;
+  --surface: #161d24;
+  --ink: #e4e9ee;
+  --muted: #94a0ac;
+  --accent: #f0a94a;
+  --signal: #ffb84d;
+  --line: #28323c;
+  --on-accent: #0e1419;
+}
+
+[data-theme="light"] {
+  --bg: #eff2f5;
+  --surface: #fafbfc;
+  --ink: #0f151b;
+  --muted: #5b6672;
+  --accent: #a34a00;
+  --signal: #c06400;
+  --line: #cfd6dd;
+  --on-accent: #ffffff;
+}

@@ -1,62 +1,178 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 /*
- * TEMPORARY holding-page palette — Part 1 only.
- *
- * Part 2 replaces this wholesale with the real token system in src/styles/tokens.css.
- * Two neutral values and nothing else: no identity is decided here, because the visual
- * identity is Part 2's approval gate. Do not grow this into a palette.
- *
- * The mechanism is deliberate, though: runtime custom properties referenced through
- * @theme inline, switched by prefers-color-scheme with a data-theme override. Part 2
- * extends exactly this shape, so the token work is a substitution, not a rewrite.
+ * Tailwind is bound to the tokens and to nothing else. Every colour utility on this
+ * site resolves to a custom property from src/styles/tokens.css; the default palette
+ * is switched off below, so `bg-blue-500` and friends do not exist. That is B13's
+ * first rule enforced by the build rather than by discipline.
  */
 
-:root {
-  --bg: #fafafa;
-  --ink: #1a1a1a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #101010;
-    --ink: #e8e8e8;
-  }
-}
-
-[data-theme="dark"] {
-  --bg: #101010;
-  --ink: #e8e8e8;
-}
-
-[data-theme="light"] {
-  --bg: #fafafa;
-  --ink: #1a1a1a;
-}
-
 @theme inline {
+  /* Kill the default palette outright, then re-add only our roles. */
+  --color-*: initial;
+
   --color-bg: var(--bg);
+  --color-surface: var(--surface);
   --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-signal: var(--signal);
+  --color-line: var(--line);
+  --color-on-accent: var(--on-accent);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* 4px base. Only the steps listed in DESIGN.md section 8 are used. */
+  --spacing: 0.25rem;
+
+  --radius-none: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --ease-site: var(--ease);
 }
 
 @layer base {
   html {
+    color-scheme: light;
+  }
+
+  [data-theme="dark"],
+  :root:not([data-theme="light"]) {
     color-scheme: light dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     background-color: var(--bg);
     color: var(--ink);
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      "Segoe UI",
-      Roboto,
-      "Helvetica Neue",
-      Arial,
-      sans-serif;
+    font-family: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+    font-size: var(--text-body);
+    font-stretch: calc(var(--wdth-body) * 1%);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+   * One focus style for the whole site. Never removed; 5.28:1 on light and 9.25:1 on
+   * dark against the page ground, so it clears the 3:1 UI minimum in both themes.
+   */
+  :focus-visible {
+    outline: var(--focus-width) solid var(--accent);
+    outline-offset: var(--focus-offset);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Hairlines default to the token so a stray border can never invent a colour. */
+  *,
+  *::before,
+  *::after {
+    border-color: var(--line);
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--on-accent);
+  }
+}
+
+/*
+ * Type scale (DESIGN.md section 3). Weight, line-height, tracking and width axis
+ * travel together — a size is never applied without the rest of its treatment.
+ */
+
+@utility text-display {
+  font-size: var(--text-display);
+  font-weight: 700;
+  font-stretch: calc(var(--wdth-display) * 1%);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+@utility text-h1 {
+  font-size: var(--text-h1);
+  font-weight: 600;
+  font-stretch: calc(var(--wdth-display) * 1%);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+@utility text-h2 {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  font-stretch: calc(var(--wdth-display) * 1%);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+@utility text-h3 {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  font-stretch: calc(var(--wdth-body) * 1%);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+@utility text-body {
+  font-size: var(--text-body);
+  font-weight: 400;
+  font-stretch: calc(var(--wdth-body) * 1%);
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+@utility text-small {
+  font-size: var(--text-small);
+  font-weight: 400;
+  font-stretch: calc(var(--wdth-body) * 1%);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+/* Readings, units, hop labels, eyebrows and captions. Never prose. */
+@utility text-data {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: var(--text-data);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@utility measure {
+  max-width: var(--measure);
+}
+
+/*
+ * Reduced motion. Applied by the `motion-safe-only` utility for anything scripted,
+ * and globally below for anything declarative. Every animated state has a designed
+ * static end state, so nothing here hides information.
+ */
+@utility motion-safe-only {
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
 }
