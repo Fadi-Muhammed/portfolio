@@ -133,6 +133,26 @@ always rebuilds, with `SCREENS_SKIP_BUILD=1` to opt out.
   lands exactly one section on. Worth checking by hand on a real phone.
 - **Not tested on a real device yet.**
 
+### Real-device findings, and the fix
+
+Tested by Fadi on a phone. One section per screen: yes. Peek strip and rail taps: yes.
+Two problems, which turned out to be the same problem:
+
+- Going back up the deck felt glitchy when the URL bar reappeared.
+- A fast flick **sometimes skipped a section**.
+
+Both are `100dvh`. It is the _dynamic_ viewport height and changes as the URL bar hides
+and reappears, so inside a snap container every section's height changes mid-scroll and
+every snap point moves underneath the visitor. `scroll-snap-stop: always` cannot help when
+the thing it is stopping at has moved.
+
+Now `100svh`, the _small_ viewport height, which never changes — see `docs/DECISIONS.md`
+for why this is a deliberate deviation from B3's wording. **Needs re-testing on the phone**
+to confirm both symptoms are gone.
+
+Reduced motion was not tested by hand; it is asserted in Playwright instead — the deck's
+`scroll-behavior` computes to `auto` and a hop completes with no smooth scroll.
+
 ### What Fadi needs to test
 
 On a real phone, iOS Safari and Android Chrome if possible:

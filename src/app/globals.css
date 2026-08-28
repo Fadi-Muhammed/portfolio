@@ -205,7 +205,24 @@
  */
 @layer components {
   .deck {
-    height: 100dvh;
+    /*
+     * svh, not dvh, and this is deliberate against B3's literal wording.
+     *
+     * dvh is the *dynamic* viewport height: it changes as a mobile URL bar hides and
+     * reappears. In a snap container that is corrosive — every section's height changes
+     * mid-scroll, so every snap point moves underneath the visitor. Tested on a real
+     * phone it read as glitchy going back up the deck, and as an occasional skipped
+     * section on a fast flick, because the target had moved.
+     *
+     * svh is the *small* viewport height: the value with the URL bar showing. It never
+     * changes, so the snap points never move. The cost is that when the bar hides, each
+     * section is a little shorter than the glass and slightly more of the next one peeks
+     * through — which is the site's own motif, not a defect.
+     *
+     * The vh line is the fallback for browsers without the newer units.
+     */
+    height: 100vh;
+    height: 100svh;
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y mandatory;
@@ -219,7 +236,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: calc(100dvh - var(--peek) - var(--nav-h));
+    height: calc(100vh - var(--peek) - var(--nav-h));
+    height: calc(100svh - var(--peek) - var(--nav-h));
     scroll-snap-align: start;
     /* A fast flick cannot skip a section. */
     scroll-snap-stop: always;
@@ -227,7 +245,8 @@
 
   /* Nothing peeks after the last one, so it takes the rest of the viewport. */
   .deck-section:last-child {
-    height: calc(100dvh - var(--nav-h));
+    height: calc(100vh - var(--nav-h));
+    height: calc(100svh - var(--nav-h));
   }
 
   /* The first section starts under the nav rather than beneath it. */

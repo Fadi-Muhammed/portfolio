@@ -267,3 +267,24 @@ the site's look or content was not decided here — that is Part 2.
 - **`--nav-h` added to the tokens.** The fixed nav's height is depended on by the deck's
   scroll padding, the section height and the first section's offset. Three rules agreeing
   on one number means it is a token, not a literal.
+
+### 28 August 2026 — Part 5, after real-device testing
+
+- **The deck uses `100svh`, not `100dvh`. This is a deliberate deviation from B3's literal
+  wording**, driven by evidence from Fadi's phone: going back up the deck felt glitchy when
+  the URL bar reappeared, and a fast flick sometimes skipped a section.
+
+  Both are the same cause. `dvh` is the _dynamic_ viewport height and changes as the mobile
+  URL bar hides and reappears. Inside a snap container that is corrosive: every section's
+  height changes mid-scroll, so every snap point moves underneath the visitor, and a fling
+  aimed at one target finds it has moved.
+
+  `svh` is the _small_ viewport height — the value with the URL bar showing — and never
+  changes, so the snap points hold still. B3's instruction was "use 100dvh, not 100vh",
+  and its intent was to avoid `vh`'s mobile breakage; `svh` serves that intent better than
+  `dvh` does here. `100vh` is kept as the preceding declaration purely as a fallback for
+  browsers without the newer units.
+
+  The cost: when the URL bar hides, each section is slightly shorter than the glass and a
+  little more of the next section peeks through. That is the site's own motif rather than
+  a defect. Revisit if Fadi reports the peek looking too tall.
