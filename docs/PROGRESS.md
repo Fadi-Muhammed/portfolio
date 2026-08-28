@@ -75,6 +75,10 @@ Run against `/design` at 390/768/1440 in both themes, full-page.
   theme is a blue-slate (`#0E1419`) rather than near-black and the accent is amber rather than acid
   green — and light is the default and the theme designed first, which is the structural defence
   against the terminal trap.
+- **Verified on a real phone.** Fadi opened `/design` on the deployed site (flag on, then removed)
+  and reloaded repeatedly: no flash of the wrong theme. That is the one Part 2 test item screenshots
+  cannot prove — localhost resolves too fast for the bug to show — so the blocking inline script in
+  `ThemeScript` is confirmed working under real network latency.
 
 **What the critique changed.** Three faults were found by looking at the screenshots, not by
 reasoning:
