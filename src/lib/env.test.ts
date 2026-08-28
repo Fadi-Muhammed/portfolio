@@ -57,7 +57,10 @@ describe("the /design flag", () => {
 });
 
 describe("parseServerEnv", () => {
-  const validServer = { SUPABASE_SERVICE_ROLE_KEY: "b".repeat(40) };
+  const validServer = {
+    SUPABASE_SERVICE_ROLE_KEY: "b".repeat(40),
+    REVALIDATE_SECRET: "c".repeat(64),
+  };
 
   it("defaults NODE_ENV to development when unset", () => {
     expect(parseServerEnv(validServer)).toEqual({
@@ -78,5 +81,11 @@ describe("parseServerEnv", () => {
 
   it("requires the service-role key and names it", () => {
     expect(() => parseServerEnv({})).toThrow(/SUPABASE_SERVICE_ROLE_KEY/);
+  });
+
+  it("requires a revalidation secret long enough to be worth checking", () => {
+    expect(() => parseServerEnv({ ...validServer, REVALIDATE_SECRET: "short" })).toThrow(
+      /REVALIDATE_SECRET/,
+    );
   });
 });

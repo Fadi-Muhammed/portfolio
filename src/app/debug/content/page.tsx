@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { Tag } from "@/components/ui/tag";
+import { isSupabaseConfigured } from "@/lib/supabase/public";
 import {
   getAchievements,
   getCertifications,
@@ -66,7 +67,9 @@ function List({ values }: { values: string[] }) {
 function Json({ value }: { value: unknown }) {
   const text = JSON.stringify(value);
   if (!text || text === "{}" || text === "[]") return <Missing />;
-  return <code className="text-data text-ink">{text}</code>;
+  // normal-case overrides the uppercase in text-data: these are URLs and keys, and
+  // uppercasing a URL path changes what it points at.
+  return <code className="text-data text-ink normal-case">{text}</code>;
 }
 
 function Group({
@@ -106,6 +109,21 @@ export default async function DebugContentPage() {
   // Never built into a production bundle. The check is on NODE_ENV rather than a flag
   // so there is no switch anyone could turn on by accident.
   if (process.env.NODE_ENV === "production") notFound();
+
+  // Without credentials every fetcher would throw and the page would 500. A tool that
+  // dies when it is most needed is not a tool, so it says what is wrong instead.
+  if (!isSupabaseConfigured) {
+    return (
+      <main className="flex min-h-dvh flex-col justify-center gap-3 px-6 sm:px-10 lg:px-16">
+        <p className="text-data text-muted">Development only · not in production</p>
+        <h1 className="text-h1 text-ink">No database configured</h1>
+        <p className="measure text-body text-muted">
+          NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are not set. Copy .env.example
+          to .env.local and fill them in, then reload.
+        </p>
+      </main>
+    );
+  }
 
   const [
     settings,
