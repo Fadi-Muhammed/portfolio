@@ -96,3 +96,60 @@ displayed attribution (Part 7).
   and the matching lines in `docs/BUILD_PLAN.md` (A1 and Section G) were updated so the two files do
   not disagree. The full name “Fadi Muhammed” is still the nav text; only the short mark used for the
   favicon and the small nav mark changes. It is still designed and shown for approval in Part 2.
+
+### 28 August 2026 — Part 1
+
+Decisions taken without asking, because they are fully determined by the spec, the prompt and the
+installed tooling (`CLAUDE.md`, "Never assume — ask", final bullet). Anything that would have shaped
+the site's look or content was not decided here — that is Part 2.
+
+**Scaffold**
+
+- The sibling directory could not be called `_scaffold` as the Part 1 prompt suggests: npm rejects a
+  package name starting with an underscore, and `create-next-app` derives the name from the
+  directory. Used `portfolio-scaffold-tmp`, then deleted it. `package.json` name set to `portfolio`.
+- Scaffolded with `--empty` (no demo boilerplate to delete), `--disable-git` (this repo already
+  exists) and `--no-agents-md`. `AGENTS.md` was declined deliberately: `CLAUDE.md` is this repo's
+  instruction file per Part 0, and two instruction files drift apart.
+- **Tailwind v4**, which is what `create-next-app` 16.3.3 ships. Part 2 step 3 allows either a config
+  file or CSS-first `@theme`; v4 makes that decision for us.
+- `turbopack.root` is pinned in `next.config.ts`. Turbopack walks up the tree looking for a lockfile
+  and was finding an unrelated `package-lock.json` in `C:\Users\Work`, outside the repo.
+- The root layout types its own props instead of using Next's generated `LayoutProps<"/">`. Those
+  types are emitted into `.next/types` by a build, so `npm run typecheck` failed on a clean
+  checkout — which is exactly the order CI runs in.
+
+**Holding page**
+
+- **No `next/font`, no palette, no identity.** The typeface pairing and tokens are Part 2 step 3 and
+  sit behind an approval gate; choosing a face here would have pre-empted it. A system stack is the
+  honest neutral for a page that exists to be replaced.
+- Two temporary neutral custom properties in `globals.css`, exposed via `@theme inline` and switched
+  by `prefers-color-scheme` with a `data-theme` override. The values are disposable; the mechanism is
+  deliberately the one Part 2 extends, so tokens are a substitution rather than a rewrite.
+- `robots: { index: false }` until launch, so "Building. Back soon." is never what gets indexed
+  against the name. Part 15 sets real metadata; Part 17 removes the flag.
+
+**Tooling**
+
+- `src/lib/env.ts` declares only `NEXT_PUBLIC_SITE_URL`. Step 4 asks for ".env.example listing every
+  variable you introduce", and Supabase, Resend and Turnstile are introduced in Parts 3 and 13.
+  Declaring them now as optional would mean a validator that validates nothing, against B13's
+  "env validated at boot".
+- Three packages beyond the prompt's list, each required to make the specced tools run rather than
+  adding capability: `eslint-config-prettier` (this is the "ESLint-compatible config" step 4 asks
+  for), `@vitejs/plugin-react` (Vitest cannot render components without it), `@testing-library/jest-dom`
+  (the matchers). Two that were floated were **not** installed and will be added by the part that
+  first needs them: `@testing-library/user-event` and `prettier-plugin-tailwindcss`. `vite-tsconfig-paths`
+  was avoided by hand-writing the one alias.
+- `scripts/screens.mts` runs as TypeScript under Node 22's native type stripping, so no test runner
+  or `tsx` dependency was needed. It spawns the server as a direct node process, because on Windows
+  killing an npm wrapper orphans the real server and leaves the port held.
+- `vitest.config.mts`, not `.ts`: Vite loads a `.ts` config as CommonJS and warned on every run.
+- **Chromium only in CI.** Section F requires Firefox and Safari, but on real devices before launch
+  (Part 16); three engines per push buys nothing yet.
+- CI `push` is filtered to `main` with `pull_request` covering everything else. This still matches the
+  decision recorded above — it prevents a same-repo pull request running the identical commit twice,
+  rather than narrowing coverage.
+- GitHub Actions pinned to `checkout@v5`, `setup-node@v5`, `upload-artifact@v7`. The v4 line targets
+  the deprecated Node 20 runtime and annotated every run.
