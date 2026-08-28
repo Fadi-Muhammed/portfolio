@@ -7,14 +7,14 @@ Private repository. Built part by part against a written plan rather than improv
 
 ## Where things are
 
-| Path | What it is |
-|------|------------|
-| [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) | The whole thing: decisions (A), specification (B), working rules (C), the ordered parts and their tests (D), utility prompts (E), launch checklist (F). |
-| [`CLAUDE.md`](CLAUDE.md) | Working rules for Claude Code. A copy of Section C of the plan. |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Every decision, dated. Nothing is guessed; missing answers stop the work. |
-| [`docs/PROGRESS.md`](docs/PROGRESS.md) | What exists, how to test it, known gaps, what is next. |
-| `docs/DESIGN.md` | Design tokens and the reasoning behind them. Arrives in Part 2. |
-| [`.claude/skills/frontend-design/SKILL.md`](.claude/skills/frontend-design/SKILL.md) | The design skill applied to all UI work. |
+| Path                                                                                 | What it is                                                                                                                                              |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md)                                           | The whole thing: decisions (A), specification (B), working rules (C), the ordered parts and their tests (D), utility prompts (E), launch checklist (F). |
+| [`CLAUDE.md`](CLAUDE.md)                                                             | Working rules for Claude Code. A copy of Section C of the plan.                                                                                         |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md)                                             | Every decision, dated. Nothing is guessed; missing answers stop the work.                                                                               |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md)                                               | What exists, how to test it, known gaps, what is next.                                                                                                  |
+| `docs/DESIGN.md`                                                                     | Design tokens and the reasoning behind them. Arrives in Part 2.                                                                                         |
+| [`.claude/skills/frontend-design/SKILL.md`](.claude/skills/frontend-design/SKILL.md) | The design skill applied to all UI work.                                                                                                                |
 
 ## Status
 

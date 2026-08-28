@@ -1,0 +1,57 @@
+import { z } from "zod";
+
+/**
+ * Environment variables, validated rather than trusted.
+ *
+ * Public and server variables are kept in separate schemas on purpose: anything in
+ * the public schema is inlined into the client bundle by Next, so a secret must never
+ * be added there. Server-only values (Supabase service key, Resend, Turnstile) arrive
+ * in the parts that introduce them — Part 3 and Part 13 — and go in `serverSchema`.
+ *
+ * Both parsers take their source as an argument so they can be tested without
+ * mutating the real process environment.
+ */
+
+const publicSchema = z.object({
+  NEXT_PUBLIC_SITE_URL: z.url({
+    error: "NEXT_PUBLIC_SITE_URL must be a full URL, for example https://fadimuhammed.work",
+  }),
+});
+
+const serverSchema = z.object({
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+});
+
+export type PublicEnv = z.infer<typeof publicSchema>;
+export type ServerEnv = z.infer<typeof serverSchema>;
+
+/** Thrown when the environment is missing or malformed. Names the variables at fault. */
+export class EnvError extends Error {
+  constructor(issues: string[]) {
+    super(
+      `Environment is not valid:\n${issues.map((line) => `  - ${line}`).join("\n")}\n` +
+        `Copy .env.example to .env.local and fill in the values.`,
+    );
+    this.name = "EnvError";
+  }
+}
+
+function issuesOf(error: z.ZodError): string[] {
+  return error.issues.map((issue) => `${issue.path.join(".") || "(root)"}: ${issue.message}`);
+}
+
+export function parsePublicEnv(source: Record<string, string | undefined>): PublicEnv {
+  // Read through explicit keys: Next only inlines NEXT_PUBLIC_* values it can see
+  // statically, so `source.NEXT_PUBLIC_SITE_URL` must appear literally.
+  const result = publicSchema.safeParse({
+    NEXT_PUBLIC_SITE_URL: source.NEXT_PUBLIC_SITE_URL,
+  });
+  if (!result.success) throw new EnvError(issuesOf(result.error));
+  return result.data;
+}
+
+export function parseServerEnv(source: Record<string, string | undefined>): ServerEnv {
+  const result = serverSchema.safeParse({ NODE_ENV: source.NODE_ENV });
+  if (!result.success) throw new EnvError(issuesOf(result.error));
+  return result.data;
+}

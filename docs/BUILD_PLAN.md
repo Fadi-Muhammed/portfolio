@@ -24,38 +24,38 @@ A note on the approval gates: Part 2 (design tokens) and the design plan inside 
 
 Filled in on 18 August 2026 from the planning conversation. Claude Code reads this table in Part 0, copies it into `docs/DECISIONS.md`, and asks you about every row that is blank, says "TBD" or "to be provided later" when the part that needs it arrives.
 
-| # | Decision | Your answer | Recommendation / notes |
-|---|----------|-------------|------------------------|
-| A1 | Your name as it should appear on the site | Fadi Muhammed. Mark: a “Fadi” mark is proposed for the favicon and a small nav mark — Claude Code designs it and shows it for approval in Part 2; the full name is used as the nav text. | Also decide whether a short mark/monogram is used in the nav. |
-| A2 | Role line (the eyebrow above the tagline) | Telecommunications & network engineer · Tech builder · Freelancer | Carries proof, e.g. "4th-year telecom & network engineer · Web Summit speaker · builds products". Adjust to what is true. |
-| A3 | Hero tagline (exact text) | Unemployed & jobless, but not lost. | Draft: "Unemployed & jobless, but not lost." Alternatives from planning: "Unemployed, jobless, and shipping anyway." / "Currently unemployed. Rarely idle." / "No job yet. Strong signal." / "Jobless, not directionless." Stored in the database so it can be changed without a deploy. |
-| A4 | Famous quote + attribution (verified) | “Big things have small beginnings.” — David, Prometheus (2012). Note: the line originates in Lawrence of Arabia (1962), spoken by Mr Dryden, and is quoted by David in Prometheus. Display attribution as “Prometheus (2012)” or “Lawrence of Arabia (1962), via Prometheus” — confirm the exact wording in Part 7. | Candidates: Shannon on information as the resolution of uncertainty (a widely used paraphrase of his theory — verify the exact wording before using it as a quote); John Gilmore, "The Net interprets censorship as damage and routes around it." (1993; fits the routing hero); Feynman, "What I cannot create, I do not understand."; Torvalds, "Talk is cheap. Show me the code."; Alan Kay, "The best way to predict the future is to invent it." Avoid quotes with shaky attribution. |
-| A5 | Primary visitor | Recruiters/employers and collaborators/clients (both). | One of: recruiters/employers, event organisers, collaborators/clients. Decides section order and hero button wording. |
-| A6 | The single job of the site | A mix of “look at what I built” and “hire me / work with me”. Proposed hero buttons: “See my work” (hops to Products) and “Work with me” (hops to Contact); confirm in Part 7. | One of: "hire me", "invite me to speak", "look at what I built". |
-| A7 | Section order on the home deck | Default. | Default: Hero → Products → Engineering projects → Achievements & talks → Featured in → About (skills, certifications, experience, education, CV) → Contact. Write "default" or your own order. |
-| A8 | Include the About block (skills, certifications, experience, education, CV)? | Yes (as recommended). | Recommended yes. These were suggested during planning, not explicitly confirmed. |
-| A9 | Footer "route you took" recap (mini topology lit with the visited path, "Destination reached")? | Yes (as recommended). | Recommended yes; was proposed but not confirmed. |
-| A10 | Domain name | fadimuhammed.work (owned). | Buy it before launch (ideally before announcing anything). Write "not yet" if you don't have one. |
-| A11 | GitHub username and repo name | GitHub user Fadi-Muhammed (https://github.com/Fadi-Muhammed); repo name `portfolio` (private). | Repo will be private. Suggested name: `portfolio`. |
-| A12 | Frontend stack | As recommended: Next.js (App Router) + TypeScript + Tailwind CSS + Motion + cmdk. | Recommended: Next.js (App Router) + TypeScript + Tailwind CSS + Motion (formerly Framer Motion) + cmdk. Alternative: Astro with React islands. Write "as recommended" or your choice. |
-| A13 | Hosting | As recommended: Vercel. | Recommended: Vercel (previews per push, easy custom domain). |
-| A14 | Supabase project | Not created yet. Create it right before Part 3 — Prompt 3 walks you through it (project name, the region closest to your visitors, and exactly which values to copy into .env.local). | Create it at supabase.com yourself. You will need: project ref, project URL, anon/publishable key, service-role/secret key. You keep the keys; they go in `.env.local` and Vercel, never in the repo or in chat. |
-| A15 | Contact email + where form messages should be forwarded | work.fmuhammed@gmail.com for both (public contact address and forwarding address). | |
-| A16 | Transactional email provider for form notifications | As recommended: Resend. Never used before — Part 13 walks you through creating the account, the API key and the sender, step by step. | Recommended: Resend (free tier is enough). |
-| A17 | Bot protection on the contact form | As recommended: Cloudflare Turnstile + honeypot. Never used before — Part 13 walks you through creating the Turnstile site and keys. | Recommended: Cloudflare Turnstile (free, no puzzles for most users) + a honeypot field. |
-| A18 | Analytics | Umami (free tier, privacy-friendly, no cookie banner) — chosen because you had no preference; Part 15 walks you through creating the account and site. Alternative if it is simpler at the time: Vercel Web Analytics. | Recommended: Plausible or Umami (privacy-friendly, no cookie banner needed). "None" is acceptable. |
-| A19 | Social links | LinkedIn: https://www.linkedin.com/in/fadi-muhammed-524b75310 · GitHub: https://github.com/Fadi-Muhammed · Others: none for now (add later in site_settings). | LinkedIn URL, X/Instagram DM URL, GitHub, YouTube (if talks are there), anything else. |
-| A20 | Slider targets ("Slide into my LinkedIn / DMs") | LinkedIn only → a single slider (“Slide into my LinkedIn →”). A DM slider can be added later. | LinkedIn + which DM channel (X, Instagram, Telegram…). |
-| A21 | Featured-in logos | To be provided later — Part 11 asks for the list, the SVGs and the coverage URLs before building. | How many, list of names, whether you have SVG logos and the URL of each piece of coverage. |
-| A22 | Content inventory | To be provided later — needed at Part 4 (start collecting rough lists now: products, engineering projects, achievements, talks, certifications, experience, education). | Even rough lists: products, engineering projects (labs, capstones), achievements (hackathons, competitions, basecamps, awards), talks (video/slide links), certifications, experience, education. Claude Code will turn these into structured seed files in Part 4. |
-| A23 | Aesthetic constraints | Let the design skill decide; Claude Code asks only if something specific is needed. | Colours you love/hate, fonts you like or own licences for, 2–3 reference sites you admire, whether the default theme is light or dark. Leave blank to let the design skill decide — but say so. |
-| A24 | Icon set | As recommended: Lucide. | Recommended: Lucide (single, consistent stroke set). Never mix sets, never use emoji as icons. |
-| A25 | Optional extras (blog/notes, testimonials, photo gallery, map of event cities) | Ask one by one when Part 18 comes. | Yes/no for each. They are Part 18 and can be added later. |
-| A26 | Languages | English only. | Default: English only. |
-| A27 | Availability line for the hero/contact | Open to freelance work and collaborations. (Alternatives: “Open to work, collaborations and freelance projects.” / “Open to collaborations, freelance and full-time work.”) | e.g. "Open to internships from June 2027" or "Open to full-time roles". Stored in the database so it never goes stale. |
-| A28 | Your time zone (for the "local time" line in Contact) | Asia/Qatar | IANA name, e.g. `Asia/Dubai`. |
-| A29 | Booking link (Calendly/Cal.com) | None for now (skip). | Optional. |
-| A30 | Node version installed | Unknown — Claude Code checks with `node --version` in Part 0 step 1; if it is missing or below 20, install the current LTS from nodejs.org and re-run Prompt 0. | Must be 20 or newer. |
+| #   | Decision                                                                                        | Your answer                                                                                                                                                                                                                                                                                                         | Recommendation / notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A1  | Your name as it should appear on the site                                                       | Fadi Muhammed. Mark: a “Fadi” mark is proposed for the favicon and a small nav mark — Claude Code designs it and shows it for approval in Part 2; the full name is used as the nav text.                                                                                                                            | Also decide whether a short mark/monogram is used in the nav.                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| A2  | Role line (the eyebrow above the tagline)                                                       | Telecommunications & network engineer · Tech builder · Freelancer                                                                                                                                                                                                                                                   | Carries proof, e.g. "4th-year telecom & network engineer · Web Summit speaker · builds products". Adjust to what is true.                                                                                                                                                                                                                                                                                                                                                                  |
+| A3  | Hero tagline (exact text)                                                                       | Unemployed & jobless, but not lost.                                                                                                                                                                                                                                                                                 | Draft: "Unemployed & jobless, but not lost." Alternatives from planning: "Unemployed, jobless, and shipping anyway." / "Currently unemployed. Rarely idle." / "No job yet. Strong signal." / "Jobless, not directionless." Stored in the database so it can be changed without a deploy.                                                                                                                                                                                                   |
+| A4  | Famous quote + attribution (verified)                                                           | “Big things have small beginnings.” — David, Prometheus (2012). Note: the line originates in Lawrence of Arabia (1962), spoken by Mr Dryden, and is quoted by David in Prometheus. Display attribution as “Prometheus (2012)” or “Lawrence of Arabia (1962), via Prometheus” — confirm the exact wording in Part 7. | Candidates: Shannon on information as the resolution of uncertainty (a widely used paraphrase of his theory — verify the exact wording before using it as a quote); John Gilmore, "The Net interprets censorship as damage and routes around it." (1993; fits the routing hero); Feynman, "What I cannot create, I do not understand."; Torvalds, "Talk is cheap. Show me the code."; Alan Kay, "The best way to predict the future is to invent it." Avoid quotes with shaky attribution. |
+| A5  | Primary visitor                                                                                 | Recruiters/employers and collaborators/clients (both).                                                                                                                                                                                                                                                              | One of: recruiters/employers, event organisers, collaborators/clients. Decides section order and hero button wording.                                                                                                                                                                                                                                                                                                                                                                      |
+| A6  | The single job of the site                                                                      | A mix of “look at what I built” and “hire me / work with me”. Proposed hero buttons: “See my work” (hops to Products) and “Work with me” (hops to Contact); confirm in Part 7.                                                                                                                                      | One of: "hire me", "invite me to speak", "look at what I built".                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| A7  | Section order on the home deck                                                                  | Default.                                                                                                                                                                                                                                                                                                            | Default: Hero → Products → Engineering projects → Achievements & talks → Featured in → About (skills, certifications, experience, education, CV) → Contact. Write "default" or your own order.                                                                                                                                                                                                                                                                                             |
+| A8  | Include the About block (skills, certifications, experience, education, CV)?                    | Yes (as recommended).                                                                                                                                                                                                                                                                                               | Recommended yes. These were suggested during planning, not explicitly confirmed.                                                                                                                                                                                                                                                                                                                                                                                                           |
+| A9  | Footer "route you took" recap (mini topology lit with the visited path, "Destination reached")? | Yes (as recommended).                                                                                                                                                                                                                                                                                               | Recommended yes; was proposed but not confirmed.                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| A10 | Domain name                                                                                     | fadimuhammed.work (owned).                                                                                                                                                                                                                                                                                          | Buy it before launch (ideally before announcing anything). Write "not yet" if you don't have one.                                                                                                                                                                                                                                                                                                                                                                                          |
+| A11 | GitHub username and repo name                                                                   | GitHub user Fadi-Muhammed (https://github.com/Fadi-Muhammed); repo name `portfolio` (private).                                                                                                                                                                                                                      | Repo will be private. Suggested name: `portfolio`.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| A12 | Frontend stack                                                                                  | As recommended: Next.js (App Router) + TypeScript + Tailwind CSS + Motion + cmdk.                                                                                                                                                                                                                                   | Recommended: Next.js (App Router) + TypeScript + Tailwind CSS + Motion (formerly Framer Motion) + cmdk. Alternative: Astro with React islands. Write "as recommended" or your choice.                                                                                                                                                                                                                                                                                                      |
+| A13 | Hosting                                                                                         | As recommended: Vercel.                                                                                                                                                                                                                                                                                             | Recommended: Vercel (previews per push, easy custom domain).                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| A14 | Supabase project                                                                                | Not created yet. Create it right before Part 3 — Prompt 3 walks you through it (project name, the region closest to your visitors, and exactly which values to copy into .env.local).                                                                                                                               | Create it at supabase.com yourself. You will need: project ref, project URL, anon/publishable key, service-role/secret key. You keep the keys; they go in `.env.local` and Vercel, never in the repo or in chat.                                                                                                                                                                                                                                                                           |
+| A15 | Contact email + where form messages should be forwarded                                         | work.fmuhammed@gmail.com for both (public contact address and forwarding address).                                                                                                                                                                                                                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| A16 | Transactional email provider for form notifications                                             | As recommended: Resend. Never used before — Part 13 walks you through creating the account, the API key and the sender, step by step.                                                                                                                                                                               | Recommended: Resend (free tier is enough).                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| A17 | Bot protection on the contact form                                                              | As recommended: Cloudflare Turnstile + honeypot. Never used before — Part 13 walks you through creating the Turnstile site and keys.                                                                                                                                                                                | Recommended: Cloudflare Turnstile (free, no puzzles for most users) + a honeypot field.                                                                                                                                                                                                                                                                                                                                                                                                    |
+| A18 | Analytics                                                                                       | Umami (free tier, privacy-friendly, no cookie banner) — chosen because you had no preference; Part 15 walks you through creating the account and site. Alternative if it is simpler at the time: Vercel Web Analytics.                                                                                              | Recommended: Plausible or Umami (privacy-friendly, no cookie banner needed). "None" is acceptable.                                                                                                                                                                                                                                                                                                                                                                                         |
+| A19 | Social links                                                                                    | LinkedIn: https://www.linkedin.com/in/fadi-muhammed-524b75310 · GitHub: https://github.com/Fadi-Muhammed · Others: none for now (add later in site_settings).                                                                                                                                                       | LinkedIn URL, X/Instagram DM URL, GitHub, YouTube (if talks are there), anything else.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| A20 | Slider targets ("Slide into my LinkedIn / DMs")                                                 | LinkedIn only → a single slider (“Slide into my LinkedIn →”). A DM slider can be added later.                                                                                                                                                                                                                       | LinkedIn + which DM channel (X, Instagram, Telegram…).                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| A21 | Featured-in logos                                                                               | To be provided later — Part 11 asks for the list, the SVGs and the coverage URLs before building.                                                                                                                                                                                                                   | How many, list of names, whether you have SVG logos and the URL of each piece of coverage.                                                                                                                                                                                                                                                                                                                                                                                                 |
+| A22 | Content inventory                                                                               | To be provided later — needed at Part 4 (start collecting rough lists now: products, engineering projects, achievements, talks, certifications, experience, education).                                                                                                                                             | Even rough lists: products, engineering projects (labs, capstones), achievements (hackathons, competitions, basecamps, awards), talks (video/slide links), certifications, experience, education. Claude Code will turn these into structured seed files in Part 4.                                                                                                                                                                                                                        |
+| A23 | Aesthetic constraints                                                                           | Let the design skill decide; Claude Code asks only if something specific is needed.                                                                                                                                                                                                                                 | Colours you love/hate, fonts you like or own licences for, 2–3 reference sites you admire, whether the default theme is light or dark. Leave blank to let the design skill decide — but say so.                                                                                                                                                                                                                                                                                            |
+| A24 | Icon set                                                                                        | As recommended: Lucide.                                                                                                                                                                                                                                                                                             | Recommended: Lucide (single, consistent stroke set). Never mix sets, never use emoji as icons.                                                                                                                                                                                                                                                                                                                                                                                             |
+| A25 | Optional extras (blog/notes, testimonials, photo gallery, map of event cities)                  | Ask one by one when Part 18 comes.                                                                                                                                                                                                                                                                                  | Yes/no for each. They are Part 18 and can be added later.                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| A26 | Languages                                                                                       | English only.                                                                                                                                                                                                                                                                                                       | Default: English only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| A27 | Availability line for the hero/contact                                                          | Open to freelance work and collaborations. (Alternatives: “Open to work, collaborations and freelance projects.” / “Open to collaborations, freelance and full-time work.”)                                                                                                                                         | e.g. "Open to internships from June 2027" or "Open to full-time roles". Stored in the database so it never goes stale.                                                                                                                                                                                                                                                                                                                                                                     |
+| A28 | Your time zone (for the "local time" line in Contact)                                           | Asia/Qatar                                                                                                                                                                                                                                                                                                          | IANA name, e.g. `Asia/Dubai`.                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| A29 | Booking link (Calendly/Cal.com)                                                                 | None for now (skip).                                                                                                                                                                                                                                                                                                | Optional.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| A30 | Node version installed                                                                          | Unknown — Claude Code checks with `node --version` in Part 0 step 1; if it is missing or below 20, install the current LTS from nodejs.org and re-run Prompt 0.                                                                                                                                                     | Must be 20 or newer.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 ---
 
@@ -239,6 +239,7 @@ how-to-test notes are in docs/PROGRESS.md. Design tokens and rationale live in d
 (after Part 2). Read these before starting any work.
 
 ## Never assume — ask
+
 - If anything is unclear, missing, contradictory, or would require guessing content, copy, brand,
   structure, external services, or spending money, stop and ask. Ask in one batch at the start of a
   part; then proceed. Record every answer in docs/DECISIONS.md with the date.
@@ -248,12 +249,14 @@ how-to-test notes are in docs/PROGRESS.md. Design tokens and rationale live in d
   yourself; say what you decided in the report.
 
 ## Always refer to the repo
+
 - Before writing code, look at what already exists: components, tokens, utilities, tests, naming.
   Reuse and extend; do not create parallel conventions.
 - Follow docs/DESIGN.md exactly for every visual decision. Do not introduce colours, fonts, spacing or
   radii that are not tokens.
 
 ## Use the frontend-design skill for all UI work
+
 - The skill is at .claude/skills/frontend-design/SKILL.md (invocable as /frontend-design). Apply it to
   every component, page, state (empty, loading, error) and piece of UI copy. Its "not the AI default"
   calibration, "hero is a thesis", "spend boldness once", "structure is information", "restraint and
@@ -262,6 +265,7 @@ how-to-test notes are in docs/PROGRESS.md. Design tokens and rationale live in d
   critique them against the skill and docs/BUILD_PLAN.md B13, and fix before reporting.
 
 ## Git discipline
+
 - Work on main unless told otherwise. Commit after every meaningful sub-step with a conventional
   commit message. Push at the end of every part and tag partNN-done. Never leave work uncommitted
   at the end of a session.
@@ -270,22 +274,26 @@ how-to-test notes are in docs/PROGRESS.md. Design tokens and rationale live in d
 - Never force-push, rewrite history, or delete branches/tags without explicit instruction.
 
 ## Quality floor
+
 - Mobile-first, keyboard-operable, WCAG 2.2 AA contrast, prefers-reduced-motion respected everywhere,
   100dvh not 100vh, hit targets >= 44px, hover always has a touch equivalent.
 - Strict TypeScript, no any, no console errors, no unused deps, tests for behaviour that matters.
 - Definition of done is docs/BUILD_PLAN.md B14. Do not report a part as done until it is met.
 
 ## Voice
+
 - Sentence case. Plain verbs. Buttons say what they do and keep the same name through a flow.
   Errors explain what happened and what to do; they do not apologise. No emoji, no exclamation
   marks, no filler. Networking vocabulary (hop, node, packet, route, destination, signal) used
   consistently per docs/BUILD_PLAN.md B12.
 
 ## The site must not look vibe-coded
+
 - Run the docs/BUILD_PLAN.md B13 checklist on every UI part and record the outcome in
   docs/PROGRESS.md, including what you removed in the "remove one accessory" pass.
 
 ## Reporting
+
 - End every part with: what was built, exactly how the user can test it (commands and clicks),
   known gaps, open questions. Update docs/PROGRESS.md first, then report.
 ```
@@ -326,6 +334,7 @@ Do not scaffold the app or install any dependencies in this part.
 ```
 
 How to test Part 0:
+
 - On GitHub, the repo exists, is marked Private, and contains `docs/BUILD_PLAN.md`, `.claude/skills/frontend-design/SKILL.md`, `CLAUDE.md`, `docs/PROGRESS.md`, `docs/DECISIONS.md`, `.gitignore`, `.editorconfig`, `README.md`.
 - `git log --oneline` shows the initialisation commit; `git tag` shows `part00-done`.
 - `CLAUDE.md` matches Section C.
@@ -352,6 +361,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B fully, and Part 1 in Section D), d
 ```
 
 How to test Part 1:
+
 - `npm install && npm run dev` starts; `http://localhost:3000` shows the placeholder line, no template junk, no console errors.
 - `npm run lint && npm run typecheck && npm test && npm run build` all pass locally.
 - `npm run test:e2e` passes; `npm run screens` produces images in `.screens/`.
@@ -387,6 +397,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B fully — especially B1, B4, B5, B
 ```
 
 How to test Part 2:
+
 - You approved the written plan in `docs/DESIGN.md` before any code was written.
 - `/design` renders in both themes with no flash of wrong theme on reload; every primitive shows every state; focus rings visible with keyboard Tab.
 - Contrast: spot-check three text/background pairs with a contrast checker; all ≥ 4.5:1.
@@ -414,6 +425,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B11 and B12 securit
 ```
 
 How to test Part 3:
+
 - Supabase Studio → Table Editor shows every table from B11; Authentication → Policies shows RLS enabled with the described policies; Storage shows `media`, `logos`, `documents`.
 - Using the SQL editor as the `anon` role (or the REST API with the anon key), you can select from `site_settings` and from `products where published = true`, and an insert into any table fails.
 - `npm run db:types` regenerates `src/lib/supabase/types.ts` without diffs; `curl http://localhost:3000/api/health` returns ok.
@@ -439,6 +451,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B2 and B11 — and 
 ```
 
 How to test Part 4:
+
 - `npm run db:seed` runs twice without creating duplicates; row counts in Studio match your inventory.
 - `/debug/content` in dev shows your real products, projects, achievements, logos, settings; nothing invented.
 - Change a title in Studio, call the revalidate route (or wait ~5 min), and the change appears.
@@ -466,6 +479,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B2, B3, B5, B12 —
 ```
 
 How to test Part 5:
+
 - On desktop: scrolling moves one section at a time; the next section peeks at the bottom with its name and teaser; clicking the peek strip or a rail node hops; the URL hash updates; reloading `/#contact` lands on Contact; PageDown/PageUp work; Tab never lands in an inactive section.
 - On a real phone: swipe moves one section at a time and never traps you; the peek is visible; nothing overflows horizontally; the tagline area isn't cut by browser chrome.
 - With reduced motion enabled in OS settings: hops are instant, no entrance animations.
@@ -491,6 +505,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B6, B5, B12 — and
 ```
 
 How to test Part 6:
+
 - Press Ctrl/⌘K anywhere → palette opens; type "eng" → Engineering projects appears; Enter → the deck hops there and the hash changes; Escape returns focus to where you were.
 - Tap the Search button on your phone → full-height sheet; results stay visible above the keyboard.
 - "Copy email" copies and shows "Copied"; "Toggle theme" works; "ping" prints its reply.
@@ -518,6 +533,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B1, B4, B5, B12, B1
 ```
 
 How to test Part 7:
+
 - Desktop: the topology sits mid-top-right, bleeds off the right edge, has no card border; it moves gently near the pointer; clicking a node visibly sends a packet and then hops; the tagline is the loudest element; the quote is small with a real attribution.
 - Mobile: order is nav → eyebrow → tagline → buttons → topology → quote; the whole tagline is visible without scrolling; tapping a node hops; the page doesn't get hot or janky.
 - Reduced motion: static topology, still clickable; no load animation.
@@ -543,6 +559,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B2 item 2, B5, B10,
 ```
 
 How to test Part 8:
+
 - The Products stop shows your real products; the LED settles to "live · N ms" for products with a live URL; a product with a bad URL shows the unreachable state without breaking the layout.
 - Mobile: the filmstrip swipes horizontally; swiping vertically still moves the deck.
 - Opening a product animates into the case-study page (or fades in browsers without View Transitions); the page reads as a case study, not a card dump; back button returns to the deck at Products.
@@ -566,6 +583,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B2 item 3, B5, B10,
 ```
 
 How to test Part 9:
+
 - Your real engineering projects show with concepts and tools; the detail page reads like a lab write-up; the diagram draws in once (and is simply present under reduced motion).
 - Each built instrument responds instantly to the slider/clicks/inputs, on touch too, and the numbers match what you expect from your coursework (spot-check one value).
 - Report links open the PDF from Storage.
@@ -588,6 +606,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B2 item 4, B5, B10,
 ```
 
 How to test Part 10:
+
 - All your achievements appear as hops with correct dates, cities and results; filtering to "talk" leaves only talks and updates the URL; clearing works; the empty state appears for a filter with nothing.
 - A talk's video loads only when tapped; slides link works; "invite me to speak" hops to Contact.
 - Long lists scroll inside the section on a phone without breaking the deck.
@@ -609,6 +628,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B8, B5, B12 — and
 ```
 
 How to test Part 11:
+
 - The section shows only logos and a header; hovering/tapping colours a logo; clicking opens the coverage in a new tab; nothing scrolls sideways on its own; nothing moves under reduced motion.
 - Logos are the same visual height and evenly spaced on 390 px too.
 - CI green; screenshots reviewed.
@@ -629,6 +649,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B2 item 6, B5, B11,
 ```
 
 How to test Part 12:
+
 - Bio, currently, skills, certifications, experience/education and CV appear with your real content; tapping a skill leaves only the projects it links to and updates the URL; the CV downloads.
 - The section feels calm next to the others; nothing decorative.
 - CI green; screenshots reviewed.
@@ -651,6 +672,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B7, B9, B10, B11, B
 ```
 
 How to test Part 13:
+
 - Submit with an invalid email → specific inline error; submit a real message → "Sending…" then the handshake plays and "Message sent" shows; the row is in `contact_messages` in Studio; the notification email arrives at the forwarding address.
 - Submit rapidly several times → throttled with a clear inline message.
 - Drag the slider most of the way → it snaps, flips to "Opening LinkedIn…", and your profile opens in a new tab; release early → it springs back; keyboard Enter on the focused slider opens the target.
@@ -676,6 +698,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B10, B12, B13 — a
 ```
 
 How to test Part 14:
+
 - Visit `/this-does-not-exist` → "Route not found." page in your fonts and colours; both buttons work; the palette opens from it.
 - Trigger the dev error route → "Packet dropped."; Try again recovers.
 - Turn off Wi-Fi while on the site → "No signal."; turn it on → "Signal restored" then the site returns.
@@ -701,6 +724,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B12 — and Part 15
 ```
 
 How to test Part 15:
+
 - View source on the home page and a project page: title, description, canonical, OG/Twitter tags, JSON-LD present; `/opengraph-image` returns a designed image; `/sitemap.xml` and `/robots.txt` load.
 - Paste a preview link into LinkedIn's Post Inspector (once indexable/public): the card shows your OG image and title.
 - Open the console: the easter egg message appears once, nothing else (no errors).
@@ -724,6 +748,7 @@ Read CLAUDE.md, docs/BUILD_PLAN.md (Section B — especially B12, B13 — and Pa
 ```
 
 How to test Part 16:
+
 - Lighthouse mobile on `/` and one detail page: ≥ 90 in Performance, Accessibility, Best Practices, SEO; the CI Lighthouse job passes.
 - Keyboard-only: you can reach and operate everything without a mouse; focus is always visible.
 - Reduced motion on: nothing animates anywhere.
@@ -804,11 +829,13 @@ Stop. Re-read CLAUDE.md and docs/BUILD_PLAN.md Section C. You assumed instead of
 Run against the production domain, on desktop and on a real phone.
 
 Content and copy
+
 - All products, engineering projects, achievements, talks, logos, skills, certifications, experience and the CV are real, current and correctly linked; no placeholder text anywhere (search the built site for "TBD", "lorem", "placeholder").
 - Tagline, eyebrow, quote (with attribution), availability and time zone are correct and come from `site_settings`.
 - Every external link opens the right place; every internal link resolves; every image has meaningful alt text.
 
 Deck and interactions
+
 - One section at a time; peek strip visible and clickable; hash deep links land correctly; keyboard paging works; skip link works.
 - Hero topology: interactive on desktop, static-but-tappable on mobile, static under reduced motion; tagline fully visible above the fold on a phone.
 - Command palette: shortcut and button open it; search finds sections and projects; actions work; mobile sheet usable with the keyboard open.
@@ -820,9 +847,11 @@ Deck and interactions
 - Contact: form validates, sends, shows the handshake and "Message sent"; the row appears in `contact_messages`; the notification email arrives; throttle works; slider opens LinkedIn (and any other A20 target) and springs back on early release; Copy email works; footer recap lights the visited path (if enabled).
 
 States
+
 - Custom 404, error, offline and maintenance pages verified live; empty states verified.
 
 Quality
+
 - Lighthouse mobile ≥ 90 across the four categories on `/` and one detail page; CI Lighthouse job green.
 - Zero serious axe violations; keyboard-only walk-through passes; contrast verified in both themes; reduced motion verified.
 - No console errors or warnings on any page.
@@ -830,15 +859,18 @@ Quality
 - Print preview of `/` and one project page readable.
 
 Backend and security
+
 - RLS enabled on every table (re-check in Studio); anon cannot write anywhere; service key only in Vercel server env; `git grep` finds no keys; `.env.example` complete.
 - Turnstile live keys in production; honeypot present; throttle active.
 - Security headers present; HTTPS enforced; canonical domain redirects (www ↔ apex as chosen).
 
 SEO and sharing
+
 - robots allows indexing; sitemap submitted in Google Search Console; canonical URLs correct; OG images render in LinkedIn's Post Inspector for the home page and a project page; JSON-LD validates.
 - Analytics receiving production traffic; privacy note accurate.
 
 Repository and docs
+
 - `main` is green in CI; tag `v1.0.0` exists; `docs/PROGRESS.md`, `docs/DECISIONS.md`, `docs/DESIGN.md`, `docs/BACKEND.md`, `docs/QA.md`, `docs/RUNBOOK.md` are current.
 
 ---
