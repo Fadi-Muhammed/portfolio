@@ -54,7 +54,7 @@ Reviewed at 390, 768 and 1440 in both themes.
   the mobile sheet is full height.
 - **Accessibility**: zero serious or critical axe violations with the palette open.
 
-**Four faults, two from looking and two from tests:**
+**Five faults, two from looking and three from tests:**
 
 1. **The scrim lightened the page on the dark theme.** It was mixed from `--ink`, which is
    a light colour there, so the dialog washed the page out instead of dimming it. A scrim
@@ -72,6 +72,12 @@ Reviewed at 390, 768 and 1440 in both themes.
    of the document and failing B6's focus-return requirement. The dialog library is
    supposed to handle this and measurably did not, so the provider remembers the opener
    itself.
+
+5. **A fifth, from CI, and it was a design flaw rather than a test problem.** Where there
+   are no Supabase credentials `/api/health` answers 503, and the ping reported "no reply,
+   100% loss". That is wrong: the packet came back, and the reply merely said the database
+   is not configured. The status code describes the database; ping describes the network
+   hop. Any HTTP response now counts as a reply; only a network failure counts as loss.
 
 **Remove one accessory.** "Opens in a new tab" as a visible hint on LinkedIn and GitHub
 took half a row to say what an arrow says in one character. Now a `↗` glyph, with the
