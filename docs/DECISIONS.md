@@ -10,7 +10,7 @@ answer is recorded here before the work continues.
 
 | # | Decision | Your answer |
 |---|----------|-------------|
-| A1 | Your name as it should appear on the site | Fadi Muhammed. Mark: an “FM” monogram is proposed for the favicon and a small nav mark — Claude Code designs it and shows it for approval in Part 2; the full name is used as the nav text. |
+| A1 | Your name as it should appear on the site | Fadi Muhammed. Mark: a “Fadi” mark is proposed for the favicon and a small nav mark — Claude Code designs it and shows it for approval in Part 2; the full name is used as the nav text. |
 | A2 | Role line (the eyebrow above the tagline) | Telecommunications & network engineer · Tech builder · Freelancer |
 | A3 | Hero tagline (exact text) | Unemployed & jobless, but not lost. |
 | A4 | Famous quote + attribution (verified) | “Big things have small beginnings.” — David, Prometheus (2012). Note: the line originates in Lawrence of Arabia (1962), spoken by Mr Dryden, and is quoted by David in Prometheus. Display attribution as “Prometheus (2012)” or “Lawrence of Arabia (1962), via Prometheus” — confirm the exact wording in Part 7. |
@@ -56,7 +56,7 @@ These are unanswered on purpose. The part that needs each one asks for it before
 | A23 | Specific aesthetic wishes | Part 2, only if something specific is needed |
 | A25 | Optional extras (blog/notes, testimonials, photo gallery, map of event cities) | Part 18, asked one by one |
 
-To confirm in their own parts: the FM monogram (Part 2); the hero button labels and the quote's
+To confirm in their own parts: the “Fadi” mark (Part 2); the hero button labels and the quote's
 displayed attribution (Part 7).
 
 ## Log
@@ -92,3 +92,7 @@ displayed attribution (Part 7).
   built-in one, which is listed under a plugin prefix. Their `description:` frontmatter is identical,
   so the listing alone does not disambiguate them; the standing rule above still holds — every UI part
   reads the repo file directly and the repo file wins.
+- **A1 amended: the mark is “Fadi”, not “FM”.** Changed in chat. The row in the Section A table above
+  and the matching lines in `docs/BUILD_PLAN.md` (A1 and Section G) were updated so the two files do
+  not disagree. The full name “Fadi Muhammed” is still the nav text; only the short mark used for the
+  favicon and the small nav mark changes. It is still designed and shown for approval in Part 2.
