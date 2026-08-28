@@ -227,9 +227,11 @@ None of it was invented.
 
 - **The CV is outdated and carries personal contact details.** Uploaded to
   `documents/cv.pdf` and wired to `site_settings.cv_path` on 28 August 2026 so the palette
-  and About downloads are real. Fadi supplied it knowing it is out of date and knowing it
-  lists a personal mobile number and a student email address, which are publicly
-  downloadable from the bucket. **Part 17 must not launch with this file.** Replacing it is
+  and About downloads are real. The personal mobile and student email have been removed from the file at Fadi's
+  request: both the drawing operators in the content stream and the Tagged PDF structure
+  tree entries, which screen readers and extractors read and which a visual redaction
+  would have left behind. Verified by scanning the raw and decompressed bytes of the file
+  served from the bucket. It is still out of date in content. **Part 17 must not launch with this file.** Replacing it is
   one command: drop the new PDF at the same path and run `npm run assets:upload`.
 - **The CV contains content that is not in the database.** Read once before publishing, as
   a privacy check. It supplies the missing degree row (BSc Electrical Engineering:
