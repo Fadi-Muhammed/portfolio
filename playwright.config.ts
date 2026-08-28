@@ -25,6 +25,9 @@ export default defineConfig({
     // CI builds in its own step, so it only needs to start. Locally, build first so
     // `npm run test:e2e` on a clean checkout can never test a stale or missing build.
     command: isCI ? "npm run start" : "npm run build && npm run start",
+    // The /design route is flag-gated and inlined at build time, so the suite that
+    // tests it has to be built with the flag on.
+    env: { NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: "true" },
     url: baseURL,
     reuseExistingServer: !isCI,
     timeout: 180_000,

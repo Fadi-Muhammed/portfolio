@@ -22,6 +22,9 @@ jobs:
       # Dummy public value: the build only needs this to be a valid URL. Nothing
       # secret is ever needed to build, and nothing secret belongs in this file.
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      # The e2e suite covers /design, which is flag-gated and inlined at build time.
+      # Production leaves this unset, so the route is absent there.
+      NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: "true"
 
     steps:
       - uses: actions/checkout@v5
