@@ -204,3 +204,27 @@ the site's look or content was not decided here — that is Part 2.
   `SCREENS_FULL_PAGE=1` captures whole documents, which a long page like `/design` needs.
 - **The `/design` flag is set in CI.** The route is inlined at build time, so the e2e suite that
   covers it must be built with the flag on. Production leaves it unset and the route is absent there.
+
+### 28 August 2026 — Part 3
+
+- **A14 resolved.** Supabase project **Portfolio**, ref `hulswrqpouaokbrbrflk`, region
+  `ap-northeast-1` (Tokyo). The region was queried before building: Tokyo is far from both the
+  Gulf and Europe, and it is permanent. Sized honestly it barely matters here — ISR means most
+  page views never touch the database, and the latency that counts is Vercel's function to
+  Supabase, which is a function-region setting we can change for free. Decision in chat: keep
+  Tokyo, and set the Vercel function region to match when we get there.
+- **CLI authentication is a personal access token, not `supabase login`.** `SUPABASE_ACCESS_TOKEN`
+  in `.env.local`. The interactive login could not be run; the token is equivalent, and keeps the
+  credential in the same gitignored file as everything else.
+- **`SUPABASE_DB_PASSWORD` is in `.env.local` too.** `supabase db push` connects directly to
+  Postgres and cannot work without it. Local tooling only — it is not needed in Vercel.
+- **"Automatically expose new tables" was switched off at project creation**, on Supabase's own
+  recommendation. Consequence: every table must be granted by name in a migration. Accepted
+  deliberately — it means a table added later is invisible until granted, so a mistake surfaces
+  as a page that cannot load rather than as a table readable by the public.
+- **"Enable automatic RLS" was switched on.** The migrations enable RLS explicitly anyway; this is
+  the safety net for any table created later, including from Studio.
+- **`server-only` was installed.** Part 3 step 5 requires the service client to be marked so it
+  can never be bundled to the client, and that package is the mechanism: it fails the build at
+  compile time if a client component imports it, however indirectly.
+- **`testimonials` was deliberately not created.** Optional in B11 and decided in Part 18.

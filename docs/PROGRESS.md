@@ -8,6 +8,99 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 
 ---
 
+## Part 3 — Supabase backend · 28 August 2026
+
+Status: done.
+
+### What exists
+
+- Supabase project **Portfolio**, ref `hulswrqpouaokbrbrflk`, region `ap-northeast-1` (Tokyo),
+  linked to this repo. CLI installed as a dev dependency.
+- `supabase/migrations` — four migrations, all applied:
+  - `..._helpers_and_enums.sql` — the `updated_at` trigger function and five enums.
+  - `..._content_tables.sql` — nine tables with a SQL `COMMENT` on every one, `updated_at`
+    triggers, and indexes on `published`/`sort_order`, `date`, `type` and `ip_hash`.
+  - `..._row_level_security.sql` — RLS on all nine, grants, and the read policies.
+  - `..._storage_buckets.sql` — `media`, `logos`, `documents`, public read.
+- `src/lib/supabase/` — `types.ts` (generated, 670 lines), `public.ts` (anon), `server.ts`
+  (service key, `server-only`), `queries.ts` (the typed read layer Part 4 fills out).
+- `src/app/api/health/route.ts` — `GET /api/health`.
+- `docs/BACKEND.md` — migrations, security model, buckets, editing content in Studio.
+- Tests: 21 unit, 8 Playwright.
+
+### How to test
+
+```
+npm run db:push        # applies any pending migrations
+npm run db:types       # regenerates src/lib/supabase/types.ts
+npm run lint && npm run typecheck && npm test && npm run build
+npm run test:e2e
+```
+
+With `.env.local` present, `npm run build && npm run start` then
+`curl http://localhost:3000/api/health` returns `{"status":"ok","database":"reachable"}`.
+
+In Supabase Studio: Table Editor shows all nine tables; each shows **RLS enabled**;
+Storage shows the three buckets.
+
+### Security verified against the live database
+
+Not inferred from the SQL — run against the running project:
+
+| Check                          | Result        |
+| ------------------------------ | ------------- |
+| Anon read, eight public tables | 200           |
+| Anon read `contact_messages`   | **401**       |
+| Anon insert / update / delete  | **401**       |
+| Unpublished row, read as anon  | **invisible** |
+| Same row after publishing      | visible       |
+| `updated_at` trigger           | fires         |
+
+The probe row was deleted afterwards; the database is empty.
+
+### Decided without asking
+
+- **`testimonials` was not created.** B11 marks it optional and Part 18 decides whether the
+  site has testimonials at all. A table nobody has agreed to is schema debt.
+- **The health check uses the anon client, not the service key.** Checking with a key that
+  bypasses RLS would report healthy even with the grants broken for every real visitor.
+- **`/api/health` is `force-dynamic`** and reports status only — no URL, no key, no driver
+  error text. It is a public endpoint and driver errors leak schema details.
+- **The e2e health test asserts the contract in both worlds** — `ok`/200 locally where
+  `.env.local` supplies a database, `unconfigured`/503 in CI where there are no credentials.
+  CI therefore needs no Supabase secrets.
+- **`slug`, `sort_order` and `published` were applied to all seven content tables**, including
+  `skills`, `certifications` and `experience`, per B11's "content tables also have" line.
+- **The query layer is per-table rather than generic.** A generic `list(table)` cannot resolve
+  to a concrete row type through supabase-js; the result is a helper too loose to be useful.
+- **The CLI wrapper runs the package's JS entry with `node`** rather than going through
+  `node_modules/.bin`, which needs a shell — and on Windows a shell splits this project's path
+  at the space in "Portfolio site".
+
+### Known gaps
+
+- **`@supabase/ssr` is installed but unused.** Part 1 installed it per the plan; with no auth
+  on this site, the plain client is the right tool. B13 forbids unused dependencies, so it
+  should either be used when auth arrives or removed. Flagged rather than removed unilaterally,
+  because the plan named it.
+- **The database is empty.** Content arrives in Part 4; `site_settings` has no row yet, which is
+  why `getSiteSettings()` returns null rather than throwing.
+- **Supabase env is not set in Vercel yet.** The deployed site has no database until
+  `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY`
+  are added there. Nothing deployed reads them yet, so this is not urgent until Part 4.
+- **CI does not exercise the configured health path**, only the unconfigured one. Adding the
+  anon key as a GitHub secret would close that, at the cost of another credential to manage.
+- **`interactive_widget` is a free text column.** Which instruments exist is not known until
+  Part 9, so an enum would have been invented rather than derived.
+
+### Next
+
+Part 4 — data layer and content seeding. It opens by asking for the content inventory (A22),
+which is still the one input that cannot be derived or invented, plus the `site_settings`
+values (A2, A3, A4, A27, A28, socials, email) and the featured-in list (A21).
+
+---
+
 ## Part 2 — Design tokens and foundations · 28 August 2026
 
 Status: done. The written plan was approved before any code was written.
