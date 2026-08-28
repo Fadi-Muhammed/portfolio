@@ -153,3 +153,27 @@ the site's look or content was not decided here — that is Part 2.
   rather than narrowing coverage.
 - GitHub Actions pinned to `checkout@v5`, `setup-node@v5`, `upload-artifact@v7`. The v4 line targets
   the deprecated Node 20 runtime and annotated every run.
+
+### 28 August 2026 — Part 2 question batch
+
+- **A23 aesthetic constraints, answered.** "Smoother than Apple", not boring, and not looking
+  vibe-coded. No colours or references named as wanted or banned. Recorded as a direction, not a
+  style: smoothness is bought with precision (optical alignment, one easing curve, a strict spacing
+  scale), not by copying Apple's actual look, which would be its own template.
+- **A1 mark, form chosen.** Option (a): a "Fadi" wordmark for the nav plus a separate simplified
+  favicon, because four letters at 16 px is illegible. Nav shows both the mark glyph and the full
+  name "Fadi Muhammed", per the B4 wireframe. A logotype was also requested for future use — the
+  proposal is in `docs/DESIGN.md` section 5: "Fadi" with the tittle of the i replaced by the packet
+  square, so the brand mark contains the site's signature element. Favicon has two candidates and is
+  still to be picked.
+- **A24 icons, confirmed.** Lucide, already installed. Stroke width 1.5 set in the design plan.
+- **Theme default: follow the system setting; light when there is no preference.** Fadi's own
+  preference is light and asked for a recommendation. Agreed and taken further: light is the theme
+  designed *first*, with dark as a full counterpart rather than an inversion. The structural reason
+  is that B13 names near-black-plus-acid-green as this project's trap, and designing dark-first is
+  what makes that trap hard to escape.
+- **Typefaces: open licence only.** No money spent. Archivo (variable, with its width axis) and
+  IBM Plex Mono, both SIL OFL 1.1, loaded and self-hosted by `next/font/google`.
+- **`/design` route: behind an environment flag,** not restricted to non-production. Chosen because
+  Part 2 step 7 asks Fadi to review `/design` on his phone; a flag means opening the deployed URL
+  rather than running a dev server over the local network. It stays `noindex` either way.
