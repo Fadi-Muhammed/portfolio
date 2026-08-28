@@ -225,8 +225,19 @@ None of it was invented.
 
 **Blocking a section from looking finished**
 
-- **No CV.** `site_settings.cv_path` is null; the About and Contact download has nothing
-  to point at. Drop the PDF at `content/assets/documents/cv.pdf`.
+- **The CV is outdated and carries personal contact details.** Uploaded to
+  `documents/cv.pdf` and wired to `site_settings.cv_path` on 28 August 2026 so the palette
+  and About downloads are real. Fadi supplied it knowing it is out of date and knowing it
+  lists a personal mobile number and a student email address, which are publicly
+  downloadable from the bucket. **Part 17 must not launch with this file.** Replacing it is
+  one command: drop the new PDF at the same path and run `npm run assets:upload`.
+- **The CV contains content that is not in the database.** Read once before publishing, as
+  a privacy check. It supplies the missing degree row (BSc Electrical Engineering:
+  Telecommunications and Network Engineering, UDST, Jan 2024 to May 2027), five
+  achievements that carry actual results, confirmation that Quitifi is a shipped product,
+  and the context behind the UC Berkeley and ALFEKRA logos. It also disagrees with what was
+  supplied in chat on three points: Web Summit 2025 versus 2026, the 3D printing end date,
+  and that role's title. None of it has been seeded — it needs Fadi's confirmation first.
 - **No images anywhere.** No product cover, no project photo, no talk photo. Parts 8, 9
   and 10 will render card layouts with empty media wells.
 - **Featured in: seven logos uploaded, zero rows.** The files are in the `logos` bucket
