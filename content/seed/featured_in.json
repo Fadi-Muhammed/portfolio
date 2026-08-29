@@ -1,1 +1,83 @@
-[]
+[
+  {
+    "slug": "web-summit-qatar",
+    "sort_order": 10,
+    "published": true,
+    "name": "Web Summit Qatar",
+    "logo_path": "web-summit-qatar.png",
+    "url": null,
+    "category": "stage"
+  },
+  {
+    "slug": "uhub",
+    "sort_order": 20,
+    "published": true,
+    "name": "UHUB",
+    "logo_path": "uhub.png",
+    "url": null,
+    "category": "program"
+  },
+  {
+    "slug": "dmz",
+    "sort_order": 30,
+    "published": true,
+    "name": "DMZ",
+    "logo_path": "dmz.png",
+    "url": null,
+    "category": "program"
+  },
+  {
+    "slug": "alfekra",
+    "sort_order": 40,
+    "published": true,
+    "name": "Al Fikra",
+    "logo_path": "alfekra.png",
+    "url": null,
+    "category": "program"
+  },
+  {
+    "slug": "qatar-innovation",
+    "sort_order": 50,
+    "published": true,
+    "name": "Qatar Innovation Program",
+    "logo_path": "qatar-innovation.png",
+    "url": null,
+    "category": "program"
+  },
+  {
+    "slug": "qatar-television",
+    "sort_order": 60,
+    "published": true,
+    "name": "Qatar Television",
+    "logo_path": "qatar-television.png",
+    "url": null,
+    "category": "press"
+  },
+  {
+    "slug": "qatar-university",
+    "sort_order": 70,
+    "published": true,
+    "name": "Qatar University",
+    "logo_path": "qatar-university.png",
+    "url": null,
+    "category": "program"
+  },
+  {
+    "slug": "uc-berkeley",
+    "sort_order": 80,
+    "published": true,
+    "name": "UC Berkeley",
+    "logo_path": "uc-berkeley.png",
+    "url": null,
+    "category": "program"
+  },
+  {
+    "slug": "vodafone",
+    "sort_order": 90,
+    "published": true,
+    "name": "Vodafone",
+    "logo_path": "vodafone.png",
+    "url": null,
+    "category": "program"
+  }
+]
