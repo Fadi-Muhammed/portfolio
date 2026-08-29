@@ -534,10 +534,15 @@ attribution.
 B4's mobile stacking order omits it. It is not lost: it appears in Contact (section 4, Contact at
 390), which is where someone who has read the whole deck acts on it.
 
-Measured budget in the 716 px the deck gives the hero at 390x844 — eyebrow 34, tagline 118,
-buttons 100, topology 154, quote 59, gaps 136, total **577 px**, leaving 139 px of slack. The
-tagline's last line sits 232 px below the top of the viewport, so the whole of it is above the
-fold with room to spare, which is Part 7's hard mobile requirement.
+Measured in the browser at 390x844, not estimated: the deck gives the hero 716 px and it uses
+577, leaving 139 px of slack. The tagline's last line sits **255 px** below the top of the
+viewport, so the whole of it is above the fold with room to spare — Part 7's hard mobile
+requirement, asserted in `e2e/hero.spec.ts` rather than trusted.
+
+The two buttons sit side by side and take only the width of their labels, at every size
+including 390. Stacked full-width they made the filled one a block of `accent` roughly the area
+of the tagline, and it won the page; B4 puts the tagline first and the buttons second, and a
+slab that large reverses the reading order the whole composition is built on.
 
 ### 11.3 The graph
 
@@ -547,13 +552,21 @@ Part 7 step 6 unit-tests.
 
 | Node         | x   | y   | Glyph    |
 | ------------ | --- | --- | -------- |
-| you          | 84  | 236 | terminal |
-| products     | 196 | 140 | server   |
-| engineering  | 268 | 312 | antenna  |
-| achievements | 388 | 108 | dish     |
-| featured-in  | 436 | 268 | cloud    |
-| about        | 528 | 172 | switch   |
-| contact      | 556 | 336 | router   |
+| you          | 86  | 222 | terminal |
+| products     | 156 | 104 | server   |
+| engineering  | 248 | 200 | antenna  |
+| achievements | 328 | 312 | dish     |
+| featured-in  | 398 | 208 | cloud    |
+| about        | 478 | 116 | switch   |
+| contact      | 548 | 310 | router   |
+
+x increases with deck order, so the drawing reads left to right as the sequence a visitor
+walks. y was chosen by search against measured constraints, not by eye: minimise edge
+crossings, keep every node at least 30 units from an edge it is not connected to, and keep
+any two nodes at least 120 apart. The first version of this table was drawn by hand, and on
+screen it read as a tangle — six edge crossings, which is what a node-link diagram must not
+look like to be worth drawing. This has two. All three constraints are asserted in
+`src/lib/hero/topology.test.ts`, so the next edit cannot quietly undo it.
 
 **Nodes are drawn as network topology glyphs, not as circles.** This replaces the 5 px circles
 described in section 6, which are superseded; nothing else in section 6 changes. The first version
@@ -618,12 +631,24 @@ which the tagline does not compete for, and loses on contrast, which the tagline
 
 ### 11.4 Two windows onto one graph
 
-- **Desktop and tablet.** `viewBox="0 0 640 420"`, `preserveAspectRatio="xMaxYMid slice"` per
-  section 6. The SVG box starts at grid column 7 and is allowed to run past the viewport's right
-  edge, so `slice` fills it at any aspect and the sparse left ground is what gets cropped.
-- **390.** `viewBox="0 72 640 276"` — the same coordinates, a tighter window, aspect 2.32, giving a
-  154 px tall block across the content column. No bleed on mobile: the topology sits inside the
-  column like everything else. No second geometry, no compression, one tested node table.
+One `viewBox="0 0 640 420"` and one `preserveAspectRatio="xMaxYMid slice"`, per section 6. The
+window is changed by the shape of the box, not by a second set of coordinates:
+
+- **1024 and up.** The box takes `aspect-ratio: 640 / 420`, the viewBox's own, so `slice` has
+  nothing to crop and the whole map is visible at every window width.
+- **Below 1024.** The box takes `aspect-ratio: 640 / 292`, and `slice` crops to the narrow band
+  the design asks for — at 390 that is a 156 px block across the column showing y 65 to 355.
+
+The height has to follow the width; it cannot be a fixed number. `slice` crops against the box's
+aspect, so a fixed height cropped correctly at 390 and cut the top and bottom nodes clean off at 768. Found by measuring the rendered geometry at three widths, not by looking at one.
+
+**On the bleed.** B4 asks for a topology that bleeds off the right edge, and section 6 chose
+`xMax` alignment for it. That was written before Part 5 put the hop rail and its "hop 1 of 7 ·
+home" reading at exactly that edge. Measured on screen, the About node landed inside the rail's
+label. Two hairline systems overlapping is clutter, not a bleed. So the rail owns a reserved strip
+— `--rail-gutter`, 3rem below 1024 and 10rem above it — and the topology runs flush to it with no
+card, no border and no padding, which is the part of B4's intent that was load-bearing. It still
+bleeds past the section's own padding on the left.
 
 ### 11.5 Load sequence
 
@@ -633,13 +658,23 @@ section 7 table, staggers 40 ms, transform and opacity only.
 | t (ms) | What                                  | Duration           |
 | ------ | ------------------------------------- | ------------------ |
 | 0      | eyebrow, y +8 → 0                     | 280 (`--dur`)      |
-| 40     | tagline, y +12 → 0                    | 480 (`--dur-slow`) |
+| 40     | tagline, y +8 → 0                     | 480 (`--dur-slow`) |
 | 80     | buttons                               | 280                |
 | 120    | quote and attribution                 | 280                |
 | 160    | availability (desktop only)           | 280                |
 | 200    | topology, as one unit                 | 480                |
-| 680    | one packet departs "you" for Products | 400                |
-| 1080   | ambient packets begin                 | —                  |
+| ~680   | one packet departs "you" for Products | 480                |
+| —      | ambient packets, already running      | —                  |
+
+One travel distance, 8 px, for every element rather than two: the tagline moving further than
+its neighbours was a distinction nobody would see and one more number to keep in agreement.
+
+The five text elements are driven by `animation-delay` in CSS, not by script. The hero mounts
+exactly once, so the sequence plays on arrival and never again — hopping back to the hero later
+does not replay it, which would turn a first impression into a tic. The packet's departure is
+timed from the live module's mount rather than from navigation start, so ~680 ms is where it
+lands rather than a guarantee; what matters is that it follows the topology's entrance, and it
+does.
 
 **The edges do not draw themselves in**, and that is the main thing decided here. Stroke draw-in is
 the obvious hero move and it is wrong twice over: the server already rendered the finished topology,
@@ -654,6 +689,12 @@ resolves. That single packet is the hero's orchestrated moment.
 
 **Reduced motion.** Every element is at its final state on first paint. No entrance, no arrival
 packet, no ambient packets, static topology, still fully operable.
+
+This needed one thing the global reduced-motion rule did not do. It zeroes every animation's
+_duration_, but a staggered entrance with `animation-fill-mode: both` also holds each element in
+its starting state for the length of its _delay_ — so the hero would have sat empty for a second
+and then snapped in. `animation-delay: 0ms !important` was added alongside it, which protects
+every future stagger on the site, not just this one.
 
 ### 11.6 Pointer proximity
 

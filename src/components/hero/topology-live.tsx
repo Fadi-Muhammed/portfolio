@@ -244,11 +244,7 @@ export default function TopologyLive() {
           const section = node(inFlight.to).section;
           if (inFlight.hop && section) hopTo(section);
         } else {
-          drawn.push({
-            id: "routing",
-            at: pointAlong(inFlight.path, progress),
-            routing: true,
-          });
+          drawn.push({ id: "routing", at: pointAlong(inFlight.path, progress) });
         }
       }
 

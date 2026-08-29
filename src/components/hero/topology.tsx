@@ -1,39 +1,32 @@
-"use client";
-
-import dynamic from "next/dynamic";
 import { TopologyGraph } from "./topology-graph";
+import { TopologyLiveLoader } from "./topology-loader";
 
 /**
  * The signature (B4, docs/DESIGN.md section 6 and 11).
  *
- * Two layers, one drawing. The static layer is server-rendered from the same component
- * the live one uses, so the finished topology is in the HTML at first paint — not a
- * skeleton, not a blur, the real drawing minus the motion — and every node is a working
- * link before any JavaScript has run and with JavaScript off entirely.
+ * Two layers, one drawing. This is a server component, so the static layer is real HTML
+ * from the same component the live one uses: the finished topology is on screen at first
+ * paint — not a skeleton, not a blur, the real drawing minus the motion — and every node
+ * is a working link before any JavaScript has run and with JavaScript off entirely.
  *
- * The live layer arrives after first paint and takes over. Because both render
- * `TopologyGraph` from the same node table, the handover has nothing to flash: the
- * geometry is identical and only the movement is new.
- *
- * This wrapper is a client component solely because `ssr: false` has to be requested
- * from one. It holds no state and ships almost nothing; the weight is all behind the
- * dynamic import.
+ * Nothing here reaches the client. `TopologyGraph` is imported by this server component
+ * and by the live module behind the dynamic import, and by neither of the eager client
+ * ones, which is what keeps the drawing code out of the bundle that blocks first paint.
+ * Importing it from the loader instead cost 1.6 KB of lazy chunk and put the rest of it
+ * in the entry bundle, which is the opposite of the point.
  */
-
-const TopologyLive = dynamic(() => import("./topology-live"), { ssr: false });
-
 export function Topology() {
   return (
     <div className="hero-topology">
       {/*
         Hidden by CSS the moment the live layer exists. It has to be a real removal
-        rather than a visual one: two copies of the same seven links would put every
+        rather than a visual one: two copies of the same six links would put every
         destination in the tab order twice and read it out twice.
       */}
       <div className="hero-topology__layer" data-topology="static">
         <TopologyGraph />
       </div>
-      <TopologyLive />
+      <TopologyLiveLoader />
     </div>
   );
 }

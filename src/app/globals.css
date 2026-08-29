@@ -187,6 +187,11 @@
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    /* Delays have to go too. A staggered entrance with `animation-fill-mode: both`
+       holds each element in its starting state for the length of its delay, so zeroing
+       only the duration leaves someone who asked for less motion staring at an empty
+       hero for a second before it snaps into place. */
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }
@@ -594,9 +599,35 @@
     padding-block: 1.5rem;
   }
 
+  /*
+   * The load sequence (docs/DESIGN.md 11.5). One of only three orchestrated moments on
+   * the site (B5).
+   *
+   * Driven by animation-delay rather than by script, and the hero mounts exactly once,
+   * so it plays on arrival and never again — hopping back to the hero later does not
+   * replay it, which would turn a first impression into a tic. Transform and opacity
+   * only, one easing, 40 ms between each, everything resolved inside 1.1 s.
+   */
+  .hero > * {
+    animation: hero-in var(--dur) var(--ease) both;
+  }
+
+  .hero__eyebrow {
+    animation-delay: 0ms;
+  }
+
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
   .hero__tagline {
     /* The one place on the site where type is allowed to be loud. */
     max-width: 14ch;
+    animation-delay: 40ms;
+    animation-duration: var(--dur-slow);
   }
 
   /*
@@ -611,11 +642,13 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    animation-delay: 80ms;
   }
 
   .hero__quote {
     margin: 0;
     max-width: 34ch;
+    animation-delay: 120ms;
   }
 
   .hero__quote blockquote {
@@ -626,6 +659,7 @@
      who has read the deck acts on it (11.2). */
   .hero__availability {
     display: none;
+    animation-delay: 160ms;
   }
 
   .hero__signature {
@@ -634,6 +668,8 @@
        and read as an eighth edge that meant nothing. */
     margin-left: calc(-1 * var(--section-pad));
     margin-right: calc(var(--rail-gutter) - var(--section-pad));
+    animation-delay: 200ms;
+    animation-duration: var(--dur-slow);
     /* Stacked, the drawing is as wide as the column — but its height follows its width,
        so an unbounded width on a wide tablet makes it tall enough to push the quote off
        the section. Capped rather than allowed to grow. */
@@ -773,13 +809,6 @@
 
   .hero-topology__packet {
     fill: var(--signal);
-  }
-
-  .hero-topology__packet--routing {
-    /* Slightly larger, because it is the one the visitor asked for. */
-    transform: scale(1.15);
-    transform-origin: center;
-    transform-box: fill-box;
   }
 
   /*

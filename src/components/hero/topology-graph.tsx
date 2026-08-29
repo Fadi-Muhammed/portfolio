@@ -22,7 +22,7 @@ import {
  * route it takes are all computed in `@/lib/hero/topology`, which is pure and tested.
  */
 
-export type PacketAt = { id: string; at: Point; routing?: boolean };
+export type PacketAt = { id: string; at: Point };
 
 type Props = {
   /** Pointer displacement per node. Absent means every node is at rest. */
@@ -85,9 +85,15 @@ export function TopologyGraph({ offsets, packets = [], target = null, onNodeActi
                 still clears 44 px of tappable area at every viewport. */}
             <circle className="hero-topology__hit" cx={0} cy={0} r={HIT_RADIUS} />
             <use href={`#${GLYPH_IDS[entry.glyph]}`} />
-            <text className="hero-topology__label" y={offset} textAnchor="middle">
-              {entry.label}
-            </text>
+            {/* Only destinations are named. The "you" node carries the packet square on
+                its screen, which already says where you are; a hover label repeating it
+                in words was the same fact told twice, on the one node that is not a
+                control. */}
+            {entry.section ? (
+              <text className="hero-topology__label" y={offset} textAnchor="middle">
+                {entry.label}
+              </text>
+            ) : null}
           </>
         );
 
@@ -139,11 +145,7 @@ export function TopologyGraph({ offsets, packets = [], target = null, onNodeActi
       {packets.map((packet) => (
         <rect
           key={packet.id}
-          className={
-            packet.routing
-              ? "hero-topology__packet hero-topology__packet--routing"
-              : "hero-topology__packet"
-          }
+          className="hero-topology__packet"
           x={packet.at.x - 1.75}
           y={packet.at.y - 1.75}
           width={3.5}
