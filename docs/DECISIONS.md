@@ -349,3 +349,37 @@ Freelancer`, verbatim. The wireframe in section 4 of `docs/DESIGN.md` shortens i
   tag marks the finished state of Part 6 rather than a point three commits before the palette
   test fix and the ping-semantics fix. `CLAUDE.md` forbids moving a tag without that instruction.
   Same situation, and same remedy, as `part05-done`.
+
+### 29 August 2026 — Rubric's content, before Part 8
+
+Answers given in chat, and content taken from the pitch deck Fadi supplied
+(`Pantheon - Pitch Deck.pdf`, eight slides). Nothing in the case study was invented: every
+claim in it appears in that deck, and everything the deck does not cover is left empty.
+
+- **Fadi's role was group leader of Team Pantheon** — three people, 48 hours. Stated plainly in
+  the case study rather than implied, because the deck names two other people and a portfolio
+  that leaves a team project ambiguous is claiming the whole of it.
+- **The impact figures are projections, not measurements, and are labelled as such wherever they
+  appear.** Confirmed in chat. Four hours for 900 applications across six roles, and zero
+  double-booked candidates, are modelled from the challenge brief during the build; Rubric has
+  never been run against a real intake. `CLAUDE.md` forbids invented metrics, and a projection
+  presented as a result is exactly that. The case study says so in its own heading, the `outcome`
+  field repeats it, and `metrics.basis` is `"projected"` so no future component can render the
+  numbers without the qualifier.
+- **The setting was a 48-hour QSTP hackathon**, and "Challenge 2 — CV matching bottleneck" was
+  one of three problems set there. Recorded in the case study as context.
+- **Quitifi is still under development**, so it is not a product on this site. This closes the
+  open question carried since Part 4. Products has one card. Revisit if it ships.
+- **The product cover is the allocation-board screenshot, not the deck's title slide.** Fadi
+  offered the title slide. It is cream with a serif display face — the exact AI-default look
+  `docs/DESIGN.md` section 9 rejects by name — and would have sat as a warm serif card in a cool
+  blue-grey palette, worst on the dark theme. A screenshot of the product doing the thing is also
+  stronger evidence than a title card, which B13 asks for directly. Recommended and accepted.
+- **Three screenshots were extracted from the deck** rather than asked for separately: the
+  allocation board, the match pool and hidden gems, all real UI at about 1900 px. They use
+  invented candidate names, so there is nothing to redact.
+- **`metrics` was given a shape here rather than in Part 8**: `basis`, `note`, and `items` of
+  `value` and `label`. Part 8 designs how metrics render and may reshape it; the point of
+  choosing now is that the projection qualifier travels with the numbers instead of living only
+  in prose that a card layout would drop.
+- **`repo_url` stays null.** The repository is private, and a link to a 404 is worse than no link.

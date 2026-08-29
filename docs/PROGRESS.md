@@ -544,8 +544,10 @@ None of it was invented.
   and the context behind the UC Berkeley and ALFEKRA logos. It also disagrees with what was
   supplied in chat on three points: Web Summit 2025 versus 2026, the 3D printing end date,
   and that role's title. None of it has been seeded — it needs Fadi's confirmation first.
-- **No images anywhere.** No product cover, no project photo, no talk photo. Parts 8, 9
-  and 10 will render card layouts with empty media wells.
+- **No images except Rubric's.** Three screenshots now exist at `media/rubric/`
+  (allocation board, match pool, hidden gems), the first being the product cover. There is still
+  no engineering-project photo and no talk photo, so Parts 9 and 10 will render empty media
+  wells.
 - **Featured in: seven logos uploaded, zero rows.** The files are in the `logos` bucket
   (`alfekra`, `dmz`, `qatar-innovation`, `qatar-university`, `uc-berkeley`, `uhub`,
   `web-summit-qatar`) but `featured_in` is still empty, because B8 makes each logo a link
@@ -566,8 +568,11 @@ None of it was invented.
 - **National Cyber Drill CTF has no date, city or result.**
 - **Career Essentials certification has no issue date and no credential URL.** A
   certification without a verification link is a claim.
-- **Rubric has no case-study body, no metrics and no outcome.** The product card will
-  render; the case-study page will be thin.
+- ~~Rubric has no case-study body, no metrics and no outcome.~~ **Filled on 29 August 2026**
+  from the pitch deck Fadi supplied (`Pantheon - Pitch Deck.pdf`, 8 slides). The body covers the
+  problem, what was built, his role and where it stands; three real product screenshots were
+  extracted from the deck and uploaded to `media/rubric/`. Still missing: what he learned, which
+  the deck does not cover, and the rest of the stack.
 - **Rubric's repo is private**, so `repo_url` is null rather than a link to a 404.
 - **No summaries or highlights on any experience row.**
 - **Work placement missing.** The curriculum shows a 9-credit, 40-hour-a-week placement
@@ -575,9 +580,10 @@ None of it was invented.
 
 **Open questions raised and not yet answered**
 
-- Rubric's full stack. Only TypeScript is verified, from the repo's own language stats.
-- Whether Quitifi is a shipped product. Fadi is Founder & CEO since March 2025 and there
-  is a Supabase project named Quitifiv2; if it ships, it belongs in Products.
+- Rubric's full stack. Only TypeScript is verified, from the repo's own language stats. The
+  pitch deck does not name the stack either.
+- ~~Whether Quitifi is a shipped product.~~ **Answered 29 August 2026: it is still under
+  development,** so it does not belong in Products. Revisit if it ships.
 - Whether DMZ Basecamp should be an achievement, an experience row, or both. It is
   currently seeded as both, with the experience row **unpublished** so only one shows.
   Flipping it is one checkbox in Studio.

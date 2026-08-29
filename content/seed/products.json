@@ -5,16 +5,36 @@
     "published": true,
     "title": "Rubric",
     "summary": "One shared pool of applicants, ranked and conflict-free for every open role at your company, instead of screening one job description at a time.",
-    "body": null,
+    "body": "## The problem\n\nScreening was weeks of work that still produced the wrong matches. Over 150 candidates were read by hand every cycle. GPA cut-offs removed people who would have been good. And each role was filled on its own, one job description at a time, so every startup got a list built without reference to any other.\n\nThis was Challenge 2 — the CV matching bottleneck — one of three problems set at a 48-hour QSTP hackathon.\n\n## What I built\n\nRubric makes the pool the product. Every resume goes into one open pool that never closes, and students keep adding to it between cycles.\n\nA startup that needs one intern today gets the pool ranked for that role, with the reasons shown: a fit score, which of the role's core skills the candidate covers, and a signal for whether a human wrote the resume. Hidden gems surfaces the people a GPA cut-off had quietly rejected, and shows the evidence for each one.\n\nOr the whole cycle runs in one pass. The allocation board spreads the pool across every startup at once, respects each one's capacity, and flags the contested picks — the candidates who rank top-three for more than one role. Any card can be dragged to override the result.\n\nThe assignment is greedy, and deliberately not an optimizer. It produces a defensible first pass that a human then adjusts, rather than an answer nobody can argue with.\n\n## My role\n\nI led Team Pantheon — three people, 48 hours, from the challenge brief to a working demo.\n\n## Projected impact\n\nThe numbers below are projections, modelled from the challenge brief during the build. Rubric has not been run against a real intake, so none of this is measured.\n\n- **4 hours** to place 900 applications across 6 roles in a single pass, against the two weeks of manual review the challenge described.\n- **Zero** double-booked candidates per cycle, with every contested pick flagged before a human sees the list.\n\nThe plan for checking those claims was a post-cycle survey of the host startups plus the share of shortlisted students who reach interview. Neither has been run.\n\n## Where it stands\n\nA 48-hour prototype with a live demo. The screenshots use invented candidates, not real applicants.",
     "stack": ["TypeScript"],
-    "tags": [],
-    "cover_image_path": null,
-    "gallery": [],
+    "tags": ["Hackathon", "Matching", "Product"],
+    "cover_image_path": "rubric/allocation-board.jpg",
+    "gallery": [
+      {
+        "path": "rubric/allocation-board.jpg",
+        "alt": "The allocation board placing a shared candidate pool across six host startups at once, with contested picks flagged."
+      },
+      {
+        "path": "rubric/match-pool.jpg",
+        "alt": "The match pool for one role, ranking candidates by fit score with the reasons behind each score and an authenticity signal."
+      },
+      {
+        "path": "rubric/hidden-gems.jpg",
+        "alt": "Hidden gems, surfacing strong candidates that a GPA cut-off had rejected."
+      }
+    ],
     "live_url": "https://rubric-gamma.vercel.app",
     "repo_url": null,
     "demo_video_url": null,
     "status_check_url": "https://rubric-gamma.vercel.app",
-    "outcome": null,
-    "metrics": {}
+    "outcome": "Built in 48 hours at a QSTP hackathon as Team Pantheon's answer to Challenge 2, the CV matching bottleneck. Demo is live; the impact figures are projections, not measurements.",
+    "metrics": {
+      "basis": "projected",
+      "note": "Modelled from the challenge brief during a 48-hour build. Rubric has not been run against a real intake.",
+      "items": [
+        { "value": "4 hrs", "label": "to place 900 applications across 6 roles in one pass" },
+        { "value": "0", "label": "double-booked candidates per cycle" }
+      ]
+    }
   }
 ]
