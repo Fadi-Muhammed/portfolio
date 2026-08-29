@@ -18,19 +18,3 @@ export function SectionPlaceholder({ section }: { section: DeckSection }) {
     </div>
   );
 }
-
-/**
- * The hero's placeholder carries the real h1 so the page has a proper heading before
- * Part 7 supplies the tagline from the database.
- */
-export function HeroPlaceholder({ section }: { section: DeckSection }) {
-  return (
-    <div className="flex h-full flex-col justify-center gap-4">
-      <p className="text-data text-muted">{section.teaser}</p>
-      <h1 className="text-display text-ink">Fadi Muhammed</h1>
-      <p className="measure text-body text-muted">
-        The tagline, the routing topology and the two buttons arrive in {section.arrivesIn}.
-      </p>
-    </div>
-  );
-}

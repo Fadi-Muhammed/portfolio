@@ -261,7 +261,7 @@
     justify-content: center;
     gap: 0.125rem;
     height: var(--peek);
-    padding-inline: 1.5rem;
+    padding-inline: var(--section-pad);
     border-top: var(--hairline) solid var(--line);
     transition: background-color var(--dur) var(--ease);
   }
@@ -286,7 +286,7 @@
   .deck-section-body {
     flex: 1 1 auto;
     min-height: 0;
-    padding: 1.5rem;
+    padding: var(--section-pad);
   }
 
   .deck-section-body--full {
@@ -298,23 +298,9 @@
     animation: hop-in var(--dur-hop) var(--ease) both;
   }
 
-  @media (min-width: 640px) {
-    .deck-section-header {
-      padding-inline: 2.5rem;
-    }
-    .deck-section-body {
-      padding: 2.5rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .deck-section-header {
-      padding-inline: 4rem;
-    }
-    .deck-section-body {
-      padding: 4rem;
-    }
-  }
+  /* The two media queries that used to repeat these paddings are gone: --section-pad
+     changes at the breakpoints instead, in one place, so the hero's bleed cannot drift
+     away from the inset it is cancelling. */
 }
 
 @keyframes hop-in {
@@ -587,5 +573,266 @@
     white-space: pre-line;
     border-top: var(--hairline) solid var(--line);
     padding: 0.75rem 1rem;
+  }
+}
+
+/*
+ * The hero (B4, docs/DESIGN.md 11).
+ *
+ * The markup order is the mobile order — eyebrow, tagline, buttons, topology, quote —
+ * so the reading order a keyboard and a screen reader get is the one the design means.
+ * At 1024 and up the topology is lifted into the right-hand field by grid placement,
+ * never by reordering the DOM.
+ */
+@layer components {
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 1.5rem;
+    height: 100%;
+    padding-block: 1.5rem;
+  }
+
+  .hero__tagline {
+    /* The one place on the site where type is allowed to be loud. */
+    max-width: 14ch;
+  }
+
+  /*
+   * Side by side and only as wide as their labels, at every size.
+   *
+   * Full-width stacked buttons made the filled one an orange slab roughly the area of
+   * the tagline, and it won the page: B4 puts the tagline first and the buttons second,
+   * and a block of accent that large reverses that. The pair fits across a 390 viewport
+   * with room to spare, and both keep their 44 px height.
+   */
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .hero__quote {
+    margin: 0;
+    max-width: 34ch;
+  }
+
+  .hero__quote blockquote {
+    margin: 0;
+  }
+
+  /* Not shown in the hero on a phone: it appears in Contact, which is where someone
+     who has read the deck acts on it (11.2). */
+  .hero__availability {
+    display: none;
+  }
+
+  .hero__signature {
+    /* Runs past the section's padding to the edge of the glass on the left, and stops
+       clear of the rail on the right — the rail's line ran straight through the drawing
+       and read as an eighth edge that meant nothing. */
+    margin-left: calc(-1 * var(--section-pad));
+    margin-right: calc(var(--rail-gutter) - var(--section-pad));
+    /* Stacked, the drawing is as wide as the column — but its height follows its width,
+       so an unbounded width on a wide tablet makes it tall enough to push the quote off
+       the section. Capped rather than allowed to grow. */
+    max-width: calc(40rem + 2 * var(--section-pad));
+  }
+
+  @media (min-width: 48rem) {
+    .hero {
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .hero {
+      /* Five columns of text to seven of drawing. The tagline is capped at 14ch and
+         does not need half the page; the topology reads better with the room. */
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: 1.5rem;
+      align-content: center;
+      row-gap: 2rem;
+    }
+
+    .hero__eyebrow,
+    .hero__tagline,
+    .hero__actions,
+    .hero__quote {
+      grid-column: 1;
+    }
+
+    /* Spans both rows of the right-hand field and tucks under the nav, per B4. */
+    /*
+     * Stops at the rail's gutter rather than bleeding past the glass.
+     *
+     * B4 asks for a topology that bleeds off the right edge. That was written before
+     * Part 5 put the hop rail and its "hop 1 of 7 · home" reading at exactly that edge,
+     * and measured on screen the About node landed inside the rail's label. Two hairline
+     * systems overlapping is clutter, not a bleed. The rail owns the right strip; the
+     * topology runs flush to it with no card, no border and no padding, which is the
+     * part of B4's intent that was actually load-bearing.
+     */
+    .hero__signature {
+      grid-column: 2;
+      grid-row: 1 / span 3;
+      align-self: center;
+      max-width: none;
+      margin-inline: 0;
+      margin-right: var(--rail-gutter);
+    }
+
+    .hero__availability {
+      display: block;
+      grid-column: 2;
+      align-self: end;
+      text-align: right;
+      padding-right: 0.25rem;
+    }
+
+    .hero__quote {
+      align-self: end;
+    }
+  }
+
+  /*
+   * The topology (docs/DESIGN.md 6 and 11.3–11.7).
+   *
+   * Two layers hold the same drawing. The static one is in the HTML at first paint and
+   * works with JavaScript off; the live one replaces it once loaded. The replacement is
+   * `display: none`, not `visibility` or `opacity` — two copies of seven links would put
+   * every destination in the tab order twice.
+   */
+  /*
+   * Height follows width, always, because `slice` crops against the box's aspect: a
+   * fixed height meant the drawing was cropped correctly at 390 and cut the top and
+   * bottom nodes clean off at 768. Stacked, the box takes the narrow window's aspect
+   * (11.4) and the crop is the one the design asks for at every width.
+   */
+  .hero-topology {
+    position: relative;
+    aspect-ratio: 640 / 292;
+  }
+
+  .hero-topology:has([data-topology="live"]) [data-topology="static"] {
+    display: none;
+  }
+
+  .hero-topology__layer,
+  .hero-topology__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-topology__edge {
+    stroke: var(--line);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    fill: none;
+  }
+
+  .hero-topology__edge--cross {
+    stroke-dasharray: 2 3;
+  }
+
+  /*
+   * One stroke weight, one colour, no fill. This is what keeps seven glyphs a set
+   * rather than an icon collection, and non-scaling-stroke is what holds the hairline
+   * at exactly 1 px on a phone instead of letting it thicken until it competes with
+   * the tagline.
+   */
+  .hero-topology__glyph {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .hero-topology__here {
+    fill: var(--signal);
+    stroke: none;
+  }
+
+  .hero-topology__hit {
+    fill: transparent;
+    stroke: none;
+  }
+
+  .hero-topology__node {
+    cursor: pointer;
+    outline: none;
+  }
+
+  .hero-topology__node--you {
+    cursor: default;
+  }
+
+  .hero-topology__packet {
+    fill: var(--signal);
+  }
+
+  .hero-topology__packet--routing {
+    /* Slightly larger, because it is the one the visitor asked for. */
+    transform: scale(1.15);
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+
+  /*
+   * Labels are the only thing here that appears and disappears. Hover and focus both
+   * reveal them, so nothing depends on a pointer that a phone does not have — a tap
+   * lands on the link and routes, which is the same information arriving faster.
+   */
+  .hero-topology__label {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+
+  .hero-topology__node:hover .hero-topology__label,
+  .hero-topology__node:focus-visible .hero-topology__label,
+  .hero-topology__node--target .hero-topology__label {
+    opacity: 1;
+  }
+
+  .hero-topology__node:hover .hero-topology__glyph,
+  .hero-topology__node:focus-visible .hero-topology__glyph {
+    stroke: var(--accent);
+  }
+
+  /* The destination a click is routing to, until the deck hops. */
+  .hero-topology__node--target .hero-topology__glyph {
+    stroke: var(--signal);
+  }
+
+  /* SVG cannot take the shared focus ring, so the hit circle becomes it. */
+  .hero-topology__node:focus-visible .hero-topology__hit {
+    stroke: var(--accent);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @media (min-width: 64rem) {
+    /*
+     * The box is given the viewBox's own aspect, so `slice` has nothing to crop and the
+     * whole map is visible at every window width. On a phone the box is deliberately
+     * squatter and `slice` crops to the band the design calls for (11.4).
+     */
+    .hero-topology {
+      aspect-ratio: 640 / 420;
+    }
+
+    .hero-topology__label {
+      font-size: 8px;
+    }
   }
 }

@@ -157,6 +157,33 @@ async function main(): Promise<void> {
             // settle on the section before capturing it mid-hop.
             if (route.includes("#")) await page.waitForTimeout(700);
 
+            /*
+             * Wait for every running animation to finish before the shutter opens.
+             *
+             * `networkidle` says the bytes have arrived, not that the page has settled.
+             * The hero's entrance runs after hydration, and at 390 it was reliably still
+             * in flight at capture time — producing a screenshot of a half-faded hero
+             * that looked exactly like a contrast bug and was reviewed as one. A design
+             * review photographs the designed state, never a frame on the way to it.
+             */
+            await page
+              .waitForFunction(
+                () =>
+                  document.getAnimations().every(
+                    (animation) =>
+                      animation.playState === "finished" ||
+                      animation.playState === "idle" ||
+                      // The topology's packets never stop, and never will.
+                      (animation as CSSAnimation).animationName === undefined,
+                  ),
+                undefined,
+                { timeout: 5_000 },
+              )
+              .catch(() => {
+                // An animation that genuinely never ends must not fail the capture.
+              });
+            await page.waitForTimeout(150);
+
             if (openPalette) {
               await page.keyboard.press("Control+k");
               // The palette is loaded on first open, so wait for it rather than guessing.

@@ -681,7 +681,7 @@ of every visit is worse than one that is a link. This is a deliberate departure 
 a packet leaves "you" and travels **along the graph** — the real shortest path over the edges above,
 never a straight line through empty space, because a packet crossing where there is no link is a lie
 about a network. Fixed duration **480 ms** (`--dur-slow`) for every route regardless of length, so
-the interaction feels the same everywhere and the longest route (Featured in, 737 px over four hops)
+the interaction feels the same everywhere and the longest route (Featured in, 533 px over four hops)
 still lands inside B4's 600 ms ceiling. Then `hopTo(section)` — the same function the rail, the peek
 strip, the palette and the hero buttons already call. Under reduced motion the hop is immediate and
 no packet is drawn. This path-finding and its interpolation are the second thing Part 7 step 6

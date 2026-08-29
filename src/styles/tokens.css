@@ -80,12 +80,32 @@
   /* The fixed nav's height. The deck reserves it so a snapped section lands below the
      nav instead of behind it. */
   --nav-h: 56px;
+  /* A section's inner padding. A token rather than three literals because the hero's
+     topology has to bleed past it by exactly the same amount it is inset by. */
+  --section-pad: 1.5rem;
+  /* The right-hand strip the hop rail owns, including room for its reading. Nothing
+     else may be drawn into it — the hero's topology stops here rather than running
+     under the rail's label. Zero below 1024, where the rail has no reading. */
+  --rail-gutter: 3rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --section-pad: 2.5rem;
+  }
 }
 
 @media (min-width: 768px) {
   :root {
     --peek: 96px;
     --nav-h: 64px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --section-pad: 4rem;
+    --rail-gutter: 10rem;
   }
 }
 
