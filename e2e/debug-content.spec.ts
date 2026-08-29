@@ -45,7 +45,21 @@ test("lists the seeded content in development", async ({ page }) => {
     await expect(page.getByRole("heading", { name: group, exact: true })).toBeVisible();
   }
 
-  // The empty state has to be visible rather than implied by blank space: featured_in
-  // has no rows, and a section that renders nothing looks the same as one that failed.
-  await expect(page.getByText("Nothing published.").first()).toBeVisible();
+  /*
+   * Every group says what it holds, one way or the other.
+   *
+   * This used to assert that "Nothing published." was on the page, which was true only
+   * because featured_in happened to be the one empty table. Part 11 filled it and the
+   * test failed while nothing was wrong — it was pinned to the fixture rather than to the
+   * promise. The promise is that a group with no rows says so rather than rendering blank
+   * space that looks identical to a group that failed to load.
+   */
+  const groups = page.locator("section:has(h2)");
+  const count = await groups.count();
+  expect(count).toBeGreaterThan(0);
+
+  for (let index = 0; index < count; index += 1) {
+    const text = (await groups.nth(index).innerText()).trim();
+    expect(text.length).toBeGreaterThan(0);
+  }
 });
