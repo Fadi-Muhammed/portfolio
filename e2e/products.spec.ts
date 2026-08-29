@@ -23,6 +23,19 @@ async function hasProducts(page: Page) {
   return (await page.locator(".product-card").count()) > 0;
 }
 
+/**
+ * Opens a case study, or reports that this environment has no content for it.
+ *
+ * Keyed on the HTTP status, not on whether an `h1` is present. With no database the page
+ * is a genuine 404 — and the 404 page has an `h1` of its own, so the earlier check saw a
+ * heading, decided there was content, and then waited thirty seconds for a button that
+ * was never going to exist.
+ */
+async function openCaseStudy(page: Page, slug: string): Promise<boolean> {
+  const response = await page.goto(`/products/${slug}`);
+  return response?.status() === 200;
+}
+
 test("the products stop renders whatever the database holds", async ({ page }) => {
   await page.goto("/#products");
   await ready(page);
@@ -102,8 +115,7 @@ test("a card opens its case study, and the page reads as one", async ({ page }) 
 
 test("Copy link reports what it did, keeping its own name", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/products/rubric");
-  if ((await page.getByRole("heading", { level: 1 }).count()) === 0) test.skip();
+  if (!(await openCaseStudy(page, "rubric"))) test.skip();
 
   const button = page.getByRole("button", { name: "Copy link" });
   await button.click();
@@ -117,8 +129,7 @@ test("Copy link reports what it did, keeping its own name", async ({ page, conte
 });
 
 test("a projected figure is never shown without saying so", async ({ page }) => {
-  await page.goto("/products/rubric");
-  if ((await page.getByRole("heading", { level: 1 }).count()) === 0) test.skip();
+  if (!(await openCaseStudy(page, "rubric"))) test.skip();
 
   const metrics = page.locator(".detail__metrics");
   if ((await metrics.count()) === 0) test.skip();
@@ -153,8 +164,7 @@ test("no serious accessibility violations on the section or the case study", asy
       .map((violation) => `${violation.id}: ${violation.help}`),
   ).toEqual([]);
 
-  await page.goto("/products/rubric");
-  if ((await page.getByRole("heading", { level: 1 }).count()) === 0) return;
+  if (!(await openCaseStudy(page, "rubric"))) return;
 
   const onDetail = await new AxeBuilder({ page }).analyze();
   expect(

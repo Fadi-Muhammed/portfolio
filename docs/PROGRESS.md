@@ -113,6 +113,13 @@ link on the site does.
   exported fetcher by name, including one test that fails if a new fetcher is added and
   not covered. A count is not a verification.
 
+  **And fixing it broke a test, in a way worth keeping too.** With the guard in place a
+  missing database turns `/products/rubric` from a thrown error into a real 404 — and the
+  404 page has an `h1`, so the "skip when there is no content" guard in the e2e suite saw
+  a heading, concluded there was content, and waited thirty seconds for a button that was
+  never going to exist. The guards now key on the HTTP status, which is the actual
+  question. Verified both ways: 48 pass with a database, 42 pass and 6 skip without.
+
 - **The markdown renderer emits React elements, never an HTML string.** No
   `dangerouslySetInnerHTML`, so nothing typed into a table editor can become markup, and
   there is no sanitiser to misconfigure. It supports only what the bodies use, and shows
