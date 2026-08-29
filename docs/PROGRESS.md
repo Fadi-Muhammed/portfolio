@@ -18,6 +18,157 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Part 10 — Achievements and talks · 29 August 2026
+
+Status: done.
+
+### What exists
+
+- `src/lib/achievements/timeline.ts` — the route as data: sort, filter, numbering, the
+  date and place formatting, the type labels, and the link map. Pure, so every rule that
+  can be wrong invisibly is asserted directly.
+- `src/components/achievements/achievements-section.tsx`, `timeline.tsx` (chips, URL,
+  FLIP, print-on-entry), `hop.tsx` (one stop, with its disclosure), `invite-to-speak.tsx`.
+- Timeline styles in `globals.css`; `scripts/screens.mts` now names a route that carries a
+  query, so a filtered view can be photographed.
+- Content: DMZ Basecamp placed in Toronto with its duration; the Scale AI entry's title cut
+  to "General track".
+- Tests: 200 unit (25 new) and 70 Playwright (12 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+Hop to Achievements. Five hops, newest first, numbered from the top. Press **Talk** — one
+hop remains, renumbered `01`, and the address bar reads `?hop=talk`; copy that URL into a
+new tab and it lands filtered. Press **All** to clear. Tab to a chip and press Enter. Open
+**Show detail** on the Scale AI hop: the summary, the trophy photograph and a link to the
+product, and the list scrolls just enough to show them. **Invite me to speak** hops to
+Contact.
+
+```
+npm test && npx playwright test achievements
+npm run screens -- "#achievements" "?hop=talk#achievements"
+```
+
+### The video facade that was not built
+
+Part 10 asks for a click-to-load video facade on talks. **There is no recording and no
+slides** — asked and answered in the question batch. A play button with nothing behind it
+is a control that lies, so it was not built, and the talk leads with the photograph
+instead. `hopLinks` already handles a `video` key so that the day a URL is added it appears
+as a labelled link rather than being silently dropped; the facade itself arrives with the
+first recording.
+
+The map of event cities (A25) was declined for the same kind of reason: four events in Doha
+and one in Toronto is two pins, and the city is already printed on every hop.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes, unfiltered and filtered, and with a hop open.
+
+- **Tokens only.** No new colours, radii or type sizes. The one new layout value is the
+  route's width cap, and it is derived: `--rail-gutter` plus one step of the spacing scale.
+- **Structure encodes something true.** Hop numbers are real position on a real sequence,
+  which is B13's own exception — and they renumber under a filter, because a filtered view
+  is a different route. `result` is set in ink because it is the answer; everything else in
+  that column is muted.
+- **Motion**: entries print once as they enter, four fields at one stagger, 400 ms end to
+  end. The filter re-lays out with a hand-written FLIP that reads its duration and easing
+  from the tokens. Nothing loops, nothing moves unprompted.
+- **Copy is real** and comes from the database, including the two entries that have no
+  result because Fadi placed in neither.
+- **Accessibility**: chips are `aria-pressed` buttons, the disclosure is
+  `aria-expanded`/`aria-controls`, the list is a labelled `ul`, every control clears 44 px.
+  Zero serious or critical axe violations.
+
+**Six faults:**
+
+1. **The route ran into the rail's reading.** `--rail-gutter` reserves the rail's dots,
+   which has been enough for every section so far because their content packs left. This is
+   the first with a right-aligned column, and "hop 4 of 7 · achievements" — the longest of
+   the seven — reaches a full step further in than the dots do.
+2. **The row stretched to 1300 px**, leaving a 440 px hole between the event name and its
+   readings. Capped at 48rem, which is what makes it read as a traceroute line rather than
+   a title and a distant column.
+3. **The route was drawn as five dashes, not one line.** A grid item cannot reach into its
+   row's padding, so the line broke at every hairline. It is a pseudo-element with negative
+   insets now, and crosses the separators.
+4. **On a phone the date sat below the disclosure button**, reading as a footnote to the
+   hop rather than part of it. The number and the reading share the top line now, the way a
+   traceroute prints one.
+5. **A wrapped reading line began with a stray "·".** Each reading is a flex item and wraps
+   with its own pseudo-element attached, so the separator had to trail its item rather than
+   lead the next.
+6. **Opening a hop appeared to do nothing.** The route scrolls inside the section and that
+   region is short, so the photograph and links landed below the fold on every hop but the
+   first. The list's own `scrollTop` is nudged — not `scrollIntoView`, which would have
+   scrolled the deck too and fought its snap.
+
+Two things were caught before they shipped rather than after: a `*` in the result column
+for entries with no result — the traceroute's own token for "no reply", but three of the
+five have no result and one of them is a talk, and a talk does not place — and a second
+copy of the type labels living in the components, which would have let a chip and a hop
+disagree about the same word.
+
+**Remove one accessory.** The section's intro line. Products and Engineering each have one,
+but the deck header's teaser already says what this section holds, and the sentence that
+stood here — "Each hop says where it was, what the role was, and how it ended" — described
+the columns to someone looking straight at them. Removing it gave the route back roughly a
+hop of height.
+
+### Decided without asking
+
+- **Newest first, and hop 1 is the most recent.** A traceroute numbers outward from the
+  origin; the origin here is now.
+- **The URL is the filter**, read through `useSyncExternalStore` rather than mirrored into
+  state after the fact. One source of truth means the link and the list cannot disagree,
+  and a deep link needs no special case — it is simply the store's first value. Written
+  with `replaceState`, matching what the deck already does with the hash.
+- **The chips are the five schema types**, not a summary of the data, so the control set
+  does not reshuffle as content is added. All five have an entry behind them today.
+- **"Programme", not "program".** The enum is a database value; the section already says
+  "programmes" in its teaser.
+- **The title line is dropped when the event name already says it.** Two of five entries
+  carry a title that restates the event, because `title` is required by the schema and an
+  entry whose name is its event has nothing else to put there.
+- **The Scale AI title lost "First place"** — it is the result, and the result has its own
+  column. It now reads "General track", which is the part the result does not say.
+- **FLIP by hand rather than with `motion`.** Five items and one transition against B12's
+  JavaScript budget.
+- **No `/achievements` index page.** The timeline shows everything it has, and the palette
+  already reaches every entry by name.
+
+### Known gaps
+
+- **No video facade and no slides link**, as above.
+- **The empty state is unreachable through the UI**, because all five types have an entry
+  behind them. It is covered by a component test rather than a Playwright one, which is the
+  honest place for a state the browser cannot currently be driven into.
+- **Five entries.** Fadi will add the rest with their dates; nothing in the section assumes
+  five, and the sort places them.
+- **Not tested on a real device.** The inner scroll inside the deck's snap is the thing to
+  check, along with the disclosure near the bottom of the list.
+- **The deep link to `#achievements` at 390 was unreliable against the dev server**,
+  landing on the hero while the section mounted correctly behind it. It is right every time
+  against a production build — the screenshots and the whole Playwright suite run that way
+  — so this reads as dev-server hydration timing rather than a defect. Worth one look on a
+  real phone in Part 16 before it is dismissed.
+- **`motion` and `@supabase/ssr` are both installed and unused.** B13 forbids unused
+  dependencies. `motion` was chosen in A12 and Part 13's contact finale may still want it;
+  `@supabase/ssr` has been carried since Part 3 with nothing using it. Worth a decision
+  before Part 16.
+
+### Next
+
+Part 11 — Featured in: logos only. It needs A21 answered first — the list, the SVGs in the
+`logos` bucket, and the coverage URL for each. Seven logo files are already staged in
+`content/assets/logos`, and `featured_in` has no rows.
+
+---
+
 ## Part 9 — Engineering projects, instruments and detail pages · 29 August 2026
 
 Status: done.

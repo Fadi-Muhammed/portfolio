@@ -524,6 +524,12 @@ Asked before any work, answered in chat.
   five currently have an entry behind them, so no chip is a control that can do nothing —
   the objection that removed Engineering's chips in Part 9. Keeping the set fixed also
   means the controls do not reshuffle as content is added.
+- **The palette does not deep-link into a filtered view, against what was proposed in the
+  question batch.** Selecting "Web Summit Qatar 2026" and landing on a filter for _all_
+  talks answers a question nobody asked; with more talks it would be plainly wrong. It
+  would also have needed the palette to announce a URL change to this section across the
+  page, which is machinery for a gain that is not there. Palette entries hop to the
+  section, as before. Worth revisiting if an achievement ever gets its own page.
 - **No `/achievements` index page.** Products and Engineering have one because their cards
   are a preview of a longer list. The timeline shows everything it has, the section scrolls
   internally, and the command palette already reaches every entry by name.

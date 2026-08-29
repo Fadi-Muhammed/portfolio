@@ -924,3 +924,81 @@ is not what the board prints and `IS_NIGHT` is not the name of the variable.
 does not parse gets a stated empty state. Invented numbers produce a drawing of nothing
 that looks exactly like a drawing of something, which is the worst thing an engineering
 portfolio can contain.
+
+---
+
+## 14. Achievements — the route
+
+Written during Part 10. It introduces no colour, type or radius; the only new value is a
+width cap, and that is derived from `--rail-gutter`.
+
+### 14.1 Why a traceroute and not cards
+
+Products and Engineering are lists of comparable objects, so they are grids of cards.
+Achievements is not a list — it is a sequence, and the sequence is time. A card grid
+throws that away. So this section is the one place where the site's borrowed vocabulary
+is literally true: a numbered route, a node per stop, a hairline between them, and a
+column of readings where a traceroute prints its times.
+
+Hop numbers are allowed here for the reason B13 names: the content really is ordered, and
+the number is position rather than decoration. **They renumber when the list is filtered**,
+because a filtered view is a different route and a real traceroute numbers the hops of the
+route it actually took.
+
+### 14.2 The row
+
+At 390 the number and the reading share the top line — `01 · AUG 2026 · DOHA, QATAR ·
+HACKATHON` — with the event, what it was, the role and the disclosure stacked under it.
+The reading has to come first: stacked below the disclosure it read as a footnote to the
+entry rather than part of it.
+
+From 768 the row becomes four columns — number, node, what happened, readings — which is
+the shape of a traceroute line. The separators between readings disappear there, because
+each is on its own line and a separator would be marking a boundary the layout already
+shows.
+
+**Capped at 48rem.** Left to fill the width, the row put 440 px of nothing between the
+event name and its readings, and the two stopped reading as one row. The cap is
+`min(100% - (var(--rail-gutter) + 4rem), 48rem)`: the rail's gutter reserves its dots,
+which every earlier section found sufficient because their content packs to the left, and
+this is the first section with a column aligned to the right — where the rail's reading,
+"hop 4 of 7 · achievements", reaches a step further in than the dots do.
+
+### 14.3 Colour, and the result
+
+Everything in the readings column is `muted` except the result, which is `ink` and
+semibold, because it is the answer to the question the entry raises. `signal` appears
+nowhere in this section: nothing here is live. A first place from April is a fact, not a
+measurement being taken now, and spending the site's one warm colour on it would empty
+the colour of its meaning.
+
+**There is no `*` for an entry with no result.** It was drafted — it is the traceroute's
+own token for "no reply", and it is honest about the two competitions Fadi did not place
+in. It was cut because the third entry with no result is a talk, and a talk does not
+place: printing "no reply" against it would state a failure that never applied.
+
+### 14.4 Motion
+
+Entries print as they enter the list, once each: number, then the reading, then the event,
+then the role, at one `--stagger` apart, 400 ms end to end. Printing again on every pass
+would make scrolling back up an event, which it is not.
+
+The filter re-lays out with FLIP, written by hand and reading its duration and easing from
+the tokens rather than carrying its own numbers. Under reduced motion neither is armed at
+all — the hidden starting state is never applied, so nothing can be left invisible if the
+observer never fires.
+
+### 14.5 The disclosure
+
+A hop shows what it is; it opens to show the evidence. Only hops with something behind
+them — a summary, a photograph, a link — get the control, because a control that opens an
+empty panel is worse than no control.
+
+**One photograph, not a gallery.** Of the Cyber Drill's six, four are venue, signage and a
+registration desk: evidence of attendance, not of the work. Each hop shows its cover — the
+certificate, the trophy, the talk itself — and the rest stay in the database until there is
+a gallery with a reason to exist.
+
+Opening a hop nudges the list's own `scrollTop` so the panel is visible. Not
+`scrollIntoView`, which scrolls every scrollable ancestor: that would move the deck and
+fight its snap, which B3 forbids outright.
