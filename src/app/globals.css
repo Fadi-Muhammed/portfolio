@@ -1546,3 +1546,353 @@
     white-space: nowrap;
   }
 }
+
+/*
+ * Achievements (B2 item 4) — the route, drawn as a traceroute.
+ *
+ * The same vocabulary as the rail and the hero topology: a hairline for the route, a
+ * small node on it, and a number that is real position rather than ornament. Nothing new
+ * is introduced; this is the rail turned on its side and given content.
+ */
+@layer components {
+  .hop-filters {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /*
+   * The section's inner scroll region (B3): content that does not fit is scrolled here
+   * rather than by making the section taller, which would break the deck's snap.
+   * `data-inner-scroll` is what stops the deck's keyboard paging from stealing the arrow
+   * keys while focus is inside this list.
+   */
+  .hop-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    padding-right: var(--rail-gutter);
+    list-style: none;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  .hop {
+    position: relative;
+    display: grid;
+    /*
+     * On a phone the number and the reading share the top line, the way a traceroute
+     * prints one: hop, time, address. Stacked instead, the date ended up below the
+     * disclosure button and read as a footnote to the entry rather than part of it.
+     */
+    grid-template-columns: 1.5rem auto 1fr;
+    grid-template-areas:
+      "mark number meta"
+      "mark main main";
+    column-gap: 0.75rem;
+    padding-block: 1rem;
+    border-top: var(--hairline) solid var(--line);
+  }
+
+  .hop:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .hop__mark {
+    grid-area: mark;
+    position: relative;
+    justify-self: center;
+    width: 7px;
+  }
+
+  /*
+   * The route itself.
+   *
+   * Bled a row's padding past its own box at both ends, so it crosses the hairline
+   * between hops and reads as one line with nodes on it rather than as five separate
+   * dashes. A grid item cannot reach into its row's padding, which is why this is a
+   * pseudo-element with negative insets rather than the element itself.
+   */
+  .hop__mark::before {
+    content: "";
+    position: absolute;
+    inset-block: -1rem;
+    left: 50%;
+    width: var(--hairline);
+    translate: -50% 0;
+    background-color: var(--line);
+  }
+
+  /* The route starts at the first node and stops at the last, rather than running off
+     into the padding at either end. */
+  .hop:first-child .hop__mark::before {
+    top: 0.4rem;
+  }
+
+  .hop:last-child .hop__mark::before {
+    bottom: calc(100% - 1.1rem);
+  }
+
+  .hop__node {
+    position: absolute;
+    top: 0.4rem;
+    left: 50%;
+    width: 7px;
+    height: 7px;
+    translate: -50% 0;
+    border-radius: 50%;
+    background-color: var(--muted);
+  }
+
+  .hop__number {
+    grid-area: number;
+    margin: 0;
+  }
+
+  .hop__main {
+    grid-area: main;
+    min-width: 0;
+  }
+
+  .hop__event {
+    margin: 0.125rem 0 0;
+  }
+
+  .hop__title {
+    margin: 0.25rem 0 0;
+  }
+
+  /*
+   * The role and the disclosure share a line. Five hops each spending a 44px control on
+   * its own row was the difference between two hops visible in the section and three, and
+   * the two belong together anyway: what the role was, and how to see the evidence.
+   */
+  .hop__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1rem;
+  }
+
+  .hop__role {
+    margin: 0.25rem 0 0;
+  }
+
+  .hop__meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.75rem;
+  }
+
+  .hop__meta p {
+    margin: 0;
+  }
+
+  /*
+   * Run together, "AUG 2026 DOHA, QATAR HACKATHON" reads as one string. The separator is
+   * the same one the rail's own reading uses.
+   *
+   * It trails its item rather than leading the next one. Each reading is a flex item and
+   * wraps with its own pseudo-element attached, so a leading separator put a stray "·" at
+   * the start of the second line every time the row wrapped — which it does at 390.
+   */
+  .hop__meta p:not(:last-child)::after {
+    content: "·";
+    margin-left: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* The outcome is the one thing in this column set in ink, because it is the answer. */
+  .hop__result {
+    font-weight: 700;
+  }
+
+  .hop__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    color: var(--muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .hop__toggle:hover {
+    color: var(--ink);
+  }
+
+  /* A plus that becomes a minus. Two strokes, one of which rotates away. */
+  .hop__toggle-glyph {
+    position: relative;
+    width: 9px;
+    height: 9px;
+    flex: none;
+  }
+
+  .hop__toggle-glyph::before,
+  .hop__toggle-glyph::after {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    height: var(--hairline);
+    background-color: currentColor;
+  }
+
+  .hop__toggle-glyph::after {
+    rotate: 90deg;
+    transition: rotate var(--dur-fast) var(--ease);
+  }
+
+  .hop__toggle-glyph[data-open]::after {
+    rotate: 0deg;
+  }
+
+  .hop__detail {
+    margin-top: 0.75rem;
+  }
+
+  .hop__summary {
+    margin: 0;
+  }
+
+  .hop__figure {
+    margin: 0.75rem 0 0;
+    max-width: 22rem;
+  }
+
+  .hop__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .hop__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hop-empty {
+    flex: none;
+    margin: 0;
+  }
+
+  .hop-empty__clear,
+  .hop-invite {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    transition: text-decoration-thickness var(--dur-fast) var(--ease);
+  }
+
+  .hop-empty__clear:hover,
+  .hop-invite:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .hop-invite {
+    min-height: 44px;
+  }
+
+  /*
+   * Entries print as they enter (B5): number, then when and where, then the event, then
+   * the role. Four steps of --stagger, so the last field lands 120 ms in — a sequence
+   * that reads as a line being written, not as four things fading.
+   *
+   * `data-printing` is set by the client only when motion is allowed, so a visitor with
+   * JavaScript off or reduced motion on gets the finished state and never the hidden one.
+   */
+  .hop-list[data-printing] .hop:not([data-printed]) .hop__print {
+    opacity: 0;
+  }
+
+  .hop-list[data-printing] .hop[data-printed] .hop__print {
+    animation: hop-print var(--dur) var(--ease) both;
+  }
+
+  .hop__print[data-print-step="1"] {
+    animation-delay: var(--stagger);
+  }
+
+  .hop__print[data-print-step="2"] {
+    animation-delay: calc(2 * var(--stagger));
+  }
+
+  .hop__print[data-print-step="3"] {
+    animation-delay: calc(3 * var(--stagger));
+  }
+
+  @media (min-width: 48rem) {
+    /*
+     * At width the hop becomes what a traceroute line actually is: a number, a node, and
+     * a column of measurements on the right where the times go.
+     */
+    .hop {
+      grid-template-columns: 2.5rem 1.5rem 1fr minmax(8rem, 11rem);
+      grid-template-areas: "number mark main meta";
+      column-gap: 1rem;
+    }
+
+    /*
+     * The route stops short of the rail's label.
+     *
+     * --rail-gutter reserves the rail's dots, which is enough for every section so far
+     * because their content packs to the left. This is the first one with a right-aligned
+     * column, and the rail's reading — "hop 4 of 7 · achievements", the longest of the
+     * seven — reaches a full step further in than the dots do. Hence the gutter plus one
+     * step from the spacing scale.
+     *
+     * Capped as well as reserved: past about 56rem the row stops reading as a traceroute
+     * line and starts reading as a title and a distant column with a hole between them.
+     */
+    .hop-list {
+      max-width: min(calc(100% - (var(--rail-gutter) + 4rem)), 48rem);
+      padding-right: 0;
+    }
+
+    .hop__number {
+      justify-self: end;
+      padding-top: 0.35rem;
+    }
+
+    .hop__meta {
+      display: block;
+      margin-top: 0.35rem;
+      text-align: right;
+    }
+
+    /* Stacked, each reading is on its own line and needs no separator. */
+    .hop__meta p:not(:last-child)::after {
+      content: none;
+    }
+
+    .hop__meta p + p {
+      margin-top: 0.125rem;
+    }
+
+    .hop__result {
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+@keyframes hop-print {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

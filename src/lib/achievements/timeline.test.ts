@@ -20,7 +20,6 @@ import {
 function entry(overrides: Partial<Achievement> & { slug: string }): Achievement {
   return {
     id: overrides.slug,
-    slug: overrides.slug,
     title: "An entry",
     type: "hackathon",
     event_name: "An event",

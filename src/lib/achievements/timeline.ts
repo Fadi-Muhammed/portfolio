@@ -28,6 +28,21 @@ export const ACHIEVEMENT_TYPES: readonly AchievementType[] = [
   "program",
 ] as const;
 
+/**
+ * How each type is written on the page.
+ *
+ * "Programme", not the schema's "program": the deck header for this section already says
+ * "Stages, competitions and programmes", and B12 asks for one vocabulary. The enum is a
+ * database value, not a label.
+ */
+export const TYPE_LABELS: Record<AchievementType, string> = {
+  hackathon: "Hackathon",
+  competition: "Competition",
+  talk: "Talk",
+  award: "Award",
+  program: "Programme",
+};
+
 export function isAchievementType(value: unknown): value is AchievementType {
   return typeof value === "string" && (ACHIEVEMENT_TYPES as string[]).includes(value);
 }
