@@ -6,6 +6,176 @@ part, before the report to the user. Newest part at the top.
 Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also record the B13
 "not vibe-coded" checklist outcome here, including what the "remove one accessory" pass removed.
 
+## Standing item for Part 17, not before
+
+**The hero ships with no proof line, and B1 says it should have one.** B1 requires that the
+tagline never stand alone in a viewport without proof, and the A2 eyebrow is positioning rather
+than proof. Fadi decided this deliberately on 29 August 2026 and asked to be reminded **once, at
+the end of the build — and not in any part report before then**. Do not raise it in the reports
+for Parts 8 to 16. Raise it at Part 17 alongside the other launch blocker recorded there, the
+out-of-date CV at `documents/cv.pdf`. The material already exists in the database: Web Summit
+Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
+
+---
+
+## Part 7 — Hero: routing topology, tagline, quote · 29 August 2026
+
+Status: done.
+
+### What exists
+
+- `src/lib/hero/topology.ts` — the topology as data and arithmetic: the node table, the edge
+  list, shortest-route finding weighted by drawn length, packet interpolation, pointer
+  displacement. Pure, so every claim about it is testable without a browser.
+- `src/components/hero/glyphs.tsx` — the seven network glyphs, drawn once into `<defs>`.
+- `src/components/hero/topology-graph.tsx` — the drawing. One component, rendered by the server
+  for the static layer and by the live module for the moving one.
+- `src/components/hero/topology.tsx` — a server component holding both layers.
+- `src/components/hero/topology-loader.tsx` — the client shim that lazy-loads the live layer and
+  deliberately imports nothing else.
+- `src/components/hero/topology-live.tsx` — the clock: rAF loop, pointer spring, ambient packets,
+  click-to-route, and the pauses for reduced motion, hidden tabs and off-screen.
+- `src/components/hero/hero.tsx` and `hero-actions.tsx` — the composition, every string from
+  `site_settings`, both buttons calling the same `hopTo` as everything else.
+- Hero and topology styles in `globals.css`; `--section-pad` and `--rail-gutter` added as tokens;
+  the deck's three repeated padding literals now point at `--section-pad`.
+- `HeroPlaceholder` deleted from `section-placeholder.tsx`.
+- Tests: 123 unit (26 new on the topology) and 38 Playwright (8 new on the hero).
+
+### How to test
+
+```
+npm run dev
+```
+
+The hero is the first stop. Hover near a node and the mesh flexes toward the pointer while
+"you" stays put. Click any node: a packet leaves "you", travels the real links to that node, and
+then the deck hops. Tab into the drawing and press Enter — same thing.
+
+```
+npm run screens
+npm test && npx playwright test
+```
+
+To see the static layer as a visitor with no JavaScript gets it, disable scripting in devtools
+and reload: the drawing is still there and every node is still a working link.
+
+### Measurements against B12's budget
+
+- **Home page JavaScript: 141.3 KB gzipped**, against a budget of about 200 KB. Measured from
+  real transfer sizes on a production build, not estimated.
+- **The topology module is 3.6 KB gzipped** and arrives at 188 ms, after first contentful paint
+  at 128 ms. It was 1.6 KB at first, which looked better and was worse: the drawing code was
+  being imported by an eager client component and so shipped in the bundle that blocks the hero.
+  Splitting the loader from the drawing moved it.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes.
+
+- **Tokens only.** Two new ones, `--section-pad` and `--rail-gutter`, both added because several
+  rules already depended on a number agreeing — the same reason `--nav-h` exists.
+- **Structure encodes something true.** Every node is a named destination that routes somewhere;
+  every edge is a relationship that exists in the product; the glyph on each node is chosen for
+  what that section is. About is drawn as a switch _because_ two links land on it.
+- **Motion**: one easing, durations from the scale, 40 ms stagger, no bounce, the whole sequence
+  resolved inside 1.1 s.
+- **Copy is real** and comes from the database.
+- **Interaction**: focus visible on every node, hit targets measured at 44 px or more on a phone,
+  hover never carries meaning alone.
+- **Accessibility**: zero serious or critical axe violations.
+
+**The first design was rejected, and it deserved to be.** The design pass specified the nodes as
+5 px circles, said in its own critique that "a constellation of dots and lines is close to an AI
+default", gave three reasons that was acceptable, and shipped the dots. Fadi rejected them and
+asked for something from the subject's own world. Naming a risk is not the same as removing it.
+The nodes are now topology glyphs — terminal, server, antenna, dish, cloud, switch, router — the
+drawing language of the field, and the strongest thing about them is that the switch makes a
+structural fact visible instead of leaving it to prose.
+
+**Seven faults found while building, six of them by measuring rather than by looking:**
+
+1. **The About node sat inside the rail's "hop 1 of 7 · home" label.** The topology ran under the
+   hop rail Part 5 put at the right edge. B4 asks the topology to bleed off that edge; the rail
+   now owns it. `--rail-gutter` reserves the strip and the drawing stops flush against it.
+2. **Hit targets were 40 px on a desktop and 23 px on a phone**, against B12's 44 px floor. The
+   radius had been sized from how the drawing looks at its largest, when what governs is the
+   smallest scale it is ever rendered at. Now 42 viewBox units, which measures 51 px at 390.
+3. **A fixed topology height cut the top and bottom nodes off at 768.** `slice` crops against the
+   box's aspect ratio, so a height that cropped correctly at 390 was wrong everywhere else. The
+   height now follows the width.
+4. **The hand-drawn layout had six edge crossings** and read as a tangle. Positions were re-chosen
+   by search against three measured constraints. Two crossings now, and the constraints are
+   unit-tested.
+5. **The primary button was a full-width orange slab on a phone**, roughly the area of the tagline
+   and louder than it. Buttons now take the width of their labels at every size.
+6. **The antenna glyph was a capital A.** An isosceles triangle bisected by a crossbar, which is
+   exactly what the letter is. Redrawn as a lattice mast with two near-vertical legs.
+7. **Three ambient packets bunched onto one edge**, leaving the rest of the network looking dead.
+   They now avoid links another packet is on.
+
+**And one fault in the review tooling itself, which mattered more than any of them.** The 390
+screenshot showed the whole hero washed out to about a third opacity while the section below it
+was full contrast. It looked exactly like a contrast bug and I nearly reviewed it as one. It was
+the entrance animation caught mid-flight: `npm run screens` waited for `networkidle`, which says
+the bytes have arrived, not that the page has settled. `scripts/screens.mts` now waits for every
+animation to finish before the shutter opens. Part 5 had already learned this lesson for
+Playwright and written a `ready()` helper for it; the screenshot script never got the same
+treatment. A review tool that photographs a frame on the way to the design is worse than no
+review tool, because its output looks like evidence.
+
+**Remove one accessory.** The "you" node had a hover label reading "You are here". The terminal
+glyph already carries the packet square on its screen, which says the same thing without words,
+and it was the one node in the drawing that is not a control. The label is gone; only
+destinations are named. A second rule went with it as dead weight rather than as the accessory:
+the routing packet was scaled to 1.15, which turns a 3.5 px square into a 4 px square and is not
+visible to anyone.
+
+### Decided without asking
+
+- **Six destinations and "you", not seven plus "you".** B4 reads as one node per section plus a
+  "you" node, which puts a Home node on the map — a control that does nothing, since the visitor
+  reading it is standing on Home. Merged, so the map shows where you are and everywhere you can
+  go from there. Approved in the design pass.
+- **Nodes are anchors, not buttons.** Part 7 and B4 both say "real buttons". An anchor to
+  `#products` satisfies what that protects — a real focusable control with a real name — and
+  works before the module loads and with JavaScript off. Approved in the design pass.
+- **The topology arrives whole and fires one packet, rather than drawing its edges in.** Stroke
+  draw-in would have meant hiding and redrawing a drawing the server had already sent, and B5
+  assigns that device to the engineering diagrams. Approved in the design pass.
+- **The quote is set in the body face; only its attribution is mono.** B4 asks for the quote in
+  the mono/utility face, but section 3 states `data` is never used for prose, and uppercasing at
+  +0.06em would make the one human sentence on the page the hardest thing on it to read.
+- **The availability line is not in the hero on a phone.** B4's mobile stacking order and the
+  approved 390 wireframe both omit it. It appears in Contact.
+- **Route finding is weighted by drawn length rather than hop count.** In the current edge list
+  the two agree everywhere, so this is defensive rather than load-bearing.
+
+### Known gaps
+
+- **Not tested on a real device.** Part 5's real-device session found two faults that no amount of
+  desktop emulation had surfaced. The pointer spring is desktop-only by design, but the tap
+  targets, the glyph legibility at 13 px and the paused-when-hidden behaviour all want a real
+  phone.
+- **Glyphs are about 13 px at 390.** Mast, dish, box and cloud are distinguishable by silhouette;
+  a router is not distinguishable from a switch. Accepted cost of the direction, and the label
+  names it on tap.
+- **The cloud is the most generic glyph in the set** and the closest to a stock icon. It survived
+  the accessory pass; it is the first thing to reconsider if the set ever starts to look like
+  clip art.
+- **The dashed cross-links are very faint on the dark theme.** They are `line`, which is correct
+  for a hairline, but they are close to invisible against `bg`.
+- **The pointer spring is not covered by a test.** Its arithmetic is, but nothing asserts that a
+  real pointer moves a real node.
+- **`@supabase/ssr` is still installed and unused**, carried since Part 3.
+
+### Next
+
+Part 8 — the Products section and case-study pages. It is the first section with cards, the first
+to ping a live endpoint for a real status line, and the first with detail pages at
+`/products/[slug]`, which is also when the palette's product items stop hopping to a section and
+start navigating.
+
 ---
 
 ## Part 6 — Command palette · 29 August 2026

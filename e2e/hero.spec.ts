@@ -86,6 +86,13 @@ test("under reduced motion the topology is still and the hop is immediate", asyn
   await page.goto("/");
   await expect(page).toHaveURL(/#/);
 
+  // Wait for the live layer before asserting anything about it. Without this the test
+  // raced the lazy import: it clicked the hidden static layer instead, and its
+  // no-packets assertion passed for the worst possible reason — there was no live layer
+  // yet for a packet to be missing from.
+  await expect(page.locator(live)).toBeVisible();
+  await expect(page.locator(staticLayer)).toBeHidden();
+
   // No packets: the loop never starts rather than running at zero duration.
   await expect(page.locator(`${live} .hero-topology__packet`)).toHaveCount(0);
 
@@ -118,7 +125,14 @@ test("every node clears the 44 px hit target on a phone", async ({ page }) => {
 
   // B12. The glyph is drawn at about 13 px here; what a finger has to hit is the
   // invisible circle around it, which is a different number and the one that counts.
-  for (const name of ["Products", "Engineering", "Achievements", "Featured in", "About", "Contact"]) {
+  for (const name of [
+    "Products",
+    "Engineering",
+    "Achievements",
+    "Featured in",
+    "About",
+    "Contact",
+  ]) {
     const hit = page.locator(`${live} a`).filter({ has: page.getByText(name, { exact: true }) });
     const box = await hit.locator(".hero-topology__hit").first().boundingBox();
     expect(box, `hit target for ${name}`).not.toBeNull();

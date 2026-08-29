@@ -321,11 +321,11 @@ Answers given in chat before the design pass. Every hero string lives in `site_s
 thirteen fields were read back from the live database rather than trusted from the seed file.
 
 - **A2 eyebrow: the full line stays.** `Telecommunications & network engineer · Tech builder ·
-  Freelancer`, verbatim. The wireframe in section 4 of `docs/DESIGN.md` shortens it; the wireframe
+Freelancer`, verbatim. The wireframe in section 4 of `docs/DESIGN.md` shortens it; the wireframe
   is wrong and the database is right.
 - **A3 tagline confirmed unchanged**: `Unemployed & jobless, but not lost.`
 - **A4 attribution is `Prometheus`, with no year.** Changed from `Prometheus (2012)` in
-  `content/seed/site_settings.json` and re-seeded. The quote's origin in *Lawrence of Arabia*
+  `content/seed/site_settings.json` and re-seeded. The quote's origin in _Lawrence of Arabia_
   (1962) is not displayed — it is a footnote about the line, not part of the design.
 - **A27 availability is `Open to work, collaborations and freelance projects.`** Changed from
   `Open to freelance work and collaborations.` and re-seeded. Chosen over the other two A27
