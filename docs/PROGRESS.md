@@ -143,6 +143,15 @@ building the way CI does, and covered by `src/lib/content/queries.unconfigured.t
 The list fetchers still throw in that state; Parts 8 and 9 will need the same guard when
 their sections start reading at build time.
 
+**A ninth, immediately behind it, and the same blind spot twice.** With the build fixed, the
+SSR test failed in CI because it asserted the heading contains "but not lost" — the seeded
+tagline. With no credentials the hero falls back to the name, so the test was asserting the
+fixture rather than the promise, which is "the heading is not blank before hydration". It
+now asserts the heading is not empty. Part 6 recorded the identical lesson ("do not assume
+the palette has database content") and it did not carry over on its own. Both fixes were
+verified locally the way CI runs them, by moving `.env.local` aside — which is now the
+thing to do before pushing anything that reads content at build time.
+
 ### Decided without asking
 
 - **Six destinations and "you", not seven plus "you".** B4 reads as one node per section plus a

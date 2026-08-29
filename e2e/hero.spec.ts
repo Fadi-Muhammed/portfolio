@@ -38,8 +38,12 @@ test("draws the topology on the server, before any JavaScript runs", async ({ br
     "Route to Contact",
   );
 
-  // The copy is server-rendered too: no blank hero while the database is fetched.
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("but not lost");
+  // The copy is server-rendered too: no blank hero while the database is fetched. The
+  // assertion is that the heading says something, not what it says — CI has no database
+  // credentials, so the tagline falls back to the name there, and a test that demanded
+  // the seeded text would be asserting the fixture rather than the promise. Part 6 hit
+  // exactly this and its lesson did not carry over on its own.
+  await expect(page.getByRole("heading", { level: 1 })).not.toBeEmpty();
   await context.close();
 });
 
