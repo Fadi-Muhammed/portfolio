@@ -432,3 +432,28 @@ claim in it appears in that deck, and everything the deck does not cover is left
   top leg of the divider, which would make the reading rise with light. Both documents state
   the opposite behaviour and say it was verified on the rig, and `main.py` depends on it. The
   table almost certainly has the legs swapped; the site models the observed behaviour.
+
+### 29 August 2026 — achievements content, before Part 10
+
+Answers given in chat, with photographs supplied.
+
+- **Dates.** The Web Summit Qatar talk was **February 2026**; the QSTP 48-hour hackathon was
+  **August 2026**; the National Cyber Drill CTF was **November 2025**. Stored as the first of
+  the month, following the convention set in Part 4 for month-precision dates. Two of the
+  three had no date at all, which would have sorted the strongest entry — the talk — to the
+  bottom of the timeline with no year against it.
+- **No result on two of them, and that is the honest answer.** Fadi placed in neither the
+  hackathon nor the CTF. `result` stays null rather than being padded with "Completed" or
+  "Participated"; the timeline shows the role instead, which is true. Proposed in chat and
+  not objected to.
+- **The QSTP hackathon is now an achievements row.** It was missing entirely, flagged twice
+  since Part 8. It is the only `hackathon` in the table, so it is also what makes B2's filter
+  chips able to do anything — before it there were three types for five chips. It links to
+  `/products/rubric`, which is the same event seen from the other side.
+- **Two photographs were used with explicit permission**, having been found in Downloads
+  rather than handed over in the message: `websummit talk.jpeg` (Fadi speaking, badge
+  visible) and `ncsa.jpeg` (Fadi holding the CTF certificate of attendance). Both are
+  photographs of a real person going onto a public site, so neither was assumed.
+- **Five more Cyber Drill photographs** were supplied and staged as that entry's gallery.
+  The one showing a laptop was checked before use: the Immersive Labs sign-in fields are
+  empty, so there is nothing to redact.

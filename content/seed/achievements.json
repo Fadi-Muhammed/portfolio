@@ -8,14 +8,39 @@
     "event_name": "Web Summit Qatar 2026",
     "role": "Speaker",
     "result": null,
-    "date": null,
+    "date": "2026-02-01",
     "city": "Doha",
     "country": "Qatar",
     "summary": "A 20 minute talk at the UDST booth on students turning challenges into solutions.",
     "links": {},
     "media": {
-      "cover": "web-summit-qatar-2026-talk/cover.jpeg"
+      "cover": "web-summit-qatar-2026-talk/cover.jpeg",
+      "gallery": [
+        {
+          "path": "web-summit-qatar-2026-talk/cover.jpeg",
+          "alt": "Speaking at the UDST booth at Web Summit Qatar, holding a microphone in front of a slide."
+        }
+      ]
     },
+    "featured": true
+  },
+  {
+    "slug": "qstp-hackathon-2026",
+    "sort_order": 15,
+    "published": true,
+    "title": "Challenge 2 — the CV matching bottleneck",
+    "type": "hackathon",
+    "event_name": "QSTP 48-hour hackathon",
+    "role": "Team lead, Team Pantheon",
+    "result": null,
+    "date": "2026-08-01",
+    "city": "Doha",
+    "country": "Qatar",
+    "summary": "Led a team of three to build Rubric in 48 hours: one shared applicant pool, ranked and conflict-free for every open role.",
+    "links": {
+      "product": "/products/rubric"
+    },
+    "media": {},
     "featured": true
   },
   {
@@ -44,13 +69,39 @@
     "event_name": "12th National Cyber Drill 2025",
     "role": "Participant",
     "result": null,
-    "date": null,
-    "city": null,
+    "date": "2025-11-01",
+    "city": "Doha",
     "country": "Qatar",
     "summary": "Took part in the capture the flag event at the 12th National Cyber Drill, run by the National Cyber Security Agency.",
     "links": {},
     "media": {
-      "cover": "national-cyber-drill-ctf/cover.jpeg"
+      "cover": "national-cyber-drill-ctf/cover.jpeg",
+      "gallery": [
+        {
+          "path": "national-cyber-drill-ctf/cover.jpeg",
+          "alt": "Holding the certificate of attendance for Capture the Flag, second edition, at the 12th National Cyber Drill."
+        },
+        {
+          "path": "national-cyber-drill-ctf/standee.jpeg",
+          "alt": "The Capture the Flag second edition standee at the National Cyber Security Agency's venue."
+        },
+        {
+          "path": "national-cyber-drill-ctf/stage.jpeg",
+          "alt": "The main stage before the exercise, with a countdown on the screen."
+        },
+        {
+          "path": "national-cyber-drill-ctf/platform.jpeg",
+          "alt": "The Immersive Labs sign-in screen for the drill's cross-border attacks scenario."
+        },
+        {
+          "path": "national-cyber-drill-ctf/venue.jpeg",
+          "alt": "The National Cyber Security Agency's registration desk at the 12th National Cyber Drill."
+        },
+        {
+          "path": "national-cyber-drill-ctf/display.jpeg",
+          "alt": "A display at the venue showing the 12th National Cyber Drill branding."
+        }
+      ]
     },
     "featured": false
   }
