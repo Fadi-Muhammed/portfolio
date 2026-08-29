@@ -48,9 +48,9 @@ export function ProductsSection({ products }: { products: Product[] }) {
         prove.
       </p>
 
-      <ul className="product-strip" data-count={shown.length}>
+      <ul className="work-strip" data-count={shown.length}>
         {shown.map((product) => (
-          <li key={product.slug} className="product-strip__item">
+          <li key={product.slug} className="work-strip__item">
             <ProductCard product={product} />
           </li>
         ))}

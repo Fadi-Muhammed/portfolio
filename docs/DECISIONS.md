@@ -406,3 +406,29 @@ claim in it appears in that deck, and everything the deck does not cover is left
 - **A metrics figure is never rendered without its basis.** `metrics.basis` becomes the heading
   above the numbers. A block with no stated basis is not rendered at all. This is what keeps
   Rubric's projections from reading as measurements after a future layout change.
+
+### 29 August 2026 — Part 9
+
+- **The card is shared between Products and Engineering** (`WorkCard`), not duplicated. The
+  CSS moved with it: `.product-card` and `.product-strip` are now `.work-card` and
+  `.work-strip`.
+- **No filter chips in Engineering.** B2 asks for them by type; with one project and one type
+  a filter is a control that can only ever do nothing.
+- **The instrument models the firmware, not the physics.** The obvious instrument — the LDR's
+  response against illuminance — was built and then discarded once the report arrived: it
+  records no photometry, so every point on that curve would have been invented. The bench is
+  `main.py`'s loop instead, asserted against the one measured console line the report
+  contains.
+- **No diagram draw-in and no oscilloscope divider were built.** B2 and Part 9 both ask for
+  them. There is no schematic in the database to animate, and a sweep divider on a page with
+  no diagram is decoration — which is the one thing this section must not be. Both arrive
+  with the first project that has a schematic.
+- **The project's `type` changed from `lab` to `course`** and its title now follows the
+  report ("Smart street lighting system"). The slug is unchanged.
+- **Credited to two people.** The report names Fadi and Adam.
+- **No `@testing-library/user-event` dependency.** Component tests use `fireEvent`; the real
+  keyboard test lives in Playwright, where a browser actually processes the keys.
+- **An error in the source report, reported to Fadi.** The wiring table says the LDR is the
+  top leg of the divider, which would make the reading rise with light. Both documents state
+  the opposite behaviour and say it was verified on the rig, and `main.py` depends on it. The
+  table almost certainly has the legs swapped; the site models the observed behaviour.

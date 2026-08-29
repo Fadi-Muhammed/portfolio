@@ -40,7 +40,6 @@ describe("the street light bench", () => {
     render(<StreetLightBench config={config} />);
     setSlider(ldrSlider(), 200);
     expect(screen.getByText(/Light OFF/)).toBeInTheDocument();
-    expect(readout("Relay")).toContain("open");
     expect(readout("is_night")).toContain("0");
   });
 

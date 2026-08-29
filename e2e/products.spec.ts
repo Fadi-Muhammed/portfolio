@@ -86,7 +86,8 @@ test("the filmstrip scrolls sideways without moving the deck", async ({ page }) 
   await ready(page);
   if (!(await hasProducts(page))) test.skip();
 
-  const strip = page.locator(".product-strip");
+  // Scoped: Engineering uses the same strip, so an unscoped selector matches two.
+  const strip = page.locator("#products .work-strip");
   const deckScroll = await page.locator(".deck").evaluate((element) => element.scrollTop);
 
   await strip.evaluate((element) => {

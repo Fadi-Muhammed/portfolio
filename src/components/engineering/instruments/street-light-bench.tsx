@@ -112,10 +112,15 @@ export function StreetLightBench({ config }: { config: StreetLightConfig }) {
         </button>
       </div>
 
+      {/*
+        Three readouts, not four. The relay's state was the fourth, and in the firmware
+        `relay.value()` and `led.duty()` are set on the same branch — it could never
+        disagree with the LED, so it was a second dial wired to the first. The body
+        explains what the relay is for; the bench shows the things that can differ.
+      */}
       <dl className="instrument__readout">
         <Reading label="is_night" value={out.isNight ? "1" : "0"} code />
         <Reading label="LED duty" value={`${out.ledDuty} · ${dutyPercent(out.ledDuty)}%`} />
-        <Reading label="Relay" value={out.relay ? "closed" : "open"} live={out.relay} />
         <Reading label="Flips" value={`${flips} / ${FAULT_FLIPS}`} live={out.fault} />
       </dl>
 

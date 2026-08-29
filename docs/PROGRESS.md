@@ -18,6 +18,158 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Part 9 — Engineering projects, instruments and detail pages · 29 August 2026
+
+Status: done.
+
+### What exists
+
+- `src/components/work/work-card.tsx` — the card shell, now shared by Products and
+  Engineering. `.product-card` and `.product-strip` were renamed to `.work-card` and
+  `.work-strip` throughout.
+- `src/components/engineering/engineering-card.tsx`, `engineering-section.tsx`.
+- `src/app/engineering/page.tsx` and `src/app/engineering/[slug]/page.tsx`, reusing Part
+  8's detail layout, aside and prose scale unchanged.
+- `src/lib/engineering/street-light.ts` — the firmware's own loop as pure functions.
+- `src/lib/engineering/instruments.ts` — the instrument registry's config narrowing.
+- `src/components/engineering/instruments/registry.tsx`, `street-light-bench.tsx`.
+- Instrument styles in `globals.css`.
+- Tests: 201 unit (19 new) and 58 Playwright (10 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+Hop to Engineering, open the project, scroll to the bench. Drag the LDR reading below the
+threshold and the lamp goes out; press the override and it comes back on in daylight. Drag
+back and forth across the threshold six times and the buzzer fault fires — the same test
+the report describes running by waving a hand over the sensor. Tab to either slider and
+use the arrow keys.
+
+```
+npm test && npx playwright test
+npm run screens -- "#engineering"
+SCREENS_FULL_PAGE=1 node scripts/screens.mts engineering/intelligent-street-light-system
+```
+
+### The instrument, and the one that was not built
+
+B2 offers four instruments: a BER-vs-SNR curve, a clickable topology, a packet capture
+viewer, a link-budget calculator. **None of them fits the one project in the database**,
+which is an ESP32 reading an LDR. Building any of them would have meant inventing a
+project to hang it on.
+
+The obvious fifth — plot the LDR's response against illuminance — was designed, built and
+then thrown away. The report records no photometry: no lux, no LDR resistance, no
+datasheet curve. Every point on that plot would have been invented, and an instrument with
+invented numbers is a drawing of nothing that looks exactly like a drawing of something.
+It was thrown away after the report arrived and before anything was seeded.
+
+What the report does record is the pair of numbers the system compares, the firmware
+listing, and one measured line of console output. So the instrument is `main.py`'s own
+loop: two sliders for the two ADC readings, a button for the override, and the printed
+line reproduced exactly. `src/lib/engineering/street-light.test.ts` asserts that line
+character for character — it is the only ground truth this project has, and if the model
+stops reproducing it, the model is wrong.
+
+The part worth touching is the fault detector. Six day/night crossings inside five seconds
+is what the firmware calls a flickering sensor; dragging the reading across the threshold
+counts them the same way, so the alarm is something a visitor reaches by hand rather than
+something a caption claims.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes.
+
+- **Tokens only.** No new colours, radii or type sizes.
+- **Structure encodes something true.** The concepts line is the thing that makes the
+  section scannable; the console line is a quotation, not a paraphrase; `signal` marks the
+  reading when it is on the night side of the threshold, which is the one live thing here.
+- **Motion**: none in the instrument, deliberately. It responds; it does not perform.
+  There is no reduced-motion branch because there is nothing to reduce.
+- **Copy is real**, from the report, including the limitations the report states about
+  itself.
+- **Accessibility**: both controls are native range inputs and both actions native
+  buttons, so keyboard and touch work without a line of code for either. Zero serious or
+  critical axe violations.
+
+**Five faults:**
+
+1. **A `nowrap` concepts line pushed the whole card wider than its column**, which clipped
+   the summary mid-word. A flex item defaults to `min-width: auto` and refuses to shrink
+   below its content, so `text-overflow: ellipsis` was inert. Fixed at three levels of the
+   flex chain; the outermost — the strip item — was the one that mattered.
+2. **The concepts line was right-aligned in a slot sized for "live · 84 ms"**, so it
+   wrapped to three lines and orphaned an ellipsis. It has its own row now, and truncates
+   by CSS rather than by a hard slice, so a wide card shows more of it.
+3. **The console line rendered in capitals.** `text-data` uppercases, and it was applied to
+   a reproduction of what the board prints. "MODE: AUTO | LIGHT ON" is not what the board
+   says, and `IS_NIGHT` is not the name of the variable. A quotation restyled into
+   something the source never emitted is not a quotation.
+4. **`.product-strip` matched two elements** once Engineering used it, breaking a Part 8
+   test. Renamed to `.work-strip` with the card, and the test scoped to its own section.
+5. **A made-up tool nearly shipped.** The first draft of the seeded tools list contained
+   "Oscilloscope-free bench", which is not a thing and was not in the report. Caught on
+   re-reading before seeding.
+
+**Remove one accessory.** The bench had four readouts: `is_night`, LED duty, relay, flips.
+In the firmware `relay.value()` and `led.duty()` are set on the same branch, so the relay
+could never disagree with the LED — it was a second dial wired to the first. Three
+readouts now.
+
+### Decided without asking
+
+- **The card is shared rather than duplicated.** Two components agreeing on nine tenths of
+  their markup is the parallel convention `CLAUDE.md` forbids, and the first divergence
+  would be a card that looked subtly wrong in one section.
+- **No filter chips.** B2 asks for them by type; with one project and one type a filter is
+  a control that can only ever do nothing.
+- **`type` changed from `lab` to `course`.** The report calls it the final project for
+  AETN 2203, a course.
+- **The title follows the report**: "Smart street lighting system" rather than "Intelligent
+  street light system". The slug is unchanged, so no link breaks.
+- **The project is credited to two people.** The report names Fadi and Adam. A portfolio
+  that leaves a team project ambiguous is claiming the whole of it.
+- **No new dependency for testing interaction.** `@testing-library/user-event` would have
+  been the obvious reach; component tests use `fireEvent` and the genuine keyboard test
+  lives in Playwright, where a real browser processes the arrow keys. Asserting that a
+  native range input responds to `ArrowLeft` in jsdom would test jsdom.
+
+### An error found in the source, worth telling Fadi about
+
+**The report's wiring table and its stated behaviour contradict each other.** The table
+gives `3.3 V → LDR → node(GPIO34) → 10 kΩ → GND`. With the LDR as the top leg, more light
+lowers its resistance and the node voltage goes _up_. But both documents say "more light
+lowers the divider voltage, so a low reading means bright", and say it was verified on the
+rig — and `main.py` depends on it (`ldr_value > threshold` means night).
+
+The observed behaviour is almost certainly the true one, which means **the wiring table has
+the legs swapped**: the LDR must actually be the bottom leg. The site models the observed
+behaviour, because that is what was measured and what the firmware assumes. Worth
+correcting in the report before it is submitted anywhere else.
+
+### Known gaps
+
+- **One project.** Fadi will add the rest after the site is complete.
+- **No schematic and no report PDF.** B2 asks for diagrams that draw themselves in on
+  entry, and Part 9 asks for an oscilloscope-sweep divider. **Neither was built**: there is
+  no diagram in the database to animate, and a divider drawn across a page with no diagram
+  on it is decoration, which is the one thing this section must not be. Both arrive with
+  the first project that has a schematic.
+- **`report_path` and `repo_url` are null**, so the Links panel holds only "Copy link".
+- **No gallery**, so the detail page has one photograph.
+- **Not tested on a real device.** The sliders under a thumb are the thing to check.
+- **`@supabase/ssr` is still installed and unused**, carried since Part 3.
+
+### Next
+
+Part 10 — achievements and talks: the traceroute timeline, the filter chips that this
+section did not earn, and the click-to-load video facades.
+
+---
+
 ## Part 8 — Products section and case-study pages · 29 August 2026
 
 Status: done.
@@ -692,9 +844,9 @@ None of it was invented.
   supplied in chat on three points: Web Summit 2025 versus 2026, the 3D printing end date,
   and that role's title. None of it has been seeded — it needs Fadi's confirmation first.
 - **No images except Rubric's.** Three screenshots now exist at `media/rubric/`
-  (allocation board, match pool, hidden gems), the first being the product cover. There is still
-  no engineering-project photo and no talk photo, so Parts 9 and 10 will render empty media
-  wells.
+  (allocation board, match pool, hidden gems), the first being the product cover. There is also a build photo for the engineering
+  project, uploaded back in Part 4 — the Part 8 note claiming otherwise was wrong. There is
+  still no talk photo, so Part 10 will render empty media wells.
 - **Featured in: seven logos uploaded, zero rows.** The files are in the `logos` bucket
   (`alfekra`, `dmz`, `qatar-innovation`, `qatar-university`, `uc-berkeley`, `uhub`,
   `web-summit-qatar`) but `featured_in` is still empty, because B8 makes each logo a link

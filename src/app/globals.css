@@ -922,7 +922,7 @@
    * left alone deliberately — the browser decides which gesture belongs to which scroller,
    * and it is better at that than a rule would be.
    */
-  .product-strip {
+  .work-strip {
     display: flex;
     gap: 1rem;
     margin: 0;
@@ -946,7 +946,7 @@
   /* `min-width: 0` on the item too: it is the outermost flex item in the chain, and
      without it a long unbreakable line inside the card pushes the item past its own
      flex-basis, taking the card and its wrapped text with it. */
-  .product-strip__item {
+  .work-strip__item {
     flex: 0 0 85%;
     min-width: 0;
     max-width: 26rem;
@@ -954,7 +954,7 @@
   }
 
   /* One card should not sit alone at 85% width with a gap where its neighbour would be. */
-  .product-strip[data-count="1"] .product-strip__item {
+  .work-strip[data-count="1"] .work-strip__item {
     flex-basis: 100%;
   }
 
@@ -1087,7 +1087,7 @@
      * card is card-sized whether there is one of them or four, and the grid simply has
      * fewer columns in use.
      */
-    .product-strip {
+    .work-strip {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(0, 20rem));
       gap: 1.5rem;
@@ -1099,7 +1099,7 @@
       scroll-snap-type: none;
     }
 
-    .product-strip__item {
+    .work-strip__item {
       max-width: none;
     }
   }
@@ -1524,7 +1524,7 @@
     }
 
     .instrument__readout {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 

@@ -38,9 +38,9 @@ export function EngineeringSection({ projects }: { projects: EngineeringProject[
         what the measurements actually showed.
       </p>
 
-      <ul className="product-strip" data-count={shown.length}>
+      <ul className="work-strip" data-count={shown.length}>
         {shown.map((project) => (
-          <li key={project.slug} className="product-strip__item">
+          <li key={project.slug} className="work-strip__item">
             <EngineeringCard project={project} />
           </li>
         ))}

@@ -880,3 +880,47 @@ React escapes text, so nothing typed into a table editor can become markup on th
 there is no sanitiser to misconfigure. It supports only what the bodies use, and renders
 anything it does not recognise as plain text rather than dropping it, so a writer can see their
 syntax and fix it.
+
+---
+
+## 13. Engineering — the bench
+
+Written during Part 9. It reuses section 12 entirely — the same card, the same detail
+layout, the same prose scale — and adds only what an instrument needs.
+
+### 13.1 The card
+
+`WorkCard`, shared with Products. Two slots differ: the tag row holds tools rather than a
+stack, and the meta slot holds the concepts applied.
+
+The concepts line takes its own full-width row rather than sitting beside the tags. Concept
+names are phrases — "analogue-to-digital conversion" — and the meta slot is sized for a
+reading like "live · 84 ms". It is one line, truncated by CSS rather than by a hard slice,
+so a wider card shows more of it. `min-width: 0` on every flex ancestor is what makes that
+truncation work at all; without it the line pushes the card wider than its column and the
+summary above gets clipped mid-word.
+
+### 13.2 The instrument
+
+**Colour.** Hairlines in `line`, readings in `ink`, the threshold in `accent` because it is
+the one thing the visitor sets, and `signal` on the reading marker only when it is on the
+night side — the single live mark, which is what section 2 reserves the colour for. The
+fault state is the one place `danger` appears outside a form, and it appears because the
+firmware genuinely reports a fault.
+
+**Motion: none.** No clock, no autoplay, no transition on the readouts. An instrument that
+drifts on its own is a decoration, and this is the section that has to read as
+instrumentation. It follows that there is no reduced-motion branch — there is nothing to
+reduce, which is a stronger guarantee than a branch would be.
+
+**Controls** are native range inputs and native buttons, so keyboard and touch both work
+without a line of code for either, and the focus ring is the site's own.
+
+**A quotation is reproduced, never restyled.** The console line and any identifier from the
+source are set in the mono face _without_ `text-data`'s uppercase. "MODE: AUTO | LIGHT ON"
+is not what the board prints and `IS_NIGHT` is not the name of the variable.
+
+**An instrument with no data is not drawn.** A project naming an instrument whose `data`
+does not parse gets a stated empty state. Invented numbers produce a drawing of nothing
+that looks exactly like a drawing of something, which is the worst thing an engineering
+portfolio can contain.
