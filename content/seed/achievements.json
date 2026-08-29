@@ -25,6 +25,37 @@
     "featured": true
   },
   {
+    "slug": "scale-ai-sprint-2026",
+    "sort_order": 12,
+    "published": true,
+    "title": "First place, general track",
+    "type": "award",
+    "event_name": "UHUB × Scale AI Sprint",
+    "role": "Co-founder and CEO, Eshrahli",
+    "result": "First place",
+    "date": "2026-04-01",
+    "city": "Doha",
+    "country": "Qatar",
+    "summary": "Won the general track with Eshrahli, a bilingual study companion. The trophy reads “for the most exciting and innovative AI venture”.",
+    "links": {
+      "product": "/products/eshrahli"
+    },
+    "media": {
+      "cover": "scale-ai-sprint-2026/ceremony.jpeg",
+      "gallery": [
+        {
+          "path": "scale-ai-sprint-2026/ceremony.jpeg",
+          "alt": "Receiving the Scale Applied AI Studio winner's trophy, with the Eshrahli title slide behind."
+        },
+        {
+          "path": "scale-ai-sprint-2026/trophy.jpeg",
+          "alt": "The Scale Applied AI Studio 2026 winner's trophy, for the most exciting and innovative AI venture."
+        }
+      ]
+    },
+    "featured": true
+  },
+  {
     "slug": "qstp-hackathon-2026",
     "sort_order": 15,
     "published": true,

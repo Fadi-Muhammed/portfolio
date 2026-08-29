@@ -457,3 +457,29 @@ Answers given in chat, with photographs supplied.
 - **Five more Cyber Drill photographs** were supplied and staged as that entry's gallery.
   The one showing a laptop was checked before use: the Immersive Labs sign-in fields are
   empty, so there is nothing to redact.
+
+### 29 August 2026 — Eshrahli and the Scale AI sprint, before Part 10
+
+- **Eshrahli is a product, not only an achievement.** It is a deployed MVP with real beta
+  users and Fadi is co-founder and CEO, so it belongs in Products; the win belongs in
+  Achievements; the two cross-reference. Written from the sprint deck and the four
+  deliverables. Earlier names Bridge AI and Jesr AI appear nowhere — the settled name is
+  Eshrahli.
+- **Its metrics are `measured`, unlike Rubric's `projected`.** Ten to fifteen beta testers
+  and 100+ slides ingested came from an actual qualitative beta with UDST students. This is
+  the first time the `basis` field earns its keep by distinguishing two products rather than
+  qualifying one.
+- **"100 % of answers cited to a page" was not seeded as a metric.** It is an architectural
+  guarantee — retrieval gate, refusal on low confidence, page-level citations — not
+  something the beta measured. It is described in the body instead.
+- **The security work is in the case study.** Two layers against prompt injection (a
+  defensive block in the system prompt and a post-generation validator) and per-user scoping
+  on every retrieval. It is the strongest engineering content in the deliverables and reads
+  as someone who implemented controls rather than documented risks.
+- **Khaled Mhirsi is credited as co-founder and CTO**, as the deck names him.
+- **The Scale AI sprint is dated April 2026**, given in chat. It is the only `award` in the
+  table, which is what finally gives B2's award filter chip something behind it. The
+  timeline now carries five entries across five types — hackathon, award, talk, competition,
+  program — all dated.
+- **Stacks, as given in chat.** Rubric: TypeScript, Next.js, Tailwind CSS, shadcn/ui,
+  Supabase, Vercel. Eshrahli: JavaScript, Supabase, Vercel.
