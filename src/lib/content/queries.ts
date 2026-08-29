@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createPublicClient } from "@/lib/supabase/public";
+import { createPublicClient, isSupabaseConfigured } from "@/lib/supabase/public";
 import type { Database } from "@/lib/supabase/types";
 import { REVALIDATE_SECONDS } from "./tags";
 
@@ -44,9 +44,22 @@ function cached<T>(fn: () => Promise<T>, key: string, tag: string) {
 // site_settings
 // ---------------------------------------------------------------------------
 
-/** The one row of site-wide copy, or null before it has been seeded. */
+/**
+ * The one row of site-wide copy, or null.
+ *
+ * Null covers both ways there can be no settings: the row has not been seeded yet, and
+ * Supabase is not configured at all — a clean checkout, or CI, which has no credentials.
+ * The second case used to throw, which was survivable while only the palette read this
+ * (it guards with `isSupabaseConfigured` itself) and stopped being survivable the moment
+ * the hero did, because the home page is statically prerendered at build time and the
+ * throw took the whole build down. Caught by CI, which is the only place that path runs.
+ *
+ * Callers already have to handle null, so this makes the unconfigured case the same
+ * shape as the unseeded one rather than a second thing to remember.
+ */
 export const getSiteSettings = cached(
   async (): Promise<SiteSettings | null> => {
+    if (!isSupabaseConfigured) return null;
     const supabase = createPublicClient();
     const { data, error } = await supabase.from("site_settings").select("*").maybeSingle();
     if (error) throw new Error(`Could not read site settings: ${error.message}`);

@@ -131,6 +131,18 @@ destinations are named. A second rule went with it as dead weight rather than as
 the routing packet was scaled to 1.15, which turns a 3.5 px square into a 4 px square and is not
 visible to anyone.
 
+**An eighth fault, and only CI could find it.** `npm run build` fails where Supabase is not
+configured, because the home page is statically prerendered and `getSiteSettings()` threw
+rather than returning null. Every local build has `.env.local`, so this path never runs on
+this machine; CI has no credentials, so it is the only place it does. The palette had
+guarded itself with `isSupabaseConfigured` since Part 6 — the hero called the fetcher
+directly and walked past the guard. `getSiteSettings()` now answers null when there is no
+database, which is the same answer it already gave for an unseeded row, so callers have
+one case to handle rather than two. Verified locally by moving `.env.local` aside and
+building the way CI does, and covered by `src/lib/content/queries.unconfigured.test.ts`.
+The list fetchers still throw in that state; Parts 8 and 9 will need the same guard when
+their sections start reading at build time.
+
 ### Decided without asking
 
 - **Six destinations and "you", not seven plus "you".** B4 reads as one node per section plus a
