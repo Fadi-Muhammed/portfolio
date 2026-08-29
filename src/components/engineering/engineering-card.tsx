@@ -13,8 +13,6 @@ import type { EngineeringProject } from "@/lib/content/queries";
  * tools are what was in your hand, concepts are what you had to understand.
  */
 export function EngineeringCard({ project }: { project: EngineeringProject }) {
-  const concepts = project.concepts.slice(0, 3);
-
   return (
     <WorkCard
       href={`/engineering/${project.slug}`}
@@ -25,10 +23,17 @@ export function EngineeringCard({ project }: { project: EngineeringProject }) {
       emptyMediaLabel="No photo yet"
       tags={project.tools.slice(0, 3)}
       meta={
-        concepts.length > 0 ? (
-          <p className="work-card__concepts text-data text-muted">
-            {concepts.join(" · ")}
-            {project.concepts.length > concepts.length ? " · …" : ""}
+        project.concepts.length > 0 ? (
+          // Every concept, on one line, truncated by CSS rather than by a hard slice:
+          // a wide card shows more of them and a narrow one shows fewer, which is what
+          // the space can actually carry. Slicing to three left "· …" orphaned on a
+          // line of its own and made the noisiest thing on the card a piece of
+          // punctuation.
+          <p
+            className="work-card__concepts text-data text-muted"
+            title={project.concepts.join(" · ")}
+          >
+            {project.concepts.join(" · ")}
           </p>
         ) : null
       }

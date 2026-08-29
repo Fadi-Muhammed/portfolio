@@ -3,24 +3,38 @@
     "slug": "intelligent-street-light-system",
     "sort_order": 10,
     "published": true,
-    "title": "Intelligent street light system",
-    "summary": "An ESP32 reads ambient light through an LDR and switches a relay-driven lamp on at nightfall, with a potentiometer setting the darkness threshold.",
-    "body": null,
-    "type": "lab",
+    "title": "Smart street lighting system",
+    "summary": "An ESP32 reads ambient light through an LDR and switches a relay-driven lamp at nightfall, with a potentiometer setting the threshold, a button for manual override, and a buzzer that fires when the sensor starts flickering.",
+    "body": "## The problem\n\nStreet lighting is one of the largest consumers of municipal electricity, and most of it is still controlled by a fixed timer or left running. A timer is wrong twice a year and wrong every overcast afternoon. The brief was an adaptive luminaire: one that responds to the light actually falling on it, can be overridden by hand, and can be calibrated on site without reflashing it.\n\nThis was the final project for AETN 2203, the microprocessors and microcontrollers lab at UDST.\n\n## What we built\n\nAn ESP32 running MicroPython, with an LDR in a voltage divider on GPIO34 and a potentiometer on GPIO35. Both are read by the 12-bit ADC at 11 dB attenuation, so each returns 0 to 4095 across the full 3.3 V range. Every pass of the loop compares the two: if the light reading is above the threshold the potentiometer sets, it is night.\n\nWhen it is night the lamp comes on — an LED driven at 80 % through the ESP32's hardware PWM, and a relay on GPIO26 to switch a higher-power load. A push button on GPIO14 toggles a manual override that forces the lamp on regardless of the reading, and back again.\n\nThe part I would defend is the fault detector. A light sensor that has come loose, or that is catching a passing headlight, flickers between day and night many times a second — but so does a real sunset, slowly. The loop counts day/night changes inside a five-second window, and six or more of them means the sensor is misbehaving rather than the sun setting. The onboard buzzer sounds and the console reports `FAULT` instead of a light state. It costs one counter and one comparison, and it separates a broken sensor from a working one without any extra hardware.\n\nStatus goes to the serial console rather than a display: the mode, the light state, and the raw readings, printed every loop so the threshold can be set by watching the numbers move.\n\n## What it did\n\nEach subsystem was tested on its own before being combined. Covering and uncovering the LDR moved the reading clearly between bright and dark; turning the potentiometer swept the threshold across that range and moved the switching point with it. Darkening the sensor below the threshold brought the LED on at 80 % and closed the relay. The button toggled cleanly between modes. Waving light and shadow over the LDR for a few seconds fired the buzzer and put `FAULT` on the console, as intended.\n\nA representative line during automatic night operation:\n\n`Mode: AUTO | Light ON | LDR = 3120 | TH = 1850`\n\n## What I learned\n\nThe ESP32's ADC is not the Arduino's: 12 bits rather than 10, attenuation that has to be set explicitly to see the whole 3.3 V range, and ADC2 unusable while Wi-Fi is on. Hardware PWM turned out to do two unrelated jobs — dimming the lamp and sounding the buzzer — from the same peripheral. And building it one subsystem at a time, with the readings printed the whole way, meant every problem was found in the part that caused it rather than in the assembled whole.\n\nThe honest limitations: the fault rule is a heuristic, not a measurement of anything; the LDR is sensitive to how it is mounted and to stray light; and a single sensor has no redundancy if it fails outright. Hysteresis around the threshold would stop it chattering at dusk, which is the first thing I would add.\n\n## Credit\n\nA two-person project for AETN 2203, with Adam.",
+    "type": "course",
     "concepts": [
       "Analogue-to-digital conversion",
       "Voltage divider sensing",
-      "Ambient light sensing",
-      "Threshold detection",
+      "Threshold detection and calibration",
+      "Hardware PWM (LEDC)",
       "Relay switching",
-      "GPIO control"
+      "Debouncing and pull-ups",
+      "Real-time control loop"
     ],
-    "tools": ["ESP32", "MicroPython", "LDR", "Potentiometer", "Relay", "LED"],
+    "tools": [
+      "ESP32",
+      "MicroPython",
+      "uPyCraft",
+      "LDR",
+      "Potentiometer",
+      "Relay module",
+      "Push button",
+      "Buzzer"
+    ],
     "cover_image_path": "intelligent-street-light-system/cover.jpeg",
     "gallery": [],
     "report_path": null,
     "repo_url": null,
-    "interactive_widget": null,
-    "data": {}
+    "interactive_widget": "street-light-bench",
+    "data": {
+      "defaultLdr": 3120,
+      "defaultThreshold": 1850,
+      "source": "Readings and constants taken from the AETN 2203 final report and main.py."
+    }
   }
 ]

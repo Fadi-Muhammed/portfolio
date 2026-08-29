@@ -1,0 +1,250 @@
+Department of Telecommunications and Network Engineering
+College of Engineering Technology
+University of Doha for Science and Technology
+AETN 2203 Microprocessors / Microcontrollers Lab
+Technical Report for Final Project
+Smart Street Lighting System
+An Adaptive Street Light Using the ESP32 and MicroPython
+Instructor: [Instructor’s Name]
+Student Names: Fadi [Surname]  &  Adam [Surname]
+Student IDs: [ID 1]  /  [ID 2]
+Date: [Submission Date]
+Table of Contents
+TOC \h \o "1-2"
+(In Word: right-click the table above → Update Field → Update entire table to fill in page numbers.)
+1. Introduction
+Street lighting is one of the largest consumers of municipal electricity, yet conventional street lights are often controlled by fixed timers or run continuously, wasting energy when natural light is already sufficient. An adaptive lighting system that responds to the actual ambient light level can reduce this waste while still guaranteeing illumination when it is genuinely needed.
+This report documents the design and implementation of a Smart Street Lighting System built around the ESP32 microcontroller and programmed in MicroPython using the uPyCraft IDE. The system measures ambient light with a light-dependent resistor (LDR), compares it against an adjustable threshold set by a potentiometer, and switches a street light (an LED, with a relay provided to drive a higher-power lamp) accordingly. A push button provides a manual override, and a simple fault-detection routine raises an audible alarm through the board’s onboard buzzer if the light sensor behaves erratically.
+The scope of the project covers the hardware design and wiring on the ESP32 development board, the control logic, and the MicroPython program, together with the testing and calibration needed to make the system behave reliably. Status information is reported over the serial console rather than a dedicated display, keeping the hardware minimal while still giving full visibility into the system state for demonstration and debugging.
+2. Objectives
+The specific objectives of the project were to:
+Design an adaptive street light that automatically turns ON in darkness and OFF in daylight, based on a measured ambient-light level.
+Provide a manual override so an operator can force the light ON regardless of the ambient conditions, and return it to automatic operation.
+Allow the day/night switching threshold to be calibrated in the field using a potentiometer, without changing the program.
+Detect a faulty or flickering light sensor and raise an audible alarm so the fault can be addressed.
+Drive the lamp at a controlled brightness (80 % using PWM) and demonstrate switching of a higher-power load through a relay.
+Implement the complete control program in MicroPython on the ESP32 and verify its behaviour through the serial console.
+3. Equipment Used
+3.1 Hardware
+Component
+Purpose
+ESP32 development board (carrier)
+Main microcontroller; runs the MicroPython program. Provides the onboard buzzer (GPIO17).
+LDR + 10 kΩ resistor
+Ambient-light sensing as a voltage divider.
+Potentiometer (10 kΩ)
+Sets / calibrates the day–night threshold.
+LED (white / yellow)
+Acts as the street light.
+220 Ω resistor
+Current-limiting resistor in series with the LED.
+Relay module (5 V)
+Switches a higher-power lamp (demonstrates real-load switching).
+Onboard buzzer (GPIO17)
+Sensor-fault alarm, driven with PWM.
+Push button
+Manual override input.
+Breadboard and jumper wires
+Prototyping connections.
+3.2 Software
+MicroPython firmware flashed onto the ESP32.
+uPyCraft IDE for writing the program, flashing firmware, uploading main.py, and viewing the serial console output (115200 baud).
+4. Methodology
+4.1 Design Specifications and Constraints
+Before implementation, the following design specifications and constraints were defined:
+Logic level: the ESP32 operates at 3.3 V, so all analog sensors are powered from the 3.3 V rail to match its logic levels and protect its pins.
+Analog resolution: the ESP32 has a 12-bit ADC, giving readings from 0 to 4095. Input attenuation is set so the full 0–3.3 V range can be read.
+Pin constraints: ADC1 pins (GPIO 32–39) are used for analog inputs because ADC2 conflicts with Wi-Fi; GPIO 34/35 are input-only and therefore used only for the sensors, never for the button.
+Brightness control: the LED is dimmed to 80 % using the ESP32’s hardware PWM (LEDC) rather than a simple ON/OFF, to model a real dimmable luminaire.
+Calibration: the threshold must be adjustable on site via a potentiometer rather than hard-coded.
+Cost and simplicity: the design avoids unnecessary parts — the onboard buzzer is reused and the status is shown on the serial console instead of adding a display.
+4.2 Design Methodology
+The project followed an incremental, test-as-you-go methodology drawn from the lab exercises: each subsystem was wired and verified on its own before being combined into the full system. The control logic was expressed as a flowchart first, then translated into MicroPython, and finally tuned against the real sensor readings.
+4.3 Circuit Connections
+The components are connected to the ESP32 as summarised below. A common ground is shared by all parts; 3.3 V supplies the sensors and 5 V (VIN) supplies the relay.
+Component
+ESP32 Pin
+Connection detail
+LDR
+GPIO 34 (ADC1)
+3.3 V → LDR → node(GPIO34) → 10 kΩ → GND
+Potentiometer
+GPIO 35 (ADC1)
+Outer pins to 3.3 V and GND, wiper → GPIO35
+Street LED
+GPIO 25 (PWM)
+GPIO25 → LED(+) → LED(−) → 220 Ω → GND
+Push button
+GPIO 14
+One leg → GPIO14, other → GND (internal pull-up)
+Relay IN
+GPIO 26
+VCC→5 V, GND→GND, IN→GPIO26
+Buzzer (onboard)
+GPIO 17
+Built into the carrier board — no external wiring
+Sensor behaviour: more light lowers the LDR resistance and the divider voltage, so a low ADC reading means bright and a high reading means dark. The day/night test in software (LDR > threshold) follows from this and was verified on the rig during calibration.
+4.4 Fritzing Diagram
+[ Insert your Fritzing wiring diagram here ]
+4.5 Photographs of the Build
+[ Insert one or more photographs of your assembled circuit here ]
+4.6 Control Logic (Flowchart)
+Each pass through the main loop follows the sequence below:
+START / initialise pins and state
+Read the button → if pressed, toggle AUTO ↔ MANUAL
+Read the LDR and the potentiometer threshold
+is_night = (LDR reading > threshold)
+If the day/night state flipped, count the flip
+If too many flips occurred within ~5 seconds → set FAULT, sound buzzer
+If MANUAL or is_night → light ON at 80 % PWM (and relay ON); else light OFF
+Print Mode / Status / LDR / threshold to the console
+Wait 0.1 s and repeat
+[ Optional: replace the steps above with your drawn flowchart image ]
+5. Results
+The completed system was tested subsystem by subsystem and then as a whole. The observed behaviour is summarised below.
+Test
+Action
+Observed result
+LDR reading
+Cover / uncover the LDR
+Console LDR value changed clearly between bright and dark.
+Threshold
+Turn the potentiometer
+Console TH value swept across the LDR range, moving the switch point.
+Auto switching
+Darken the LDR below threshold
+LED turned ON at 80 % brightness; relay switched.
+Manual override
+Press the push button
+Mode toggled to MANUAL and the light stayed ON regardless of light level; pressing again returned to AUTO.
+Fault alarm
+Rapidly wave light/shadow over the LDR
+After several quick flips within the 5 s window, the buzzer sounded and the console showed FAULT.
+A representative line of console output during automatic night operation is:
+Mode: AUTO | Light ON | LDR = 3120 | TH = 1850
+The raw LDR and threshold values printed every loop made calibration straightforward and provided clear evidence of correct operation during the demonstration.
+6. Analysis
+The results show that the system met all of its objectives: it switches automatically on ambient light, accepts a manual override, allows on-site threshold calibration, and flags an erratic sensor. The following evaluation considers the design against technical performance, cost, and broader impacts, as required.
+6.1 Technical Performance
+Using the 12-bit ADC with proper attenuation gave a wide, stable reading range that made the day/night decision reliable. Driving the LED with PWM at 80 % models a dimmable luminaire and reduces power compared with full brightness. The 0.1 s loop is fast enough to feel responsive while keeping the console output readable. The fault routine, based on counting state changes inside a fixed time window, is simple yet effectively distinguishes a normal sunrise/sunset transition from an erratic, flickering sensor.
+6.2 Cost-Effectiveness
+The design is deliberately low-cost. It reuses the board’s onboard buzzer and reports status over the serial console instead of adding a display, removing parts without losing functionality. The remaining components — an LDR, a potentiometer, an LED, a resistor, a relay, and a push button — are inexpensive and widely available, making the prototype cheap to reproduce and easy to scale.
+6.3 Ethical Implications
+An automated light that the public relies on for safety must fail safely and behave predictably. The manual override and the sensor-fault alarm directly address this: if the sensor misbehaves, the alarm draws attention to it rather than leaving the street silently dark. Honest reporting of the system’s limitations (see Conclusion) is also an ethical obligation when a design affects public spaces.
+6.4 Impact on Public Health, Safety, and Welfare
+Reliable street lighting supports road and pedestrian safety and a general sense of security. By ensuring lights come on when it is genuinely dark — rather than on a fixed timer that can be wrong — the system improves safety, while the override gives operators control during maintenance or emergencies.
+6.5 Environmental and Economic Factors
+Switching lights only when needed and dimming them reduces electricity consumption, lowering both cost and the associated carbon emissions. Across a city the cumulative saving from avoiding unnecessary lighting is significant, giving the approach a clear economic and environmental benefit.
+6.6 Global, Cultural, and Social Factors
+Adaptive, energy-efficient lighting aligns with global sustainability goals and smart-city initiatives, and the calibration potentiometer lets the same design be tuned to different latitudes and local preferences for how dark it should be before lights switch on — making it adaptable across regions and communities.
+7. Coding
+The complete MicroPython program, written and tested in uPyCraft, is listed below. It is saved on the board as main.py so that it runs automatically on power-up. The code is commented throughout to relate each block to the control logic described in the Methodology.
+# ============================================================
+# Smart Street Lighting System  (ESP32 + MicroPython)
+# Objective: an adaptive street light that responds to ambient
+# light (LDR) and to a manual override button, and raises an
+# alarm if the light sensor behaves erratically.
+#  - AUTO mode  : dark -> LED ON at 80%, bright -> LED OFF
+#  - MANUAL mode: button forces the light ON, ignoring the LDR
+#  - Fault      : too many day/night flips in 5s -> buzzer alarm
+# Status is printed to the serial console (no display used).
+# ============================================================
+from machine import Pin, ADC, PWM   # GPIO, analog read, and PWM classes
+from time import sleep              # delay function
+print("Smart Street Light started")
+# ---------------- INPUTS ----------------
+# LDR voltage divider on GPIO34 (an ADC1 pin, as required for analog reads).
+# The 12-bit ADC returns 0..4095. Per the project notes:
+# low reading = bright, high reading = dark.
+ldr = ADC(Pin(34))
+ldr.atten(ADC.ATTN_11DB)            # widen the range so it reads the full 0-3.3V
+# Potentiometer on GPIO35 (also ADC1) used to CALIBRATE the day/night threshold.
+pot = ADC(Pin(35))
+pot.atten(ADC.ATTN_11DB)
+# Push button on GPIO14 for the manual override.
+# PULL_UP holds the pin at 1; pressing the button connects it to GND -> 0.
+button = Pin(14, Pin.IN, Pin.PULL_UP)
+# ---------------- OUTPUTS ----------------
+# Street LED on GPIO25, driven with PWM so we can set 80% brightness.
+led = PWM(Pin(25))
+led.freq(1000)                      # PWM frequency in Hz
+led.duty(0)                         # start OFF (duty range is 0..1023)
+# Relay on GPIO26 switches the higher-power lamp (project requirement).
+relay = Pin(26, Pin.OUT)
+# Onboard buzzer on GPIO17, driven with PWM (same as in the lab buzzer task).
+buzzer = PWM(Pin(17))
+buzzer.freq(1000)
+buzzer.duty(0)                      # start silent
+# ---------------- STATE VARIABLES ----------------
+manual = 0                          # manual override: 0 = AUTO, 1 = MANUAL
+last_night = 0                      # previous day/night state (0 = day, 1 = night)
+flips = 0                           # how many times day/night changed in this window
+ticks = 0                           # loop counter, used to measure the 5-second window
+fault = 0                           # sensor fault flag: 0 = ok, 1 = erratic
+while 1:                            # main loop, repeats forever (~10 times a second)
+    # --- MANUAL OVERRIDE: each button press flips AUTO <-> MANUAL ---
+    if button.value() == 0:         # 0 means the button is being pressed
+        manual = 1 - manual         # flips 0 to 1, or 1 to 0
+        sleep(0.3)                  # short pause so one press counts once (debounce)
+    # --- READ THE SENSORS ---
+    ldr_value = ldr.read()          # current light level, 0..4095
+    threshold = pot.read()          # day/night threshold set by the pot, 0..4095
+    if ldr_value > threshold:       # high reading = dark -> it is night
+        is_night = 1
+    else:
+        is_night = 0                # otherwise it is bright -> day
+    # --- FAULT DETECTION: count day/night flips inside a 5-second window ---
+    if is_night != last_night:      # the state changed since last loop
+        flips = flips + 1           # count this flip
+        last_night = is_night       # remember the new state
+    ticks = ticks + 1               # one more loop has passed
+    if ticks >= 50:                 # 50 loops x 0.1s = 5 seconds -> window is over
+        if flips >= 6:              # too many flips = erratic / flickering sensor
+            fault = 1
+        else:
+            fault = 0
+        flips = 0                   # reset the counters for the next window
+        ticks = 0
+    # --- BUZZER ALARM: sound only when a fault is detected ---
+    if fault == 1:
+        buzzer.duty(512)            # ON (about half power) -> audible tone
+    else:
+        buzzer.duty(0)              # OFF -> silent
+    # --- LIGHTING DECISION ---
+    # Light comes ON if we are in MANUAL mode, OR if AUTO mode says it is night.
+    if manual == 1:
+        light_on = 1                # MANUAL forces the light ON
+    elif is_night == 1:
+        light_on = 1                # AUTO: dark -> ON
+    else:
+        light_on = 0                # AUTO: bright -> OFF
+    if light_on == 1:
+        led.duty(819)               # ~80% of 1023, as required for "ON"
+        relay.value(1)              # switch the lamp on via the relay
+    else:
+        led.duty(0)                 # LED off
+        relay.value(0)              # relay off
+    # --- PRINT STATUS to the serial console ---
+    # Shows the mode and light status, plus the raw LDR/TH values for calibration.
+    if manual == 1:
+        mode = "MANUAL"
+    else:
+        mode = "AUTO"
+    if fault == 1:
+        status = "FAULT - sensor erratic"
+    elif light_on == 1:
+        status = "Light ON"
+    else:
+        status = "Light OFF"
+    print("Mode:", mode, "|", status, "| LDR =", ldr_value, "| TH =", threshold)
+    sleep(0.1)                      # wait 0.1s, then repeat the loop
+8. Conclusion
+The Smart Street Lighting System successfully demonstrates an adaptive luminaire controlled by an ESP32 in MicroPython. It switches automatically on ambient light, supports a manual override, allows field calibration of the threshold through a potentiometer, dims the LED to 80 % with PWM, switches a higher-power load through a relay, and warns of an erratic sensor with the onboard buzzer — with full status visible on the serial console.
+The main limitation is that the fault detection is heuristic and the LDR is sensitive to its mounting and to stray light, so careful calibration is needed. The single-LDR design also has no redundancy if the sensor fails completely. Future work could add a light-level histogram for smarter thresholds, hysteresis to avoid switching near the threshold, data logging, or wireless reporting using the ESP32’s Wi-Fi.
+Through the project we gained practical experience with the ESP32’s 12-bit ADC and attenuation, hardware PWM for both dimming and tone generation, input handling with pull-ups and debouncing, and structuring a real-time control loop in MicroPython — as well as the value of incremental, test-as-you-go development and on-screen calibration.
+9. References
+Espressif Systems. (2024). ESP32 series datasheet. Espressif Systems. https://www.espressif.com/en/support/documents/technical-documents
+Espressif Systems. (2024). ESP32 technical reference manual. Espressif Systems. https://www.espressif.com/en/support/documents/technical-documents
+MicroPython. (2024). MicroPython documentation: Quick reference for the ESP32. https://docs.micropython.org/en/latest/esp32/quickref.html
+MicroPython. (2024). machine — functions related to the hardware (Pin, ADC, PWM). https://docs.micropython.org/en/latest/library/machine.html
+(Format the final reference list in full APA style and add any datasheets or tutorials you actually used.)
