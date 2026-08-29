@@ -131,6 +131,29 @@ test("a hop's evidence opens on request, and only on request", async ({ page }) 
   await expect(panel).toBeHidden();
 });
 
+test("opening a hop near the bottom brings it into view, without moving the deck", async ({
+  page,
+}) => {
+  if (!(await openTimeline(page))) test.skip();
+
+  const toggles = await page.locator("#achievements .hop__toggle").all();
+  const toggle = toggles.at(-1);
+  if (!toggle) {
+    test.skip();
+    return;
+  }
+
+  const deckBefore = await page.evaluate(() => document.querySelector(".deck")?.scrollTop ?? 0);
+  await toggle.click();
+
+  const panel = page.locator(`#${await toggle.getAttribute("aria-controls")}`);
+  await expect(panel).toBeInViewport();
+
+  // Only the list's own scroll moved. Scrolling the deck here would fight its snap.
+  const deckAfter = await page.evaluate(() => document.querySelector(".deck")?.scrollTop ?? 0);
+  expect(deckAfter).toBe(deckBefore);
+});
+
 test("a hop's links say where they go and open outward safely", async ({ page }) => {
   if (!(await openTimeline(page))) test.skip();
 

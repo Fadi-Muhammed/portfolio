@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "@/components/ui/link";
 import { galleryImages, mediaUrl } from "@/lib/content/media";
 import {
@@ -46,6 +46,26 @@ export function Hop({ hop }: { hop: HopModel }) {
   const { entry, number } = hop;
   const [open, setOpen] = useState(false);
   const detailId = useId();
+  const itemRef = useRef<HTMLLIElement | null>(null);
+
+  /*
+   * Bring what was just opened into view.
+   *
+   * The route scrolls inside the section, and that region is short — opening the detail
+   * on any hop but the first put the photograph and the links entirely below the fold, so
+   * the control appeared to do nothing. Only the list's own scrollTop is touched:
+   * `scrollIntoView` would scroll every scrollable ancestor including the deck, which is
+   * exactly the fight with scroll-snap that B3 forbids.
+   */
+  useEffect(() => {
+    if (!open) return;
+    const item = itemRef.current;
+    const list = item?.closest<HTMLElement>(".hop-list");
+    if (!item || !list) return;
+
+    const overflow = item.getBoundingClientRect().bottom - list.getBoundingClientRect().bottom;
+    if (overflow > 0) list.scrollTop += overflow;
+  }, [open]);
 
   const when = formatWhen(entry.date);
   const place = formatPlace(entry.city, entry.country);
@@ -58,7 +78,7 @@ export function Hop({ hop }: { hop: HopModel }) {
   const hasDetail = Boolean(entry.summary || image || links.length > 0);
 
   return (
-    <li className="hop" data-slug={entry.slug}>
+    <li ref={itemRef} className="hop" data-slug={entry.slug}>
       <div className="hop__mark" aria-hidden="true">
         <span className="hop__node" />
       </div>

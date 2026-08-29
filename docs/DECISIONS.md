@@ -491,8 +491,7 @@ Asked before any work, answered in chat.
 - **The list is complete for now.** Five entries, one of each type. Fadi will add more
   after the site is complete, with their dates, and the timeline sorts them into place on
   its own — nothing about the section assumes five.
-- **DMZ Basecamp was in Toronto, Ontario, Canada**, and ran two months, July to August
-  2025. The row had no city, no country and no summary; it was the only entry missing all
+- **DMZ Basecamp was in Toronto, Ontario, Canada**, and ran two months, July to August 2025. The row had no city, no country and no summary; it was the only entry missing all
   three. `date` stays `2025-07-01` — the table has one date column, not a range — and the
   duration is stated in the summary instead, which is where a range can be read.
 - **The Web Summit talk has no recording and no slides.** So **the click-to-load video

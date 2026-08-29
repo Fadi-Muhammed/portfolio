@@ -69,9 +69,17 @@ const fullPage = process.env.SCREENS_FULL_PAGE === "1";
 const openPalette = process.env.SCREENS_PALETTE === "1";
 
 function slugOf(route: string): string {
-  if (route.startsWith("/#")) return `deck-${route.slice(2)}`;
-  const cleaned = route.replace(/^\/+|\/+$/g, "");
-  return cleaned === "" ? "home" : cleaned.replace(/\//g, "-");
+  const [pathAndQuery, hash] = route.split("#");
+  const [pathname, query] = pathAndQuery.split("?");
+  const cleaned = pathname.replace(/^\/+|\/+$/g, "");
+  const base = hash ? `deck-${hash}` : cleaned === "" ? "home" : cleaned.replace(/\//g, "-");
+
+  /*
+   * A deck route can carry state that is part of what is being photographed — the
+   * Achievements filter, "/?hop=talk#achievements". It belongs in the file name, and
+   * "?" and "=" are not legal in a Windows one.
+   */
+  return query ? `${base}-${query.replace(/[^a-zA-Z0-9]+/g, "-")}` : base;
 }
 
 function run(args: string[]): Promise<void> {
