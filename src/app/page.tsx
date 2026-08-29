@@ -5,15 +5,20 @@ import { SectionPlaceholder } from "@/components/deck/section-placeholder";
 import { SiteNav } from "@/components/deck/site-nav";
 import { SkipLink } from "@/components/deck/skip-link";
 import { Hero } from "@/components/hero/hero";
+import { ProductsSection } from "@/components/products/products-section";
 import { PaletteProvider } from "@/components/palette/palette-provider";
-import { getSiteSettings } from "@/lib/content/queries";
+import { getProducts, getSiteSettings } from "@/lib/content/queries";
 import { SECTIONS } from "@/lib/deck/sections";
 import { getPaletteContent } from "@/lib/palette/content";
 
 export default async function Home() {
   // Fetched on the server so the palette's list is current without the client querying
   // the database, and so nothing is fetched for a palette that is never opened.
-  const [paletteContent, settings] = await Promise.all([getPaletteContent(), getSiteSettings()]);
+  const [paletteContent, settings, products] = await Promise.all([
+    getPaletteContent(),
+    getSiteSettings(),
+    getProducts(),
+  ]);
 
   return (
     <DeckProvider>
@@ -32,6 +37,8 @@ export default async function Home() {
             >
               {section.id === "hero" ? (
                 <Hero settings={settings} />
+              ) : section.id === "products" ? (
+                <ProductsSection products={products} />
               ) : (
                 <SectionPlaceholder section={section} />
               )}

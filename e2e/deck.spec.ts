@@ -120,6 +120,10 @@ test("inactive sections are inert, so tabbing stays in the active one", async ({
 test("under reduced motion the hop is instant and nothing smooth-scrolls", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  // The provider writes the hash on mount, so this proves the keyboard listener exists.
+  // Without it the keypress raced hydration — invisible while the sections were empty
+  // placeholders, and a flake the moment Part 8 gave one of them an image to load.
+  await expect(page).toHaveURL(/#/);
 
   const deck = page.locator(".deck");
   await expect(deck).toHaveCSS("scroll-behavior", "auto");

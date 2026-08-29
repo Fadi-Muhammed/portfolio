@@ -123,6 +123,7 @@ export async function getEngineeringProject(slug: string): Promise<EngineeringPr
 
 const getAllAchievements = cached(
   async (): Promise<Achievement[]> => {
+    if (!isSupabaseConfigured) return [];
     const supabase = createPublicClient();
     // Newest first, because a traceroute timeline reads from the most recent hop.
     // Entries without a date sort last rather than being dropped.
@@ -154,6 +155,7 @@ export async function getAchievements(type?: AchievementType): Promise<Achieveme
 
 export const getFeaturedIn = cached(
   async (): Promise<FeaturedIn[]> => {
+    if (!isSupabaseConfigured) return [];
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("featured_in")
@@ -173,6 +175,7 @@ export const getFeaturedIn = cached(
 
 export const getSkills = cached(
   async (): Promise<Skill[]> => {
+    if (!isSupabaseConfigured) return [];
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("skills")
@@ -192,6 +195,7 @@ export const getSkills = cached(
 
 export const getCertifications = cached(
   async (): Promise<Certification[]> => {
+    if (!isSupabaseConfigured) return [];
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("certifications")
@@ -211,6 +215,7 @@ export const getCertifications = cached(
 
 export const getExperience = cached(
   async (): Promise<Experience[]> => {
+    if (!isSupabaseConfigured) return [];
     const supabase = createPublicClient();
     // Most recent first: a timeline is read from now backwards.
     const { data, error } = await supabase

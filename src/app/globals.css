@@ -891,3 +891,433 @@
     }
   }
 }
+
+/*
+ * Products (B2 item 2) — the deck section, the cards, and the case-study page.
+ */
+@layer components {
+  .section-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .section-intro {
+    flex: none;
+  }
+
+  .section-more {
+    flex: none;
+    margin: 0;
+  }
+
+  /*
+   * The filmstrip.
+   *
+   * It snaps horizontally inside one child of a container that snaps vertically. The two
+   * never argue because they are on different axes and on different elements: the deck
+   * owns the page's vertical scroll, this owns its own horizontal one. `touch-action` is
+   * left alone deliberately — the browser decides which gesture belongs to which scroller,
+   * and it is better at that than a rule would be.
+   */
+  .product-strip {
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0 var(--section-pad) 0.5rem;
+    /* Runs to the glass so a half-visible next card says there is more to the right. */
+    margin-inline: calc(-1 * var(--section-pad));
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: var(--section-pad);
+    min-height: 0;
+  }
+
+  .product-strip__item {
+    flex: 0 0 85%;
+    max-width: 26rem;
+    scroll-snap-align: start;
+  }
+
+  /* One card should not sit alone at 85% width with a gap where its neighbour would be. */
+  .product-strip[data-count="1"] .product-strip__item {
+    flex-basis: 100%;
+  }
+
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+  }
+
+  /*
+   * One target, not several. A link inside a link is invalid and makes the card
+   * ambiguous to a keyboard, so the card's only destination is the case study and the
+   * demo and repo links live on that page, where there is room to label them.
+   */
+  .product-card__link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .product-card__media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+    background-color: var(--surface);
+    display: grid;
+    place-items: center;
+  }
+
+  .product-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  .product-card__link:hover .product-card__image {
+    opacity: 0.88;
+  }
+
+  .product-card__link:hover .product-card__title,
+  .product-card__link:focus-visible .product-card__title {
+    color: var(--accent);
+  }
+
+  .product-card__title {
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .product-card__summary {
+    /* Two lines, so a long summary cannot make one card twice the height of another. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .product-card__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.25rem;
+  }
+
+  .product-card__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /*
+   * The live reading.
+   *
+   * `signal` is spent here because this is exactly what section 2 reserves it for: a
+   * thing that is genuinely live, measured now. Unreachable is `muted` rather than
+   * `danger` — the product being down is not the visitor's error and not this site's
+   * fault, and painting it red would say something untrue about both.
+   */
+  .live-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .live-status__led {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 50%;
+    background-color: var(--muted);
+  }
+
+  .live-status[data-state="up"] {
+    color: var(--signal);
+  }
+
+  .live-status[data-state="up"] .live-status__led {
+    background-color: var(--signal);
+  }
+
+  .live-status[data-state="checking"] .live-status__led {
+    animation: packet 1s var(--ease) infinite;
+  }
+
+  .product-card__no-image {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  @media (min-width: 48rem) {
+    .product-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow-x: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      /* The grid does not scroll, so it must not carry snap points. */
+      scroll-snap-type: none;
+    }
+
+    .product-strip__item {
+      max-width: none;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .product-strip[data-count="3"],
+    .product-strip[data-count="4"] {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /*
+   * Detail pages. These are outside the deck, so they scroll like a normal document.
+   */
+  .detail {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: calc(var(--nav-h) + 2rem) var(--section-pad) 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .detail__back {
+    margin: 0;
+  }
+
+  .detail__head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .detail__cover {
+    width: 100%;
+    height: auto;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .detail__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .detail__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .detail__aside h2 {
+    margin: 0 0 0.75rem;
+  }
+
+  .detail__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .detail__metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0 0 0.75rem;
+  }
+
+  .detail__metrics dd {
+    margin: 0;
+  }
+
+  .detail__links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .detail__copy {
+    padding: 0;
+    color: var(--accent);
+    background: none;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .detail__gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .detail__gallery figure {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .detail__gallery img {
+    width: 100%;
+    height: auto;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .detail__nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: var(--hairline) solid var(--line);
+  }
+
+  .detail__nav a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .detail__nav-next {
+    text-align: right;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 48rem) {
+    .product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .detail__grid {
+      /* The reading column and its apparatus. The aside is deliberately narrow: it holds
+         labels and figures, and a wide column of them would compete with the prose. */
+      grid-template-columns: minmax(0, 1fr) 16rem;
+      gap: 4rem;
+    }
+  }
+
+  /*
+   * The prose scale (docs/DESIGN.md section 12). Markdown bodies only. Every value is
+   * from the existing type and spacing scales — this adds rhythm, not new sizes.
+   */
+  .prose {
+    max-width: var(--measure);
+  }
+
+  .prose > * {
+    margin: 0;
+  }
+
+  .prose > * + * {
+    margin-top: 1rem;
+  }
+
+  .prose h2 {
+    margin-top: 2.5rem;
+  }
+
+  .prose h3 {
+    margin-top: 2rem;
+  }
+
+  .prose > :first-child {
+    margin-top: 0;
+  }
+
+  .prose p,
+  .prose li {
+    color: var(--ink);
+    font-size: var(--text-body);
+    line-height: 1.6;
+  }
+
+  .prose ul {
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  .prose li + li {
+    margin-top: 0.5rem;
+  }
+
+  .prose strong {
+    font-weight: 600;
+  }
+
+  .prose-code {
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+    border: var(--hairline) solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .prose-link {
+    color: var(--accent);
+  }
+}
+
+/*
+ * The card's cover animates into the detail page's cover where the browser supports it
+ * (B5). Everything else cross-fades, which is the default behaviour and the designed
+ * fallback rather than a degraded one. Under reduced motion nothing moves at all.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(*) {
+    animation-duration: var(--dur-hop);
+    animation-timing-function: var(--ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
