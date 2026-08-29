@@ -26,7 +26,7 @@
 import { readdir, mkdir, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import sharp from "sharp";
+import sharp, { type Sharp } from "sharp";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const SRC = path.join(ROOT, "content", "assets", "logos-src");
@@ -63,6 +63,11 @@ const INSET = 0.94;
 const FILLED_COVERAGE = 0.6;
 const FILLED_LIGHT_SHARE = 0.05;
 
+/** The luminance window the knockout maps to alpha. Below the floor is fill, above the
+ *  ceiling is artwork; between them is the edge. */
+const FILL_FLOOR = 0.35;
+const FILL_CEILING = 0.7;
+
 if (!existsSync(SRC)) {
   console.error(`No ${path.relative(ROOT, SRC)}. Put the original logo files there.`);
   process.exit(1);
@@ -70,7 +75,7 @@ if (!existsSync(SRC)) {
 
 type Measured = {
   name: string;
-  trimmed: sharp.Sharp;
+  trimmed: Sharp;
   width: number;
   height: number;
   side: number;
@@ -140,7 +145,12 @@ async function knockOutFill(buffer: Buffer): Promise<Buffer> {
   for (let i = 0; i < out.length; i += info.channels) {
     // Rec. 709 luma, then gated by the original alpha so the trimmed surround stays out.
     const luma = (0.2126 * out[i] + 0.7152 * out[i + 1] + 0.0722 * out[i + 2]) / 255;
-    out[i + 3] = out[i + 3] > 128 ? Math.round(luma * 255) : 0;
+    // Stretched, not used raw. Luminance straight from the artwork gives a mark of
+    // graduated alpha, and a monochrome mask draws graduated alpha as a washed-out ghost
+    // beside eight flat ones. The curve moves the engraving to opaque and the fill to
+    // clear, leaving the anti-aliasing in between.
+    const stretched = Math.min(1, Math.max(0, (luma - FILL_FLOOR) / (FILL_CEILING - FILL_FLOOR)));
+    out[i + 3] = out[i + 3] > 128 ? Math.round(stretched * 255) : 0;
   }
 
   return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } })

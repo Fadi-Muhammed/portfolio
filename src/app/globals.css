@@ -1896,3 +1896,175 @@
     transform: none;
   }
 }
+
+/*
+ * Featured in (B2 item 5, B8) — logos and nothing else.
+ *
+ * Every mark is drawn twice from one file: the image in its own colours underneath, and a
+ * flat fill in a token colour masked by the same image on top. The mask is what makes a
+ * near-black wordmark and a pale broadcaster's mark read at the same weight, which
+ * `filter: grayscale()` cannot do — greyscale preserves luminance, so a pale mark stays
+ * pale and a black one stays black, and this set fails at both ends.
+ *
+ * The files arrive pre-normalised by scripts/normalise-logos.mts: equal ink, identical
+ * canvas. That is why there is no per-logo sizing here at all — one cell, nine times.
+ */
+@layer components {
+  /*
+   * Three columns, not `auto-fit`.
+   *
+   * auto-fit put seven marks on the first row and two on the second, and a 7 + 2 split
+   * reads as an accident rather than an arrangement — the count came from the viewport
+   * rather than from the content. Nine divides by three, so the grid is stated instead of
+   * inferred and every row is full at every width.
+   *
+   * Centred in the section because there is nothing else in it: B8 allows logos and a
+   * header and nothing more, so the space around them is the design rather than a gap
+   * waiting to be filled.
+   */
+  .featured {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.75rem 1rem;
+    margin: 0;
+    padding: 0;
+    padding-right: var(--rail-gutter);
+    list-style: none;
+    align-content: center;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .featured__item {
+    min-width: 0;
+  }
+
+  /*
+   * The cell. 600x421 is the canvas every normalised logo shares, so the aspect is the
+   * files' own rather than a number chosen here. The 44px floor is the touch target: a
+   * logo becomes a link the day its coverage URL exists, and a target that only clears
+   * B12's minimum once the href arrives would be a trap set for later.
+   */
+  .featured__link {
+    display: grid;
+    place-items: center;
+    min-height: max(44px, 5rem);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+  }
+
+  .featured__mark {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 8.5rem;
+    aspect-ratio: 600 / 421;
+  }
+
+  .featured__colour,
+  .featured__mono {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  .featured__colour {
+    object-fit: contain;
+    /* The colour layer is the hover state, so it starts hidden and the mask sits over it. */
+    opacity: 0;
+  }
+
+  .featured__mono {
+    background-color: var(--muted);
+    mask-image: var(--logo);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: var(--logo);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+  }
+
+  /*
+   * Hover and focus reveal the real mark — on the light theme only.
+   *
+   * Four of the nine fail WCAG's 3:1 against the dark ground in their own colours: Al
+   * Fikra and DMZ are black (1.13:1), Web Summit Qatar is near-black (1.40:1), Qatar
+   * University's maroon is 2.00:1. Revealing those on dark makes the logo disappear at
+   * the moment the visitor points at it, which is the opposite of what the state is for.
+   * So on dark the reveal lifts the mask from `muted` to `ink` instead: the same mark,
+   * brighter, still legible. Recorded as a deviation from B8 in docs/DESIGN.md 15.
+   */
+  .featured__link:hover .featured__colour,
+  .featured__link:focus-visible .featured__colour {
+    opacity: 1;
+  }
+
+  .featured__link:hover .featured__mono,
+  .featured__link:focus-visible .featured__mono {
+    opacity: 0;
+  }
+
+  [data-theme="dark"] .featured__link:hover .featured__colour,
+  [data-theme="dark"] .featured__link:focus-visible .featured__colour {
+    opacity: 0;
+  }
+
+  [data-theme="dark"] .featured__link:hover .featured__mono,
+  [data-theme="dark"] .featured__link:focus-visible .featured__mono {
+    opacity: 1;
+    background-color: var(--ink);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .featured__link:hover .featured__colour,
+    :root:not([data-theme="light"]) .featured__link:focus-visible .featured__colour {
+      opacity: 0;
+    }
+
+    :root:not([data-theme="light"]) .featured__link:hover .featured__mono,
+    :root:not([data-theme="light"]) .featured__link:focus-visible .featured__mono {
+      opacity: 1;
+      background-color: var(--ink);
+    }
+  }
+
+  /* The designed fallback: the name, never a broken-image icon. */
+  .featured__fallback {
+    display: grid;
+    place-items: center;
+    min-height: 3rem;
+    padding: 0.5rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  @media (min-width: 48rem) {
+    .featured {
+      gap: 2.5rem 2rem;
+    }
+
+    .featured__mark {
+      max-width: 11rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    /*
+     * Same clearance the timeline needs: --rail-gutter reserves the rail's dots, and the
+     * rail's reading — "hop 5 of 7 · featured in" — reaches a step further in than they do.
+     */
+    .featured {
+      padding-right: calc(var(--rail-gutter) + 4rem);
+      gap: 3rem 3rem;
+    }
+
+    .featured__mark {
+      max-width: 13rem;
+    }
+  }
+}

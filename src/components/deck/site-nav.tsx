@@ -18,11 +18,27 @@ import { Button } from "@/components/ui/button";
  * repeating them would spend scarce width on the third-best route to the same place.
  */
 export function SiteNav() {
-  const { hopTo } = useDeck();
+  const { active, hopTo } = useDeck();
   const { open: openPalette } = usePalette();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 sm:px-10 lg:px-16">
+    <header
+      /*
+       * Transparent over the hero, solid everywhere else.
+       *
+       * The deck snaps a section to just below the nav, so the strip the nav occupies
+       * shows the tail of the section above it. That was invisible while every section's
+       * content stopped short of its own bottom edge, and stopped being invisible the
+       * moment Achievements put its "Invite me to speak" line there: from the Featured in
+       * stop, it printed over the nav.
+       *
+       * The hero is the exception rather than the rule because B4 asks for it — its
+       * topology bleeds off the right edge and tucks under the nav, which an opaque band
+       * would crop instead.
+       */
+      data-solid={active === "hero" ? undefined : ""}
+      className="fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 data-solid:bg-bg sm:px-10 lg:px-16"
+    >
       <a
         href="#hero"
         onClick={(event) => {

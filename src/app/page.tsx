@@ -6,12 +6,14 @@ import { SectionPlaceholder } from "@/components/deck/section-placeholder";
 import { SiteNav } from "@/components/deck/site-nav";
 import { SkipLink } from "@/components/deck/skip-link";
 import { EngineeringSection } from "@/components/engineering/engineering-section";
+import { FeaturedSection } from "@/components/featured/featured-section";
 import { Hero } from "@/components/hero/hero";
 import { ProductsSection } from "@/components/products/products-section";
 import { PaletteProvider } from "@/components/palette/palette-provider";
 import {
   getAchievements,
   getEngineeringProjects,
+  getFeaturedIn,
   getProducts,
   getSiteSettings,
 } from "@/lib/content/queries";
@@ -21,13 +23,15 @@ import { getPaletteContent } from "@/lib/palette/content";
 export default async function Home() {
   // Fetched on the server so the palette's list is current without the client querying
   // the database, and so nothing is fetched for a palette that is never opened.
-  const [paletteContent, settings, products, engineering, achievements] = await Promise.all([
-    getPaletteContent(),
-    getSiteSettings(),
-    getProducts(),
-    getEngineeringProjects(),
-    getAchievements(),
-  ]);
+  const [paletteContent, settings, products, engineering, achievements, featured] =
+    await Promise.all([
+      getPaletteContent(),
+      getSiteSettings(),
+      getProducts(),
+      getEngineeringProjects(),
+      getAchievements(),
+      getFeaturedIn(),
+    ]);
 
   return (
     <DeckProvider>
@@ -52,6 +56,8 @@ export default async function Home() {
                 <EngineeringSection projects={engineering} />
               ) : section.id === "achievements" ? (
                 <AchievementsSection achievements={achievements} />
+              ) : section.id === "featured-in" ? (
+                <FeaturedSection entries={featured} />
               ) : (
                 <SectionPlaceholder section={section} />
               )}
