@@ -20,7 +20,7 @@ async function ready(page: Page) {
 
 /** True when the database is reachable, so content-dependent checks can be skipped. */
 async function hasProducts(page: Page) {
-  return (await page.locator(".product-card").count()) > 0;
+  return (await page.locator(".work-card").count()) > 0;
 }
 
 /**
@@ -45,7 +45,7 @@ test("the products stop renders whatever the database holds", async ({ page }) =
 
   if (await hasProducts(page)) {
     // Every card is one link to its case study, and only one.
-    const card = page.locator(".product-card").first();
+    const card = page.locator(".work-card").first();
     await expect(card.getByRole("link")).toHaveCount(1);
     await expect(card.getByRole("heading", { level: 3 })).toBeVisible();
   } else {
@@ -104,7 +104,7 @@ test("a card opens its case study, and the page reads as one", async ({ page }) 
   await ready(page);
   if (!(await hasProducts(page))) test.skip();
 
-  await page.locator(".product-card").first().getByRole("link").click();
+  await page.locator(".work-card").first().getByRole("link").click();
   await expect(page).toHaveURL(/\/products\/[a-z0-9-]+$/);
 
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
