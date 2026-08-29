@@ -100,8 +100,19 @@ link on the site does.
 
 - **Every list fetcher now answers with nothing when Supabase is unconfigured.** Part 7
   needed this for `getSiteSettings` and CI found it the hard way; Parts 9 and 10 would have
-  found it again. Verified by building and running the suite with `.env.local` moved aside,
-  which is now the routine before pushing anything that reads content at build time.
+  found it again.
+
+  **This was got wrong once more before it was got right, and the way it went wrong is
+  worth keeping.** The script that added the guards failed halfway, so only five of seven
+  fetchers were changed — and `grep -c` still returned a plausible number, which was read
+  as success without checking _which_. The local verification build then passed, because
+  `.next` still held the previous build's output and Turbopack reused it. Two false
+  confirmations in a row, and CI caught it anyway. So: the check is
+  `rm -rf .next` before building with `.env.local` moved aside, and
+  `src/lib/content/queries.unconfigured.test.ts` now asserts the behaviour of every
+  exported fetcher by name, including one test that fails if a new fetcher is added and
+  not covered. A count is not a verification.
+
 - **The markdown renderer emits React elements, never an HTML string.** No
   `dangerouslySetInnerHTML`, so nothing typed into a table editor can become markup, and
   there is no sanitiser to misconfigure. It supports only what the bodies use, and shows

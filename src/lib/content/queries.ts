@@ -75,6 +75,7 @@ export const getSiteSettings = cached(
 
 export const getProducts = cached(
   async (): Promise<Product[]> => {
+    if (!isSupabaseConfigured) return [];
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("products")
@@ -99,6 +100,7 @@ export async function getProduct(slug: string): Promise<Product | null> {
 
 export const getEngineeringProjects = cached(
   async (): Promise<EngineeringProject[]> => {
+    if (!isSupabaseConfigured) return [];
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("engineering_projects")
