@@ -1,5 +1,41 @@
 [
   {
+    "slug": "eshrahli",
+    "sort_order": 5,
+    "published": true,
+    "title": "Eshrahli",
+    "summary": "Upload your lecture slides and get them explained in Arabic with the English technical terms left intact — so the concept lands in your own language and the exam vocabulary comes with it.",
+    "body": "## The problem\n\nStudents at UDST who did their secondary education in Arabic-medium government schools sit through lectures delivered in English. The gap is not vocabulary at the surface — it is the distance between recognising an English word and understanding the concept behind it well enough to be examined on it.\n\nTranslating the material outright does not fix that. It removes the English terms the exam will actually use.\n\n## What we built\n\nEshrahli takes a student's own lecture slides — PDF or PPTX, organised into course folders — and explains each slide in flowing Arabic with every key English technical term left in English and bolded inline. The student follows the concept in their own language and absorbs the terminology they will be assessed on at the same time.\n\nThe bilingual spine is the design decision, not a feature. In the beta it was the thing students asked us not to remove.\n\nBehind it is a retrieval pipeline in four steps: parse and chunk the course PDF; enrich figures and equations with vision so diagrams are readable rather than skipped; retrieve against the student's question; and generate with a RISEN-structured prompt — role, instruction, steps, end goal, narrowing — that instructs the model to teach rather than summarise.\n\nEvery answer is grounded in the student's own upload. There is no drift onto a different syllabus, and where retrieval is not confident enough the system refuses rather than guessing. Answers carry page-level citations.\n\n## Security\n\nThe sprint asked for a security assessment, and three risks drove real changes rather than a document.\n\nPrompt injection is handled by a defensive block at the top of the system prompt that refuses attempts to override the role, reveal instructions, or answer off-topic — and by a post-generation validator between the model and the screen that replaces off-scope output with a safe fallback before a student sees it. Two layers, because a prompt alone is not a control.\n\nAccess is scoped by authentication: every folder, slide and saved explanation is stored under a user ID, and every database query and retrieval is filtered to the signed-in student. Uploaded coursework is private.\n\n## Where it stands\n\nAn end-to-end MVP, deployed, with course folders, vision-enriched ingestion, slide-level explanations, follow-up Q&A and generated quizzes. It has been through a qualitative beta with UDST students on their own coursework.\n\nThe plan is a paid launch at UDST for the spring semester — students first, and a campus licence only once that has proved demand.\n\n## My role\n\nCo-founder and CEO. Built with Khaled Mhirsi, co-founder and CTO, for the UHUB × Scale AI Sprint, where it won the general track.",
+    "stack": ["Vercel"],
+    "tags": ["RAG", "Applied AI", "EdTech"],
+    "cover_image_path": "eshrahli/pitch.jpeg",
+    "gallery": [
+      {
+        "path": "eshrahli/pitch.jpeg",
+        "alt": "Pitching Eshrahli at the UHUB x Scale AI Sprint, with the four sprint pillars on screen."
+      }
+    ],
+    "live_url": null,
+    "repo_url": null,
+    "demo_video_url": null,
+    "status_check_url": null,
+    "outcome": "Won the general track at the UHUB x Scale AI Sprint. An end-to-end MVP is deployed and has been through a qualitative beta with UDST students on their own coursework.",
+    "metrics": {
+      "basis": "measured",
+      "note": "From the qualitative beta with UDST students, on a single demo course.",
+      "items": [
+        {
+          "value": "10-15",
+          "label": "active beta testers on their own coursework"
+        },
+        {
+          "value": "100+",
+          "label": "slides ingested across the demo course"
+        }
+      ]
+    }
+  },
+  {
     "slug": "rubric",
     "sort_order": 10,
     "published": true,
@@ -32,8 +68,14 @@
       "basis": "projected",
       "note": "Modelled from the challenge brief during a 48-hour build. Rubric has not been run against a real intake.",
       "items": [
-        { "value": "4 hrs", "label": "to place 900 applications across 6 roles in one pass" },
-        { "value": "0", "label": "double-booked candidates per cycle" }
+        {
+          "value": "4 hrs",
+          "label": "to place 900 applications across 6 roles in one pass"
+        },
+        {
+          "value": "0",
+          "label": "double-booked candidates per cycle"
+        }
       ]
     }
   }
