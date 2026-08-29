@@ -457,3 +457,252 @@ destructive actions; it never appears decoratively.
 
 Errors do not rely on colour alone: an invalid field gets the `danger` border, a text message naming
 what is wrong, and `aria-invalid` with the message wired through `aria-describedby`.
+
+---
+
+## 11. Hero — the Part 7 specification
+
+Written before any code, per Part 7 step 2. It extends section 4 (composition) and section 6 (the
+signature) with the exact geometry, choreography and behaviour needed to build the hero, and it
+does not change either. Section 6 remains the approved description of what the topology _is_; this
+section is what it _measures_.
+
+Copy comes from `site_settings` in every case. Nothing here is hard-coded text.
+
+### 11.1 Composition at 1440
+
+The deck gives the hero `calc(100svh - var(--peek) - var(--nav-h))` — at a 900 px viewport, 740 px.
+Grid is the 12-column one from section 4, 24 px gutter, 64 px page padding.
+
+```text
++---------------------------------------------------------------------+
+| # Fadi Muhammed                       [K] Search   Work   Contact    |  nav, 64px
++---------------------------------------------------------------------+
+|  cols 1-6                             |  cols 7-12, bleeding right   |
+|                                       |                              |
+|  TELECOMMUNICATIONS & NETWORK         |          o Achievements      |
+|  ENGINEER . TECH BUILDER . FREELANCER |     o Products          o    |
+|                                       |      \      .          About |
+|  Unemployed & jobless,                |   (#) --- \   . o           \|
+|  but not lost.                        |   you      \    Featured  o  |
+|                                       |             o             Con|
+|  [ See my work ]  [ Work with me ]    |        Engineering           |
+|                                       |                              |
+|  "Big things have small beginnings."     OPEN TO WORK, COLLABORATIONS |
+|  -- PROMETHEUS                           AND FREELANCE PROJECTS       |
++---------------------------------------------------------------------+
+| NEXT . PRODUCTS -- what I've built and shipped                   ^   |  peek, 96px
++---------------------------------------------------------------------+
+```
+
+Left column, top to bottom, with the gap above each:
+
+| Element     | Token                            | Colour  | Gap above |
+| ----------- | -------------------------------- | ------- | --------- |
+| eyebrow     | `data`                           | `muted` | —         |
+| tagline     | `display` (Archivo Expanded 700) | `ink`   | 1.5rem    |
+| buttons     | —                                | below   | 2rem      |
+| quote       | `small` (Archivo 400)            | `ink`   | 3rem      |
+| attribution | `data`                           | `muted` | 0.5rem    |
+
+The quote is **not** set in `data`. Section 3 states that `data` is never used for prose, and a
+quote is prose; uppercasing it at +0.06em would make the one human sentence on the page the least
+readable thing in it. B4 asks for "small (mono/utility face)", and the part of the construction
+that is genuinely a label — the attribution — is what carries the mono voice. That matches the
+390 wireframe in section 4, which already shows the quote in sentence case and `-- PROMETHEUS`
+below it in caps.
+
+Buttons: "See my work" is the filled `accent` button, "Work with me" the hairline one. Both are
+existing `Button` variants from Part 2; no new variant is introduced.
+
+The availability line sits on the same baseline as the quote, in the right half, `data` in `muted`.
+It is the last thing read and it is deliberately not marked with a `signal` dot — see 11.8.
+
+Vertical rhythm: the eyebrow and the topology's top edge align; the tagline is the optical centre;
+the quote and availability share a baseline near the bottom. No hairline divides them. Section 8
+requires a hairline to encode structure, and there is no structural boundary inside a hero — the
+peek strip already rules off the bottom.
+
+### 11.2 Stacking at 390
+
+Per B4, and matching the approved 390 wireframe in section 4:
+
+nav → eyebrow → tagline → buttons (stacked, full width, 44 px each) → topology → quote and
+attribution.
+
+**The availability line is not shown in the hero on mobile.** The approved wireframe omits it and
+B4's mobile stacking order omits it. It is not lost: it appears in Contact (section 4, Contact at
+390), which is where someone who has read the whole deck acts on it.
+
+Measured budget in the 716 px the deck gives the hero at 390x844 — eyebrow 34, tagline 118,
+buttons 100, topology 154, quote 59, gaps 136, total **577 px**, leaving 139 px of slack. The
+tagline's last line sits 232 px below the top of the viewport, so the whole of it is above the
+fold with room to spare, which is Part 7's hard mobile requirement.
+
+### 11.3 The graph
+
+One node table and one edge list, in the `viewBox="0 0 640 420"` space fixed by section 6. Desktop
+and mobile use the same numbers; only the window onto them changes (11.4). This is the layout math
+Part 7 step 6 unit-tests.
+
+| Node         | x   | y   | Radius | Fill    |
+| ------------ | --- | --- | ------ | ------- |
+| you          | 84  | 236 | 7      | `muted` |
+| products     | 196 | 140 | 5      | none    |
+| engineering  | 268 | 312 | 5      | none    |
+| achievements | 388 | 108 | 5      | none    |
+| featured-in  | 436 | 268 | 5      | none    |
+| about        | 528 | 172 | 5      | none    |
+| contact      | 556 | 336 | 5      | none    |
+
+**Six destinations and "you" — not seven destinations plus "you".** B4 says the nodes are the
+sections plus a small "you" node, which would put a Home node in the map. The visitor reading this
+is standing on Home, so a Home node is a control that does nothing, and the "you" node is already
+sitting in exactly the place Home would occupy. Collapsing them makes the map honest: it shows
+where you are and everywhere you can go from here. This is a deliberate departure from a literal
+reading of B4 and needs approval.
+
+Edges, deck order, solid, 1 px `line`:
+
+`you-products`, `products-engineering`, `engineering-achievements`, `achievements-featured-in`,
+`featured-in-about`, `about-contact`.
+
+Cross-links, dashed `2 3`, 1 px `line` — three, each one a route the site actually offers:
+
+| Cross-link          | What makes it true                                                             |
+| ------------------- | ------------------------------------------------------------------------------ |
+| `you-contact`       | "Work with me" and the nav's Contact link both route straight there.           |
+| `products-about`    | About's skill tags filter the products (B2 item 6). The link is real and used. |
+| `engineering-about` | The same filter, on the telecom half of the skills.                            |
+
+Two edges landing on About is not an accident to be tidied away: About is where the skills live,
+and the skills are what point at both bodies of work. The map says so.
+
+Nodes are kept inside `x <= 556` so that what bleeds off the right edge at 1440 is edge tails and
+quiet ground, never a control. A destination the visitor cannot click is not a bleed, it is a bug —
+and Contact, the site's whole conversion path, is the node furthest right.
+
+**Measured ink coverage: 0.69 %** of the topology's box — 1 480 px² of stroke, 342 px² of node,
+37 px² of packet, against 268 800 px². Section 6 asserts under 3 %; this is the number. Nothing in
+the topology uses `ink`; the tagline is `ink` at 700 weight. The topology draws the eye by movement,
+which the tagline does not compete for, and loses on contrast, which the tagline wins outright.
+
+### 11.4 Two windows onto one graph
+
+- **Desktop and tablet.** `viewBox="0 0 640 420"`, `preserveAspectRatio="xMaxYMid slice"` per
+  section 6. The SVG box starts at grid column 7 and is allowed to run past the viewport's right
+  edge, so `slice` fills it at any aspect and the sparse left ground is what gets cropped.
+- **390.** `viewBox="0 72 640 276"` — the same coordinates, a tighter window, aspect 2.32, giving a
+  154 px tall block across the content column. No bleed on mobile: the topology sits inside the
+  column like everything else. No second geometry, no compression, one tested node table.
+
+### 11.5 Load sequence
+
+Total **1 080 ms**, inside Part 7's ~1.2 s budget. One easing (`--ease`), durations from the
+section 7 table, staggers 40 ms, transform and opacity only.
+
+| t (ms) | What                                  | Duration           |
+| ------ | ------------------------------------- | ------------------ |
+| 0      | eyebrow, y +8 → 0                     | 280 (`--dur`)      |
+| 40     | tagline, y +12 → 0                    | 480 (`--dur-slow`) |
+| 80     | buttons                               | 280                |
+| 120    | quote and attribution                 | 280                |
+| 160    | availability (desktop only)           | 280                |
+| 200    | topology, as one unit                 | 480                |
+| 680    | one packet departs "you" for Products | 400                |
+| 1080   | ambient packets begin                 | —                  |
+
+**The edges do not draw themselves in**, and that is the main thing decided here. Stroke draw-in is
+the obvious hero move and it is wrong twice over: the server already rendered the finished topology,
+so the edges would have to be hidden and redrawn, which is a visible flash on a fast connection; and
+B5 assigns the draw-in device to the engineering diagrams, where a diagram assembling itself explains
+something. Spending it here would spend it twice.
+
+What the topology does instead is arrive whole and then **send one packet from "you" to Products** —
+the same journey the primary button makes. The entrance demonstrates the control rather than
+decorating it, it reuses the one device the site already has instead of inventing a second, and it
+resolves. That single packet is the hero's orchestrated moment.
+
+**Reduced motion.** Every element is at its final state on first paint. No entrance, no arrival
+packet, no ambient packets, static topology, still fully operable.
+
+### 11.6 Pointer proximity
+
+Nodes displace toward the pointer, up to 6 px, on a spring settling in about 400 ms, per section 6.
+Influence radius 120 viewBox units, falling off smoothly to zero at the edge. Edges follow their
+endpoints, so the whole mesh flexes rather than the dots sliding under fixed lines.
+
+**The "you" node does not move.** Everything else in the network flexes around the visitor and the
+visitor stays put. It is one line of code and it is the difference between a map with a fixed
+reference point and a field of drifting dots — which is the failure mode B13 names.
+
+Disabled entirely on touch (no pointer), under reduced motion, when the section is off-screen, and
+when the tab is hidden.
+
+### 11.7 Routing, labels and the placeholder
+
+**Nodes are anchors, not buttons.** Each node is `<a href="#products">` with the accessible name
+"Route to Products". Part 7 step 3 and B4 both say "real buttons"; an anchor satisfies what that
+requirement is protecting — a real focusable control with a real name, not a decorative circle —
+and it does one thing a button cannot: it works with JavaScript off, and it works in the
+server-rendered placeholder before the module has loaded. A node that is dead for the first 400 ms
+of every visit is worse than one that is a link. This is a deliberate departure and needs approval.
+
+**On activate** (click, tap, Enter or Space): the target node fills `signal`, its label appears, and
+a packet leaves "you" and travels **along the graph** — the real shortest path over the edges above,
+never a straight line through empty space, because a packet crossing where there is no link is a lie
+about a network. Fixed duration **480 ms** (`--dur-slow`) for every route regardless of length, so
+the interaction feels the same everywhere and the longest route (Featured in, 737 px over four hops)
+still lands inside B4's 600 ms ceiling. Then `hopTo(section)` — the same function the rail, the peek
+strip, the palette and the hero buttons already call. Under reduced motion the hop is immediate and
+no packet is drawn. This path-finding and its interpolation are the second thing Part 7 step 6
+unit-tests.
+
+**Labels** appear on hover and on keyboard focus only, in `data` at `muted`, offset from the node so
+they never sit on an edge, fading in over 200 ms (`--dur-fast`).
+
+**The server-rendered placeholder** is the same SVG from the same node table: all seven nodes, all
+nine edges, real anchors, no labels, no packets. It is not a skeleton and not a blurred stand-in —
+it is the finished drawing, minus the motion. First paint is never blank, and the difference between
+placeholder and hydrated module is that one of them moves.
+
+### 11.8 Critique
+
+Checked against `.claude/skills/frontend-design/SKILL.md` and B13.
+
+**The honest risk: a node-link diagram is the obvious answer.** A network engineer's portfolio with
+a constellation of dots and lines is close to a default, and B13 explicitly bans floating particles.
+Three things separate this from that, and if they ever stop being true the element should be cut:
+every node is a named destination that routes somewhere; every edge is a relationship that exists in
+the product; and the packets mark position rather than drifting. It is a map of the site, drawn in
+the subject's own vocabulary, and it is operable. A constellation is none of those.
+
+**Structure encodes something true.** The graph is the deck's real order. The cross-links are the
+site's real shortcuts. Two edges into About is a fact about the content, not a balancing act.
+
+**Boldness is spent once.** The topology is the only bold element in the hero and its boldness is
+structural: 0.69 % ink coverage, nothing in `ink`, no fill, no glow, no shadow. Everything around it
+is left-aligned type on quiet ground.
+
+**Against the three AI defaults.** Palette and type were argued in section 9 and are unchanged here.
+The hero adds no gradient, no glass, no shadow, no card around the topology, and no centred stack.
+
+**Copy.** Every string is real and comes from the database. Sentence case. No exclamation marks, no
+emoji, no filler.
+
+**The `signal` dot on the availability line was cut** before it was ever drawn. "Open to work" is
+arguably a live status and the dot would have been defensible, but the packets are already spending
+the site's one warm colour in this viewport, and a second `signal` element competing with them would
+weaken the rule that makes `signal` mean anything. The line is `data` in `muted` and says what it
+says. The formal "remove one accessory" pass happens against real screenshots at Part 7 step 8.
+
+**Known departure, recorded rather than hidden.** B1 requires that the tagline never stand alone in a
+viewport without proof. The A2 eyebrow is positioning, not proof, and Fadi decided on 29 August 2026
+to ship the hero without a proof line. The composition above has room for one on the line below the
+buttons if that is revisited.
+
+### 11.9 Three decisions needing approval
+
+1. **Six destinations and "you", instead of seven destinations and "you"** (11.3).
+2. **Nodes are anchors rather than buttons** (11.7).
+3. **The topology arrives whole and sends one packet, instead of drawing its edges in** (11.5).
