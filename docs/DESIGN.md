@@ -1002,3 +1002,89 @@ a gallery with a reason to exist.
 Opening a hop nudges the list's own `scrollTop` so the panel is visible. Not
 `scrollIntoView`, which scrolls every scrollable ancestor: that would move the deck and
 fight its snap, which B3 forbids outright.
+
+---
+
+## 15. Featured in — the logo wall
+
+Written during Part 11. It introduces no colour, type, radius or spacing value. The only
+new idea is how a set of logos with nothing in common is made to look like a set.
+
+### 15.1 Not a constellation, and not a collage
+
+B8 offers a grid or a gentle constellation around a small "you" node. The constellation
+was declined: the hero already owns the routing topology and B5 spends the site's boldness
+there, so a second topology two stops later competes with the first rather than echoing it.
+
+A collage was proposed in chat and declined for a different reason. Varying the sizes of
+logos says one of them matters more than another, and there is nothing behind that
+ranking. It also reads as a marketing logo wall, which is the failure mode B13 names for
+exactly this section.
+
+### 15.2 Equal ink, not equal height
+
+B8 asks for logos "normalised to the same visual height". That works for a row of
+horizontal wordmarks and falls apart here: at 44 px tall, Al Fikra's vertical lockup is
+16 px wide and DMZ's is 136 px. Both are nominally normalised; they carry completely
+different weight.
+
+What has to match is ink — how much of the mark reaches the page. `scripts/normalise-logos.mts`
+measures each mark's alpha mass, whose square root is its optical side length, scales every
+logo to a common side, and centres all nine on one canvas derived from the results rather
+than chosen in advance. Nine files with identical dimensions is what lets the component
+render one cell nine times with no per-logo knowledge at all.
+
+**Three columns, stated rather than inferred.** `auto-fit` put seven marks on the first row
+and two on the second, which reads as an accident: the count came from the viewport rather
+than the content. Nine divides by three at every width.
+
+### 15.3 A mask, not a filter
+
+The resting state is a flat fill in `muted`, masked by the logo — not `filter: grayscale()`.
+
+Greyscale preserves luminance, and this set fails at both ends of it. Qatar Television's
+mark is pale enough to vanish on the light ground (1.94:1 against `bg`); Al Fikra and DMZ
+are pure black and vanish on the dark one. A mask discards the artwork's own tones and
+keeps only its shape, so every mark lands at exactly the token colour and every mark weighs
+the same.
+
+**The seal is the exception the mask cannot handle on its own.** UC Berkeley's artwork is a
+filled disc, so its alpha is a circle and masking it draws a circle. The normalise script
+detects that case — mostly opaque _and_ genuinely two-toned, which separates a seal from a
+bold wordmark like DMZ, whose fill is uniform and would be erased by the same treatment —
+and rebuilds the alpha from the artwork's own luminance, so what silhouettes is the
+engraving rather than the outline.
+
+### 15.4 The hover state, and where it deviates from B8
+
+On the light theme, hover and focus reveal the logo in its own colours, as B8 asks.
+
+**On the dark theme they do not.** Measured against `bg`, four of the nine fail WCAG's 3:1
+in their own colours:
+
+| Logo             | Ink       | On light | On dark  |
+| ---------------- | --------- | -------- | -------- |
+| Al Fikra         | `#000000` | 18.69    | **1.13** |
+| DMZ              | `#000000` | 18.69    | **1.13** |
+| Web Summit Qatar | `#4f1c47` | 11.76    | **1.40** |
+| Qatar University | `#8b1538` | 8.26     | **2.00** |
+| Qatar Television | `#a2b2be` | **1.94** | 8.52     |
+
+Revealing those on dark makes the logo disappear at the moment the visitor points at it,
+which is the opposite of what a hover state is for. So on dark the reveal lifts the mask
+from `muted` to `ink` instead: the same mark, brighter, still legible, still a clear
+response to the pointer.
+
+The alternative was generating a lightened variant of each failing logo, which means
+altering four organisations' marks automatically and shipping two files per logo. Adapting
+the treatment is honest; adapting the brand is not.
+
+### 15.5 What is not here
+
+No captions, no counts, no quotes, no marquee, and no header inside the section — the deck
+already names it. The one-time link draw-in B8 permits was not built: it belongs to the
+constellation that was declined, and drawing links between logos that are not connected to
+anything would be decoration.
+
+The section has one state change and one only. Nothing moves unprompted, so there is no
+reduced-motion branch to get wrong.

@@ -578,3 +578,34 @@ The reasoning for the earlier deferral was that a logo linking nowhere is paddin
 holds for a logo that will never have a link — but these will, and the alternative was
 rediscovering the whole design problem cold in a few weeks. Building now and adding the hrefs
 later costs one seed edit.
+
+### 30 August 2026 — Part 11
+
+Question batch answered in chat, plus the calls made while building.
+
+- **Header stays "Featured in."** The deck already names the section, so there is no second
+  heading inside it. "As seen at" would have been a rename across the rail, the palette,
+  the peek strip and the document title.
+- **Both Qatar University and UC Berkeley are coverage**, so both stay. That is what makes
+  the area-based normalisation necessary: a square seal and a vertical lockup in the same
+  row as five wordmarks.
+- **A collage was proposed and declined.** Varying logo sizes claims a ranking that nothing
+  supports, and it reads as a marketing logo wall — the failure mode B13 names for this
+  section. Two arrangements were rendered from the real files and compared before deciding.
+- **No map, no constellation, no link draw-in.** The hero owns the routing topology; a
+  second one here competes with it. The draw-in B8 permits belongs to the constellation
+  that was declined.
+- **The hover reveal is light-theme only.** A measured deviation from B8, with the contrast
+  table in `docs/DESIGN.md` 15.4: four of the nine fail WCAG 3:1 against the dark ground in
+  their own colours, so revealing them there hides the logo at the moment the visitor
+  points at it. On dark the monochrome mask lifts from `muted` to `ink` instead.
+- **Categories are provisional for six of the nine.** The schema requires one and only
+  three are known from the database. Recorded as guesses, corrected when Fadi says what
+  each logo represents.
+- **`sharp` added as a devDependency.** It was already installed as a transitive dependency
+  of Next, and a script in `scripts/` should not rely on that holding.
+- **The nav is opaque everywhere except the hero.** Not a Part 11 decision by intent — the
+  deck snaps a section below the nav, so the nav's strip shows the tail of the section
+  above it, and the nav had no background at all. Invisible until Part 10 put "Invite me to
+  speak" at the bottom of its section, where it printed over the nav from the Featured in
+  stop. The hero keeps a transparent nav because B4 asks for the topology to tuck under it.

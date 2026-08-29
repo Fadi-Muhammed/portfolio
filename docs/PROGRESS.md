@@ -25,13 +25,10 @@ timeline rather than in this section. The nine staged in `content/assets/logos` 
 DMZ, Qatar Innovation, Qatar Television, Qatar University, UC Berkeley, UHUB, Vodafone, Web
 Summit Qatar.
 
-Three findings from the review of those files are recorded so the work is not repeated:
-normalising by height breaks this set (at 44 px tall, Al Fikra is 16 px wide and DMZ is 136 px, so
-it wants area-based normalisation and a deviation from B8's literal wording); UC Berkeley's seal
-collapses to a solid white disc under the dark theme's silhouette treatment; and Web Summit Qatar
-and Al Fikra are near-black, so "full colour on hover" barely registers on dark. The Vodafone file
-arrived with its transparency painted in as checkerboard pixels and was repaired — alpha rebuilt
-from chroma, so there is no halo on the edges.
+All three problems those files had are solved and recorded in `docs/DESIGN.md` section 15:
+the set is normalised by ink rather than height, the monochrome state is a mask rather than
+a greyscale filter, and UC Berkeley's filled seal has its fill knocked out so it silhouettes
+as engraving. Nothing about the logos is waiting on the URLs.
 
 **2. The hero ships with no proof line, and B1 says it should have one.** B1 requires that the
 tagline never stand alone in a viewport without proof, and the A2 eyebrow is positioning rather
@@ -40,6 +37,146 @@ the end of the build — and not in any part report before then**. Do not raise 
 for Parts 8 to 16. Raise it at Part 17 alongside the other launch blocker recorded there, the
 out-of-date CV at `documents/cv.pdf`. The material already exists in the database: Web Summit
 Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
+
+---
+
+## Part 11 — Featured in · 30 August 2026
+
+Status: done, except the coverage links. See the standing item at the top of this file.
+
+### What exists
+
+- `scripts/normalise-logos.mts` (`npm run logos:normalise`) — reads
+  `content/assets/logos-src/**`, equalises each mark's ink, and writes nine files of
+  identical dimensions to `content/assets/logos/**` for `npm run assets:upload`.
+- `src/components/featured/featured-section.tsx`, `featured-logo.tsx`.
+- Featured in styles in `globals.css`; `docs/DESIGN.md` section 15.
+- `src/components/deck/site-nav.tsx` — the nav is now opaque everywhere but the hero.
+- Content: `content/seed/featured_in.json`, nine rows, all published, every `url` null.
+- `sharp` added as a devDependency; it was already present as a transitive dependency of
+  Next, and the script should not rely on that.
+- Tests: 200 unit and 79 Playwright (9 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+Hop to Featured in. Nine logos in a 3 x 3 grid, all one weight, all one colour. Hover or
+tab to one on the light theme and it turns its own colours; do the same on the dark theme
+and it brightens instead — the reason is in DESIGN.md 15.4. Nothing is a link yet, so
+nothing opens.
+
+```
+npx playwright test featured
+npm run screens -- "#featured-in"
+npm run logos:normalise && npm run assets:upload
+```
+
+### The logos are PNG, and two of them arrived broken
+
+Fadi asked to ship PNGs now and swap SVGs in later. The swap costs nothing structural —
+same paths, same bucket — beyond re-running the normalise script.
+
+**Vodafone had no transparency at all.** Its checkerboard was painted into the pixels, with
+no alpha channel and no `tRNS` chunk, so it would have rendered as a literal tile. Repaired
+before staging: every background pixel is neutral and the mark is red-only, so
+`alpha = (R - G) / chroma` recovers true coverage on the anti-aliased edges independently
+of which square a pixel sat on. Keying on "is this white-ish" would have left a halo.
+
+**UC Berkeley's seal is a filled disc**, so masking it drew a disc. The normalise script
+detects that case and rebuilds the alpha from the artwork's own luminance, so the seal
+silhouettes as its engraving. It is still the lightest mark in the set — a fine engraving
+cannot weigh the same as a solid wordmark however it is scaled — and that is the one place
+the normalisation does not fully deliver.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes, at rest and on hover.
+
+- **Tokens only.** No new colours, radii, spacing or type. The monochrome state is
+  `--muted` and the hover state on dark is `--ink`; nothing else is painted.
+- **Structure encodes something true.** Three columns because nine divides by three, not
+  because a viewport happened to fit that many. Equal ink because equal height is a lie
+  about a set that mixes a vertical lockup, a square seal and five wordmarks.
+- **Motion**: one state change, on hover and focus, and nothing else. No draw-in, no
+  marquee. There is no reduced-motion branch because there is nothing running to reduce —
+  a stronger guarantee than a branch.
+- **Copy is real**: there is none. No captions, no counts, no quotes, no header inside the
+  section.
+- **Accessibility**: every logo carries an accessible name whether or not it is a link;
+  hit targets clear 44 px now rather than when the hrefs arrive; zero serious or critical
+  axe violations.
+
+**Five faults:**
+
+1. **`auto-fit` put seven logos on one row and two on the next.** A 7 + 2 split reads as
+   an accident, because the count came from the viewport rather than from the content.
+2. **The whole section rendered empty** after `justify-items: center` was added. It made
+   each cell shrink to fit, so the mark's `width: 100%` resolved against an auto-width
+   parent and collapsed to zero — and because a failed mask hides its element rather than
+   revealing it, nothing was left to see. The link already centres its own contents.
+3. **The route ran into the rail's reading**, the same collision the timeline hit in Part
+   10, fixed the same way: the gutter plus one step of the spacing scale.
+4. **Achievements printed over the nav.** The deck snaps a section below the nav, so the
+   nav's strip shows the tail of the section above — invisible until Part 10 put "Invite
+   me to speak" at the bottom of its section. The nav had no background at all. It is now
+   opaque everywhere except the hero, where B4 wants the topology to tuck under it.
+5. **The knocked-out seal was a washed-out ghost** beside eight flat marks, because
+   luminance-derived alpha is graduated where the others are binary. The knockout now
+   stretches that luminance to a window, so the engraving goes opaque and the fill goes
+   clear.
+
+**Remove one accessory.** `border-radius` on `.featured__link`. It never painted anything:
+the element has no background and no border, and the focus ring carries its own radius. A
+value that cannot be seen is one more thing to keep consistent for nothing.
+
+### Decided without asking
+
+- **A grid, not a constellation and not a collage.** Reasoning in DESIGN.md 15.1; the
+  collage was proposed in chat and declined because varying the sizes claims a ranking
+  that does not exist.
+- **A mask rather than `filter: grayscale()`.** Greyscale preserves luminance, and this
+  set fails at both ends of it — Qatar Television is 1.94:1 on the light ground, Al Fikra
+  and DMZ are 1.13:1 on the dark one.
+- **The hover reveal is light-theme only** — a measured deviation from B8, with the
+  contrast table in DESIGN.md 15.4. Four of nine fail 3:1 on dark in their own colours, so
+  on dark the reveal brightens the mask instead. Adapting the treatment is honest;
+  automatically lightening four organisations' marks is not.
+- **No grouping by category.** B8 asks for it above about a dozen logos; nine would be
+  three short rows with headings that say less than the marks do.
+- **Categories are provisional.** The schema requires one, and only three are known from
+  the database: Web Summit Qatar is a stage, UHUB and DMZ are programmes. The other six are
+  guesses recorded as guesses, and the field drives nothing in the UI at this size. They
+  are corrected when Fadi says what each logo represents, alongside the URLs.
+- **Order is evidence first, then alphabetical**: the three the database can vouch for,
+  then the rest. `sort_order` exists so it can be rearranged in Studio without a deploy.
+
+### Known gaps
+
+- **No coverage links.** Nine of nine. The standing item at the top of this file covers
+  when to ask.
+- **Two logos may not belong here at all.** Qatar University and UC Berkeley were kept as
+  coverage on Fadi's answer, but if they turn out to be education they move to About's
+  timeline in Part 12.
+- **PNG, not SVG.** Swapping is a file replacement plus a re-run of the normalise script.
+- **UC Berkeley reads lighter than the rest**, as above.
+- **Qatar Television's source is 187 x 75**, the smallest of the nine. It survives the
+  normalisation but has the least resolution behind it.
+- **`e2e/deck.spec.ts` "lands on the section named in the URL" failed once under six
+  parallel workers and passed on its own and on a re-run.** CI runs one worker with two
+  retries, so it is unlikely to be seen there. Same symptom as the Part 10 note about
+  deep links against the dev server; worth watching rather than chasing.
+- **`motion` and `@supabase/ssr` are still installed and unused**, carried from Parts 1
+  and 3. `sharp` is now a direct devDependency and is used.
+
+### Next
+
+Part 12 — About: skills as filter tags, certifications, the experience and education
+timeline, and the CV download. The content is seeded already: 22 skills of which 5 are
+published, 1 certification, 4 experience rows of which 3 are published. `documents/cv.pdf`
+is in Storage and is recorded as out of date — that is a Part 17 item, not a Part 12 one.
 
 ---
 
