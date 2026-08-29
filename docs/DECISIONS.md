@@ -483,3 +483,51 @@ Answers given in chat, with photographs supplied.
   program — all dated.
 - **Stacks, as given in chat.** Rubric: TypeScript, Next.js, Tailwind CSS, shadcn/ui,
   Supabase, Vercel. Eshrahli: JavaScript, Supabase, Vercel.
+
+### 29 August 2026 — Part 10 question batch
+
+Asked before any work, answered in chat.
+
+- **The list is complete for now.** Five entries, one of each type. Fadi will add more
+  after the site is complete, with their dates, and the timeline sorts them into place on
+  its own — nothing about the section assumes five.
+- **DMZ Basecamp was in Toronto, Ontario, Canada**, and ran two months, July to August
+  2025. The row had no city, no country and no summary; it was the only entry missing all
+  three. `date` stays `2025-07-01` — the table has one date column, not a range — and the
+  duration is stated in the summary instead, which is where a range can be read.
+- **The Web Summit talk has no recording and no slides.** So **the click-to-load video
+  facade is not built.** Part 10 asks for one; there is no URL to put behind it, and a
+  facade with nothing behind it is a play button that lies. The talk entry leads with the
+  photograph instead. The facade arrives with the first recording.
+- **One photograph per hop, on expansion**, not all six of the Cyber Drill's. Four of
+  those six are venue, signage and a registration desk, which is evidence of attendance,
+  not of the work. Each entry shows its cover — the certificate, the trophy ceremony, the
+  talk itself — and the rest stay in the database for a gallery that has a reason to
+  exist.
+- **No map of event cities (A25).** Four events in Doha and one in Toronto is two pins.
+  The city is already printed on every hop, which is the information a map would carry.
+  Answered "what do you think"; this is the answer, and it can be revisited at Part 18.
+- **Newest first.** Also answered "what do you think". A traceroute numbers hops outward
+  from the origin, so hop 1 being the most recent — the one nearest to now — is the
+  metaphor read correctly, and it puts the QSTP hackathon and the Scale AI win at the top
+  instead of under a 2025 programme.
+
+### 29 August 2026 — Part 10, decided without asking
+
+- **Hop numbers renumber when the list is filtered.** A filtered view is a different
+  route, and a real traceroute numbers the hops of the route it actually took. Numbers are
+  positional, never an identity.
+- **The filter writes `?hop=talk` and uses `replaceState`.** Part 10 asks the URL to carry
+  the filter so a filtered view can be shared. `replaceState` matches what the deck
+  already does with the hash; pushing would fill the back button with filter states and
+  fight the deck's own history writes.
+- **The five chips are the five types from the schema, not a summary of the data.** All
+  five currently have an entry behind them, so no chip is a control that can do nothing —
+  the objection that removed Engineering's chips in Part 9. Keeping the set fixed also
+  means the controls do not reshuffle as content is added.
+- **No `/achievements` index page.** Products and Engineering have one because their cards
+  are a preview of a longer list. The timeline shows everything it has, the section scrolls
+  internally, and the command palette already reaches every entry by name.
+- **FLIP is written by hand rather than with `motion`.** Five list items and one
+  transition do not justify pulling in layout animations, and B12's JavaScript budget is
+  the reason. `motion` stays unused — see the Part 10 report.
