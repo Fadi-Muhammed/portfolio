@@ -565,3 +565,16 @@ Asked before any work, answered in chat.
   Summit Qatar and Al Fikra are near-black, so full colour on hover barely registers on dark.
   The first of these will need a deviation from B8's literal "same visual height", which is
   Fadi's call when the part is built.
+
+### 29 August 2026 — Part 11 is built and shipped, links to follow
+
+Reversing the deferral recorded above, on Fadi's instruction the same day: **build and ship
+everything except the URLs.** The section is built in sequence and the logos are published;
+a row whose `url` is null renders as a logo rather than as a link, which the schema already
+allows. Part 11 is complete on every count except the links, and the URLs are asked for once
+after the rest of the site is finished.
+
+The reasoning for the earlier deferral was that a logo linking nowhere is padding. That still
+holds for a logo that will never have a link — but these will, and the alternative was
+rediscovering the whole design problem cold in a few weeks. Building now and adding the hrefs
+later costs one seed edit.

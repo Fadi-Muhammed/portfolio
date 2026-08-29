@@ -11,20 +11,21 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 Two things are deliberately unfinished and must not be raised again in a part report until the
 part named against each.
 
-**1. Featured in has no coverage URLs, so Part 11 is deferred.** B8 is "logos only, each linking
-to the actual coverage", and there is not one URL for any of the nine staged logos. Fadi asked on
-29 August 2026 to be asked for them **after the rest of the site is finished**, and said not to
-add the logos in the meantime. So the Featured in stop keeps its placeholder, Part 11 is skipped
-in the sequence, and the question is put once when Parts 12 to 16 are done — before Part 17, so
-the section can be built and reviewed while there is still a launch to prepare for.
+**1. Featured in ships without its coverage links.** B8 is "logos only, each linking to the
+actual coverage", and there is not one URL for any of the nine logos. Fadi decided on 29 August
+2026 to **build and ship the section anyway**, with the links added later, and asked to be asked
+for the URLs after the rest of the site is finished. So Part 11 is built in sequence and the
+logos are published; a logo with no URL renders as a logo rather than a link. Part 11 is tagged
+done on everything except the links, and the question is put once when Parts 12 to 16 are done,
+before Part 17.
 
 What to ask for at that point, per logo: the coverage URL, and what the logo represents — some of
 these may be education or employment rather than coverage, in which case they belong in About's
-timeline rather than in this section. The nine staged in `content/assets/logos` (gitignored, not
-yet uploaded to the `logos` bucket) are Al Fikra, DMZ, Qatar Innovation, Qatar Television, Qatar
-University, UC Berkeley, UHUB, Vodafone, Web Summit Qatar.
+timeline rather than in this section. The nine staged in `content/assets/logos` are Al Fikra,
+DMZ, Qatar Innovation, Qatar Television, Qatar University, UC Berkeley, UHUB, Vodafone, Web
+Summit Qatar.
 
-Three findings from the Part 10 review of those files are recorded so the work is not repeated:
+Three findings from the review of those files are recorded so the work is not repeated:
 normalising by height breaks this set (at 44 px tall, Al Fikra is 16 px wide and DMZ is 136 px, so
 it wants area-based normalisation and a deviation from B8's literal wording); UC Berkeley's seal
 collapses to a solid white disc under the dark theme's silhouette treatment; and Web Summit Qatar
