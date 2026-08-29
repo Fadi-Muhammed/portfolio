@@ -545,15 +545,44 @@ One node table and one edge list, in the `viewBox="0 0 640 420"` space fixed by 
 and mobile use the same numbers; only the window onto them changes (11.4). This is the layout math
 Part 7 step 6 unit-tests.
 
-| Node         | x   | y   | Radius | Fill    |
-| ------------ | --- | --- | ------ | ------- |
-| you          | 84  | 236 | 7      | `muted` |
-| products     | 196 | 140 | 5      | none    |
-| engineering  | 268 | 312 | 5      | none    |
-| achievements | 388 | 108 | 5      | none    |
-| featured-in  | 436 | 268 | 5      | none    |
-| about        | 528 | 172 | 5      | none    |
-| contact      | 556 | 336 | 5      | none    |
+| Node         | x   | y   | Glyph    |
+| ------------ | --- | --- | -------- |
+| you          | 84  | 236 | terminal |
+| products     | 196 | 140 | server   |
+| engineering  | 268 | 312 | antenna  |
+| achievements | 388 | 108 | dish     |
+| featured-in  | 436 | 268 | cloud    |
+| about        | 528 | 172 | switch   |
+| contact      | 556 | 336 | router   |
+
+**Nodes are drawn as network topology glyphs, not as circles.** This replaces the 5 px circles
+described in section 6, which are superseded; nothing else in section 6 changes. The first version
+of this section specified circles, correctly identified in its own critique that a constellation of
+dots is close to an AI default, and then shipped the dots anyway with three reasons why it was
+acceptable. Naming a risk is not the same as removing it. The skill is explicit that the subject's
+own materials, instruments, artifacts and vernacular are where distinctive choices come from, and
+the topology diagram is the drawing language of the subject's field — the one Fadi has been working
+in for four years. Circles are the absence of a choice; these are the choice.
+
+Each glyph is assigned because it is true of that section, never because it looks technical:
+
+| Glyph        | Section      | Why that one                                                                                                                                                                                 |
+| ------------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **terminal** | you          | The visitor is an endpoint. The packet square sits on its screen — the same mark as the tittle of the `i` in the Fadi logotype (section 5), so the site's mark appears inside its signature. |
+| **server**   | products     | Things that run. The site literally pings them for the live status line (B11).                                                                                                               |
+| **antenna**  | engineering  | The RF and lab work: link budgets, the street light system, the telecom half.                                                                                                                |
+| **dish**     | achievements | Talks and stages, pointed outward.                                                                                                                                                           |
+| **cloud**    | featured-in  | The outside world, where coverage lives.                                                                                                                                                     |
+| **switch**   | about        | The hub where the skill tags fan out to both bodies of work — which is also why two edges land on it. The glyph makes that structure visible instead of something the prose has to justify.  |
+| **router**   | contact      | The gateway out of this network to a person.                                                                                                                                                 |
+
+Drawing rules, so seven glyphs stay a set rather than becoming clip art: one stroke weight (1 px,
+`vector-effect: non-scaling-stroke`), one colour (`muted`), no fill anywhere except the packet
+square inside the terminal, round caps and joins, and every glyph fitted to the same optical size
+inside a 24-unit box. No glyph exists that does not name a destination.
+
+The hit target is a transparent circle of radius 22 units centred on each node, independent of the
+glyph's drawn size, so every node clears 44 px at 1440 and stays tappable at 390.
 
 **Six destinations and "you" — not seven destinations plus "you".** B4 says the nodes are the
 sections plus a small "you" node, which would put a Home node in the map. The visitor reading this
@@ -701,8 +730,21 @@ viewport without proof. The A2 eyebrow is positioning, not proof, and Fadi decid
 to ship the hero without a proof line. The composition above has room for one on the line below the
 buttons if that is revisited.
 
-### 11.9 Three decisions needing approval
+### 11.9 Decisions, resolved
 
-1. **Six destinations and "you", instead of seven destinations and "you"** (11.3).
-2. **Nodes are anchors rather than buttons** (11.7).
-3. **The topology arrives whole and sends one packet, instead of drawing its edges in** (11.5).
+Presented to Fadi on 29 August 2026. He rejected the circles — "can u not make it something more
+than just nodes? like a router or cell tower antenna" — which was the right call and is the reason
+11.3 now specifies glyphs. Three directions were drawn and compared: topology glyphs, a single
+repeated mast at varying heights, and the original dots. He then delegated the choice. Decided:
+
+1. **Direction A, the topology glyphs** (11.3). B was more disciplined but said nothing about the
+   half of the subject that ships products, and its varying mast heights encoded nothing true.
+2. **Six destinations and "you", not seven destinations plus "you"** (11.3).
+3. **Nodes are anchors rather than buttons** (11.7).
+4. **The topology arrives whole and sends one packet, rather than drawing its edges in** (11.5).
+
+Two things to watch on real screenshots at step 8, both named before building rather than
+discovered after: seven distinct glyphs can tip into clip art, and the cloud is the most generic
+shape in the set — it is the first candidate for the "remove one accessory" pass. At 390 the glyphs
+render about 13 px, which is enough to tell mast from dish from box by silhouette but not enough to
+read a router from a switch. That is the accepted cost of the direction.
