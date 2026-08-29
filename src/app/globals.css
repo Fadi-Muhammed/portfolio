@@ -651,8 +651,34 @@
     animation-delay: 120ms;
   }
 
+  /*
+   * A quote has to look like one. The marks and the dash are set here rather than stored
+   * in `site_settings`, so the database holds the sentence and nothing else — punctuation
+   * that belongs to the presentation would otherwise have to be typed correctly into
+   * every row, and would come back out in the palette and the page metadata.
+   */
   .hero__quote blockquote {
     margin: 0;
+    quotes: "\201C" "\201D";
+    /*
+     * The opening mark hangs into the margin so the sentence keeps the same left edge as
+     * the eyebrow, the tagline and the buttons. Without this the quote sits a few pixels
+     * proud of everything above it, which is the kind of misalignment that reads as
+     * sloppy without being identifiable.
+     */
+    text-indent: -0.42em;
+  }
+
+  .hero__quote blockquote::before {
+    content: open-quote;
+  }
+
+  .hero__quote blockquote::after {
+    content: close-quote;
+  }
+
+  .hero__quote figcaption::before {
+    content: "— ";
   }
 
   /* Not shown in the hero on a phone: it appears in Contact, which is where someone

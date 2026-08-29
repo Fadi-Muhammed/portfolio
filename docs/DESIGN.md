@@ -512,6 +512,14 @@ that is genuinely a label — the attribution — is what carries the mono voice
 390 wireframe in section 4, which already shows the quote in sentence case and `-- PROMETHEUS`
 below it in caps.
 
+The quote is set with typographic quotation marks and the attribution is preceded by an em dash,
+both from CSS (`quotes` with `open-quote`/`close-quote`, and a `::before` on the caption) rather
+than stored in `site_settings`. The database holds the sentence and nothing else: punctuation that
+belongs to the presentation would otherwise have to be typed correctly into the row, and would
+come back out anywhere else the quote is read — the palette, page metadata, an OG image. The
+opening mark hangs into the margin so the sentence keeps the same left edge as the eyebrow, the
+tagline and the buttons.
+
 Buttons: "See my work" is the filled `accent` button, "Work with me" the hairline one. Both are
 existing `Button` variants from Part 2; no new variant is introduced.
 
