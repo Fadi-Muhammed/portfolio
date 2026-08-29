@@ -314,3 +314,38 @@ the site's look or content was not decided here — that is Part 2.
 - **Focus restoration is handled by the provider, not the dialog library.** Closing left
   focus on `<body>`, which fails B6. The provider records whatever had focus when the
   palette opened and restores it on close.
+
+### 29 August 2026 — Part 7
+
+Answers given in chat before the design pass. Every hero string lives in `site_settings`; all
+thirteen fields were read back from the live database rather than trusted from the seed file.
+
+- **A2 eyebrow: the full line stays.** `Telecommunications & network engineer · Tech builder ·
+  Freelancer`, verbatim. The wireframe in section 4 of `docs/DESIGN.md` shortens it; the wireframe
+  is wrong and the database is right.
+- **A3 tagline confirmed unchanged**: `Unemployed & jobless, but not lost.`
+- **A4 attribution is `Prometheus`, with no year.** Changed from `Prometheus (2012)` in
+  `content/seed/site_settings.json` and re-seeded. The quote's origin in *Lawrence of Arabia*
+  (1962) is not displayed — it is a footnote about the line, not part of the design.
+- **A27 availability is `Open to work, collaborations and freelance projects.`** Changed from
+  `Open to freelance work and collaborations.` and re-seeded. Chosen over the other two A27
+  candidates because it leads with "open to work", which is the phrase a recruiter scans for,
+  and A6 makes hiring half the site's job.
+- **Hero button labels confirmed**: `See my work` (hops to Products) and `Work with me` (hops
+  to Contact).
+- **No proof line in the hero, for now.** B1 requires that the tagline never stand alone in a
+  viewport without proof, and the A2 eyebrow is positioning rather than proof, so the hero as
+  built departs from B1 on this point. Decided deliberately in chat. **Fadi asked to be reminded
+  once, at the end of the build, and not in any part report before then** — see the note in
+  `docs/PROGRESS.md`. The material is already in the database if he wants it: Web Summit Qatar
+  2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
+- **The Web Summit year discrepancy is resolved, and both years are real.** Fadi attended
+  **Web Summit 2025 as an attendee** and **spoke at Web Summit Qatar 2026**. The CV and the chat
+  notes were describing two different events, not contradicting each other. The `achievements`
+  row `Students turning challenges into solutions` / `Web Summit Qatar 2026` / role `Speaker` is
+  therefore correct as seeded. The 2025 attendance is not a row; whether it should be one is a
+  question for Part 10, not an omission.
+- **`part06-done` was moved** from `990c579` to `edd30f0` on Fadi's explicit instruction, so the
+  tag marks the finished state of Part 6 rather than a point three commits before the palette
+  test fix and the ping-semantics fix. `CLAUDE.md` forbids moving a tag without that instruction.
+  Same situation, and same remedy, as `part05-done`.
