@@ -383,3 +383,26 @@ claim in it appears in that deck, and everything the deck does not cover is left
   choosing now is that the projection qualifier travels with the numbers instead of living only
   in prose that a card layout would drop.
 - **`repo_url` stays null.** The repository is private, and a link to a 404 is worse than no link.
+
+### 29 August 2026 — Part 8
+
+- **Every list fetcher answers with nothing when Supabase is unconfigured**, matching the guard
+  `getSiteSettings` got in Part 7. CI is the only environment where that path runs, so it is the
+  only place the failure appears; building with `.env.local` moved aside is now the check to run
+  before pushing anything that reads content at build time.
+- **The markdown renderer emits React elements, never an HTML string.** React escapes text, so
+  a body edited in Supabase Studio cannot become markup on the page and there is no sanitiser to
+  misconfigure. It supports only the subset the bodies use and shows unrecognised syntax as
+  plain text rather than dropping it. No dependency was added for this.
+- **`/api/status` takes a slug, not a URL.** The endpoint looks up `status_check_url` itself, so
+  it can only ever reach a URL this site already publishes. A URL parameter would have made the
+  site an open proxy.
+- **A product's `ok` follows the HTTP status code**, unlike the palette's ping easter egg, which
+  counts any reply as reachability. A 500 is a reply and the product is not up.
+- **Four cards in the deck before "All products →"**, and the link only appears when there are
+  more than that.
+- **`/products` exists even with one product** — a guessable URL should not 404, and Part 15's
+  sitemap will want it.
+- **A metrics figure is never rendered without its basis.** `metrics.basis` becomes the heading
+  above the numbers. A block with no stated basis is not rendered at all. This is what keeps
+  Rubric's projections from reading as measurements after a future layout change.

@@ -797,3 +797,86 @@ discovered after: seven distinct glyphs can tip into clip art, and the cloud is 
 shape in the set — it is the first candidate for the "remove one accessory" pass. At 390 the glyphs
 render about 13 px, which is enough to tell mast from dish from box by silhouette but not enough to
 read a router from a switch. That is the accepted cost of the direction.
+
+---
+
+## 12. Products — cards, the live reading, and the prose scale
+
+Written during Part 8. Everything here derives from sections 2, 3 and 8; nothing new is
+introduced except the prose rhythm, which the case-study bodies need and which section 3 does
+not cover.
+
+### 12.1 The card
+
+A cover at 16:9, the title at `h3`, a summary clamped to three lines, up to three stack tags,
+and the live reading. Card and Tag are the Part 2 primitives, unchanged.
+
+**One target.** The whole card is a single link to the case study. A card with a link inside a
+link is invalid markup and ambiguous to a keyboard, so the demo and repository links live on
+the case-study page, where there is room to label them properly.
+
+**Tracks are capped, not stretched.** The grid is `repeat(auto-fill, minmax(0, 20rem))`. With
+`1fr` columns a single product filled half a 1440 viewport — a 900 px card carrying a 500 px
+screenshot, which read as a billboard rather than a card and left the rest of the section
+empty. Capping the track means a card is card-sized whether there is one or four, and the grid
+simply uses fewer columns.
+
+**The filmstrip.** Below 768 the cards are a horizontal scroller that snaps on its own axis. It
+does not fight the deck because the two scrollers are on different axes and different elements:
+the deck owns the page's vertical scroll, the strip owns its own horizontal one, and the
+browser decides which gesture belongs to which. It bleeds to the glass on the left so a
+half-visible next card says there is more that way, and stops at `--rail-gutter` on the right —
+bled to both edges, the live reading printed straight over the rail's dots.
+
+### 12.2 The live reading
+
+`signal`, because this is exactly what section 2 reserves it for: something genuinely live,
+measured now. Three designed states — checking, a reading, and unreachable.
+
+Unreachable is `muted`, never `danger`. A product being down is not the visitor's mistake and
+not this site's fault, and painting it red would say something untrue about both. `danger` stays
+reserved for errors the visitor can act on.
+
+It is measured once, when the card mounts, and never again. B5 is explicit that live pings
+happen once rather than continuously, and a card that polled would put traffic on someone
+else's server for as long as the tab stayed open.
+
+### 12.3 Case-study layout
+
+A reading column and a narrow apparatus column at 16rem. The aside is deliberately narrow: it
+holds labels and figures, and a wide column of them would compete with the prose.
+
+The cover spans the full content width. **So does the gallery** — the first version placed it
+inside the reading column, where the screenshots came out half the width of the cover directly
+above them, which read as a mistake and made the interface in them illegible. Each gallery image
+carries a visible caption and an empty `alt`, so the description is read once rather than twice.
+
+**A figure is never shown without its basis.** `metrics.basis` is rendered as the heading above
+the numbers — "Projected" or "Measured" — not as a footnote. Rubric's figures are projections
+from a 48-hour build, and a qualifier that lives only in prose is one a future layout can drop.
+A metrics block with no stated basis is not rendered at all.
+
+### 12.4 The prose scale
+
+Markdown bodies only. Every value comes from the existing type and spacing scales; this adds
+rhythm, not sizes.
+
+| Element     | Treatment                                                      |
+| ----------- | -------------------------------------------------------------- |
+| measure     | `--measure` (68ch), as section 4 already sets for prose        |
+| `h2`        | `h2` from section 3, 2.5rem above                              |
+| `h3`        | `h3` from section 3, 2rem above                                |
+| paragraph   | `body`, line-height 1.6, 1rem above                            |
+| list        | disc, 1.25rem indent, 0.5rem between items                     |
+| `strong`    | weight 600 — the body face's own semibold, not a second family |
+| inline code | mono at 0.9em on `surface` with a hairline and `--radius-sm`   |
+| link        | `accent`, as every other link on the site                      |
+
+The first child never takes a top margin, so a body starting with a heading does not push
+itself away from what introduced it.
+
+**The renderer emits React elements, never an HTML string.** That is the whole safety argument:
+React escapes text, so nothing typed into a table editor can become markup on the page, and
+there is no sanitiser to misconfigure. It supports only what the bodies use, and renders
+anything it does not recognise as plain text rather than dropping it, so a writer can see their
+syntax and fix it.

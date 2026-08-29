@@ -38,9 +38,14 @@ export function ProductsSection({ products }: { products: Product[] }) {
 
   return (
     <div className="section-body">
+      {/*
+        The section header already says "Products — what I've built and shipped". An intro
+        that opened by saying it again was the same job done twice, so this only does the
+        part the header cannot: say what opening one gets you.
+      */}
       <p className="section-intro text-body text-ink measure">
-        Products I have built and shipped. Each one has a case study: what the problem was, what I
-        built, and what it did or did not prove.
+        Each one has a case study: what the problem was, what I built, and what it did or did not
+        prove.
       </p>
 
       <ul className="product-strip" data-count={shown.length}>

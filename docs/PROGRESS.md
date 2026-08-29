@@ -18,6 +18,135 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Part 8 — Products section and case-study pages · 29 August 2026
+
+Status: done.
+
+### What exists
+
+- `src/lib/status/ping.ts` — the measuring, apart from the route: a HEAD request with a
+  3 second timeout, and a one-minute per-instance memory of each answer. The clock and
+  `fetch` are both injected, so the tests never touch the network.
+- `src/app/api/status/route.ts` — `GET /api/status?slug=…`. Takes a slug, never a URL.
+- `src/lib/content/media.ts` — storage paths to public URLs, and the narrowing for
+  `gallery` and `metrics`, which are `jsonb` and therefore guaranteed nothing by the schema.
+- `src/lib/content/markdown.tsx` — a small renderer for case-study bodies.
+- `src/components/products/product-card.tsx`, `live-status.tsx`, `products-section.tsx`,
+  `copy-link.tsx`.
+- `src/app/products/page.tsx` and `src/app/products/[slug]/page.tsx`.
+- Products, card, detail and prose styles in `globals.css`; `next.config.ts` now allows
+  images from this project's Supabase host and nowhere else.
+- Tests: 147 unit (23 new) and 48 Playwright (10 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+Hop to Products. The LED settles to a real measurement — it is pinging the actual demo, so
+the number changes between reloads and would say "Endpoint unreachable" if Vercel were
+down. Click the card: the cover animates into the case study where the browser supports
+View Transitions, and cross-fades where it does not. "Copy link" becomes "Link copied" and
+then goes back to its own name.
+
+On a phone, swipe the card strip sideways — the deck must not move. Swipe vertically and
+the deck moves as normal.
+
+```
+npm test && npx playwright test
+npm run screens -- "#products"
+SCREENS_FULL_PAGE=1 node scripts/screens.mts products/rubric
+```
+
+`/products/does-not-exist` returns a real 404.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes.
+
+- **Tokens only.** No new colours, radii or type sizes. The prose scale is rhythm applied
+  to values section 3 already defines.
+- **Structure encodes something true.** The metrics block's heading is its basis —
+  "Projected" — so a figure never appears without its standing. The live reading is a real
+  measurement taken now, not a badge.
+- **Copy is real** and comes from the database, with one deliberate exception noted below.
+- **Interaction**: one target per card, focus visible, hover never carries meaning alone.
+- **Accessibility**: zero serious or critical axe violations on the section and the case
+  study.
+
+**Four faults, all found by looking at screenshots rather than by reasoning:**
+
+1. **A single card filled half a 1440 viewport.** `1fr` grid columns stretched one product
+   into a 900 px card carrying a 500 px screenshot — a billboard, with the rest of the
+   section empty beside it. Tracks are now capped at 20rem, so a card is card-sized whether
+   there is one or four.
+2. **The section intro repeated the section header almost word for word.** The header
+   already says "Products — what I've built and shipped"; the intro opened by saying it
+   again. It now only does the part the header cannot: say what opening a case study gets
+   you.
+3. **The card ran under the hop rail at 390**, printing the live reading over the rail's
+   dots. The same collision the hero had. The filmstrip now bleeds to the glass on the left
+   and stops at `--rail-gutter` on the right.
+4. **The gallery sat inside the reading column**, so the screenshots came out half the
+   width of the cover directly above them — which read as a mistake and made the dense
+   interface in them unreadable. It is now full width with captions.
+
+**Remove one accessory.** Hovering a card dimmed its screenshot _and_ coloured its title:
+two signals for one state. The dim is gone. The title alone says it, the way every other
+link on the site does.
+
+### Decided without asking
+
+- **Every list fetcher now answers with nothing when Supabase is unconfigured.** Part 7
+  needed this for `getSiteSettings` and CI found it the hard way; Parts 9 and 10 would have
+  found it again. Verified by building and running the suite with `.env.local` moved aside,
+  which is now the routine before pushing anything that reads content at build time.
+- **The markdown renderer emits React elements, never an HTML string.** No
+  `dangerouslySetInnerHTML`, so nothing typed into a table editor can become markup, and
+  there is no sanitiser to misconfigure. It supports only what the bodies use, and shows
+  unrecognised syntax as text rather than dropping it. No dependency added.
+- **The status route takes a slug and looks the URL up itself.** Accepting a URL parameter
+  would have made the site an open proxy anyone could point at an internal address.
+- **`ok` follows the status code**, unlike the palette's ping easter egg, which counts any
+  reply as reachability. A 500 is a reply and the product is not up; on a card that claims
+  a product is live, that distinction is the whole point.
+- **Four cards in the deck before "All products →".** A section is one viewport and four is
+  what fits at 1440 without the grid becoming a contact sheet. The link only appears when
+  there are more, so it is never a link to where you already are.
+- **`/products` exists even with one product**, because it is a URL people can reasonably
+  guess and Part 15's sitemap will want it.
+- **No previous/next on the case study** while there is one product. Nothing to point at.
+- **The empty state is a sentence, not a designed void.** "Nothing here yet. The products
+  are being written up." — B10 asks every empty state to offer a way on, so it points at
+  the engineering section and at search.
+
+### Known gaps
+
+- **Rubric has no "what I learned" section.** B2 asks a case study for one. The pitch deck
+  does not cover it and Fadi chose to leave it rather than have it invented. One field, one
+  re-seed, whenever he writes it.
+- **The stack is one tag.** Only TypeScript is verified, from the repository's language
+  stats. The deck does not name the rest.
+- **The Products stop is mostly empty ground at 1440** with a single card. That is a
+  content fact rather than a layout one, and it resolves itself the moment a second product
+  exists.
+- **The View Transition is not covered by a test.** Playwright cannot meaningfully assert a
+  cross-document transition, and the fallback is a cross-fade, so the failure mode is
+  cosmetic.
+- **Not tested on a real device.** The filmstrip against the vertical deck is the thing to
+  check: the automated test proves the deck's scroll position does not change, which is not
+  the same as it feeling right under a thumb.
+- **`@supabase/ssr` is still installed and unused**, carried since Part 3.
+
+### Next
+
+Part 9 — engineering projects, instruments and detail pages. It reuses the card, the detail
+layout and the prose scale built here, and adds the interactive instruments, which is the
+first time a section needs something built per project rather than per section.
+
+---
+
 ## Part 7 — Hero: routing topology, tagline, quote · 29 August 2026
 
 Status: done.

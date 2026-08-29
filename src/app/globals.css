@@ -927,8 +927,14 @@
     gap: 1rem;
     margin: 0;
     padding: 0 var(--section-pad) 0.5rem;
-    /* Runs to the glass so a half-visible next card says there is more to the right. */
-    margin-inline: calc(-1 * var(--section-pad));
+    /*
+     * Runs to the glass on the left so a half-visible next card says there is more that
+     * way, and stops at the rail's gutter on the right. Bled to both edges, the card's
+     * live reading printed straight over the rail's dots — the same collision the hero
+     * topology had, and the reason --rail-gutter exists.
+     */
+    margin-left: calc(-1 * var(--section-pad));
+    margin-right: calc(var(--rail-gutter) - var(--section-pad));
     list-style: none;
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -979,16 +985,14 @@
     place-items: center;
   }
 
+  /* The accessory removed in the B13 pass: hovering a card used to dim the screenshot
+     and colour the title, which is two signals for one state. The title alone says it,
+     and it says it the way every other link on the site does. */
   .product-card__image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: opacity var(--dur) var(--ease);
-  }
-
-  .product-card__link:hover .product-card__image {
-    opacity: 0.88;
   }
 
   .product-card__link:hover .product-card__title,
@@ -1070,11 +1074,20 @@
   }
 
   @media (min-width: 48rem) {
+    /*
+     * Tracks are capped rather than stretched. With `1fr` columns a single product filled
+     * half a 1440 viewport — a 900 px card with a 500 px screenshot, which read as a
+     * billboard and left the other half of the section empty. Capping the track means a
+     * card is card-sized whether there is one of them or four, and the grid simply has
+     * fewer columns in use.
+     */
     .product-strip {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(0, 20rem));
+      gap: 1.5rem;
       overflow-x: visible;
-      margin-inline: 0;
+      margin-left: 0;
+      margin-right: var(--rail-gutter);
       padding-inline: 0;
       /* The grid does not scroll, so it must not carry snap points. */
       scroll-snap-type: none;
@@ -1082,13 +1095,6 @@
 
     .product-strip__item {
       max-width: none;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .product-strip[data-count="3"],
-    .product-strip[data-count="4"] {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
