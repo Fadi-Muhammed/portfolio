@@ -536,3 +536,32 @@ Asked before any work, answered in chat.
 - **FLIP is written by hand rather than with `motion`.** Five list items and one
   transition do not justify pulling in layout animations, and B12's JavaScript budget is
   the reason. `motion` stays unused — see the Part 10 report.
+
+### 29 August 2026 — Part 11 deferred, and the logo files
+
+- **There is not one coverage URL for any of the nine logos**, and B8's whole premise is
+  "logos only, each linking to the actual coverage". Fadi asked to be asked for them after
+  the rest of the site is finished, and said not to add the logos in the meantime. **Part 11
+  is therefore skipped in the sequence**, not built with placeholder links: a logo linking
+  nowhere is the padding B13 names this section as most at risk of. The Featured in stop
+  keeps its placeholder and the question is put once, before Part 17. Recorded as a standing
+  item at the top of `docs/PROGRESS.md`.
+- **Two logos were added to the staging directory**: Vodafone and Qatar Television, bringing
+  the set to nine. What either represents is not yet known — a television interview is
+  coverage, but an employer or a sponsor is not, and that goes in About's timeline instead.
+  Asked with the URLs.
+- **The Vodafone file had no transparency at all.** Its checkerboard was painted into the
+  pixels as white and light-grey squares, with no alpha channel and no `tRNS` chunk, so it
+  would have rendered as a literal tile on the page. Repaired rather than sent back: every
+  background pixel is neutral and the mark is red-only, so `alpha = (R - G) / chroma`
+  recovers true coverage on the anti-aliased edges independently of which square a pixel sat
+  on. Keying on "is this white-ish" instead would have left a halo on every edge.
+- **The logos are PNG and that is accepted for now**, with SVGs to be swapped in later. The
+  swap costs nothing structural — same paths, same bucket — beyond deleting the dark-theme
+  invert rule that a PNG needs and an SVG taking `currentColor` would not.
+- **Three problems with the set are recorded now so they are not rediscovered**: height
+  normalisation breaks a set that mixes wordmarks with a vertical lockup and a square seal;
+  UC Berkeley's seal becomes a solid white disc under the dark silhouette treatment; Web
+  Summit Qatar and Al Fikra are near-black, so full colour on hover barely registers on dark.
+  The first of these will need a deviation from B8's literal "same visual height", which is
+  Fadi's call when the part is built.

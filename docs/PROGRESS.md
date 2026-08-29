@@ -6,9 +6,33 @@ part, before the report to the user. Newest part at the top.
 Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also record the B13
 "not vibe-coded" checklist outcome here, including what the "remove one accessory" pass removed.
 
-## Standing item for Part 17, not before
+## Standing items for the end of the build, not before
 
-**The hero ships with no proof line, and B1 says it should have one.** B1 requires that the
+Two things are deliberately unfinished and must not be raised again in a part report until the
+part named against each.
+
+**1. Featured in has no coverage URLs, so Part 11 is deferred.** B8 is "logos only, each linking
+to the actual coverage", and there is not one URL for any of the nine staged logos. Fadi asked on
+29 August 2026 to be asked for them **after the rest of the site is finished**, and said not to
+add the logos in the meantime. So the Featured in stop keeps its placeholder, Part 11 is skipped
+in the sequence, and the question is put once when Parts 12 to 16 are done — before Part 17, so
+the section can be built and reviewed while there is still a launch to prepare for.
+
+What to ask for at that point, per logo: the coverage URL, and what the logo represents — some of
+these may be education or employment rather than coverage, in which case they belong in About's
+timeline rather than in this section. The nine staged in `content/assets/logos` (gitignored, not
+yet uploaded to the `logos` bucket) are Al Fikra, DMZ, Qatar Innovation, Qatar Television, Qatar
+University, UC Berkeley, UHUB, Vodafone, Web Summit Qatar.
+
+Three findings from the Part 10 review of those files are recorded so the work is not repeated:
+normalising by height breaks this set (at 44 px tall, Al Fikra is 16 px wide and DMZ is 136 px, so
+it wants area-based normalisation and a deviation from B8's literal wording); UC Berkeley's seal
+collapses to a solid white disc under the dark theme's silhouette treatment; and Web Summit Qatar
+and Al Fikra are near-black, so "full colour on hover" barely registers on dark. The Vodafone file
+arrived with its transparency painted in as checkerboard pixels and was repaired — alpha rebuilt
+from chroma, so there is no halo on the edges.
+
+**2. The hero ships with no proof line, and B1 says it should have one.** B1 requires that the
 tagline never stand alone in a viewport without proof, and the A2 eyebrow is positioning rather
 than proof. Fadi decided this deliberately on 29 August 2026 and asked to be reminded **once, at
 the end of the build — and not in any part report before then**. Do not raise it in the reports
