@@ -174,10 +174,9 @@ thing to do before pushing anything that reads content at build time.
 
 ### Known gaps
 
-- **Not tested on a real device.** Part 5's real-device session found two faults that no amount of
-  desktop emulation had surfaced. The pointer spring is desktop-only by design, but the tap
-  targets, the glyph legibility at 13 px and the paused-when-hidden behaviour all want a real
-  phone.
+- ~~Not tested on a real device.~~ **Checked by Fadi on a phone on 29 August 2026: fine.** No
+  faults reported — unlike Part 5, where the real-device pass found two. The tap targets, the
+  glyphs at roughly 13 px and the scrolling all held up on real hardware.
 - **Glyphs are about 13 px at 390.** Mast, dish, box and cloud are distinguishable by silhouette;
   a router is not distinguishable from a switch. Accepted cost of the direction, and the label
   names it on tap.
