@@ -122,11 +122,18 @@ export const experienceSchema = contentBase.extend({
   location: text,
   summary: text,
   highlights: z.array(z.string().min(1)),
+  // An object in the `logos` bucket, as featured_in and certifications also use. Most
+  // rows have none, and a row without one renders without one.
+  logo_path: text,
 });
 
 /** One row, so no slug, no sort_order, no published. */
 export const siteSettingsSchema = z.object({
   tagline: text,
+  // The About section's prose (B2 item 6). Plain text rather than markdown: it is two
+  // short pieces of copy, and a renderer would be more machinery than they justify.
+  bio: text,
+  currently: text,
   eyebrow: text,
   quote: text,
   quote_author: text,

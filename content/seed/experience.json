@@ -10,7 +10,8 @@
     "end_date": "2027-05-01",
     "location": "Doha, Qatar",
     "summary": "Four-year degree, started January 2024. Expected graduation May to July 2027.",
-    "highlights": []
+    "highlights": [],
+    "logo_path": "udst.svg"
   },
   {
     "slug": "quitifi-founder-ceo",
@@ -23,20 +24,22 @@
     "end_date": null,
     "location": null,
     "summary": null,
-    "highlights": []
+    "highlights": [],
+    "logo_path": null
   },
   {
     "slug": "cet-3d-printing-support-staff",
     "sort_order": 20,
     "published": true,
-    "org": "College of Engineering & Technology",
-    "role": "3D Printing Support Staff",
+    "org": "University of Doha for Science and Technology",
+    "role": "3D printing support staff, College of Engineering and Technology",
     "type": "job",
     "start_date": "2025-09-01",
     "end_date": "2025-12-31",
     "location": null,
     "summary": null,
-    "highlights": []
+    "highlights": [],
+    "logo_path": null
   },
   {
     "slug": "udst-volunteer-club-president",
@@ -49,7 +52,8 @@
     "end_date": "2025-09-30",
     "location": null,
     "summary": null,
-    "highlights": []
+    "highlights": [],
+    "logo_path": null
   },
   {
     "slug": "dmz-basecamp-health-tech-entrepreneur",
@@ -62,6 +66,7 @@
     "end_date": "2025-08-31",
     "location": null,
     "summary": null,
-    "highlights": []
+    "highlights": [],
+    "logo_path": null
   }
 ]
