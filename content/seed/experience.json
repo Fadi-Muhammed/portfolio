@@ -1,5 +1,18 @@
 [
   {
+    "slug": "udst-bsc-telecommunications",
+    "sort_order": 5,
+    "published": true,
+    "org": "University of Doha for Science and Technology",
+    "role": "BSc Electrical Engineering — Telecommunications and Network Engineering",
+    "type": "education",
+    "start_date": "2024-01-01",
+    "end_date": "2027-05-01",
+    "location": "Doha, Qatar",
+    "summary": "Four-year degree, started January 2024. Expected graduation May to July 2027.",
+    "highlights": []
+  },
+  {
     "slug": "quitifi-founder-ceo",
     "sort_order": 10,
     "published": true,
