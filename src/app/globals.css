@@ -2175,12 +2175,18 @@
    * where a mark should be.
    */
   .track__logo {
+    display: block;
     width: 100%;
-    height: auto;
-    max-height: 2rem;
-    object-fit: contain;
-    filter: grayscale(1);
-    opacity: 0.75;
+    height: 1.75rem;
+    background-color: var(--muted);
+    mask-image: var(--logo);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: var(--logo);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
   }
 
   .track__body {

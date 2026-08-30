@@ -12,6 +12,20 @@ import { expect, test, type Page } from "@playwright/test";
  * hold the day the URLs land. That is the point of writing them now rather than then.
  */
 
+/**
+ * Waits for the crossfade to land.
+ *
+ * The two layers transition over --dur, and asserting the exact endpoint immediately after
+ * a hover is a race the test loses under a loaded machine — it passed alone and failed
+ * twice inside the full suite. Settling first asserts the designed state rather than a
+ * frame on the way to it, which is the same rule the screenshot script follows.
+ */
+async function settled(page: Page) {
+  await page.waitForFunction(() =>
+    document.getAnimations().every((animation) => animation.playState !== "running"),
+  );
+}
+
 async function ready(page: Page) {
   await expect(page).toHaveURL(/#/);
   await page.waitForFunction(() =>
@@ -100,6 +114,7 @@ test("a logo changes on hover, and the change is reachable without a pointer", a
   await expect(mono).toHaveCSS("opacity", "1");
 
   await mark.hover();
+  await settled(page);
   // Light is the default theme in a fresh context, where hover reveals the real colours.
   await expect(colour).toHaveCSS("opacity", "1");
   await expect(mono).toHaveCSS("opacity", "0");
@@ -117,6 +132,7 @@ test("the hover state is legible on the dark theme rather than revealing an invi
   const resting = await mono.evaluate((node) => getComputedStyle(node).backgroundColor);
 
   await mark.hover();
+  await settled(page);
 
   // Four of the nine fail 3:1 against the dark ground in their own colours, so on dark the
   // reveal lifts the monochrome layer instead of swapping to them.

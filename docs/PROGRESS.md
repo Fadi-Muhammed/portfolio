@@ -181,6 +181,12 @@ name. The column is simply empty for Quitifi now.
   which `goto("/#engineering")` makes true before any JavaScript runs. It now asserts
   `data-active`. Three consecutive full-suite runs green.
 - **`motion` and `@supabase/ssr` are still installed and unused.**
+- **The timeline's logo is masked, not greyscaled.** Greyscale left UDST'''s near-black mark
+  invisible on the dark theme — the same failure DESIGN.md 15.3 records for Featured in,
+  repeated because the treatment was described as shared before it was.
+- **One Featured in test asserted a transition'''s endpoint immediately after hovering**, and
+  lost that race twice inside the full suite while passing alone. It waits for the crossfade
+  to settle now. Two consecutive full-suite runs green afterwards.
 
 ### Next
 

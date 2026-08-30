@@ -1,4 +1,4 @@
-import Image from "next/image";
+import type { CSSProperties } from "react";
 import { storageUrl } from "@/lib/content/media";
 import type { Experience } from "@/lib/content/queries";
 import { spanParts } from "@/lib/about/dates";
@@ -40,13 +40,12 @@ export function Timeline({ entries }: { entries: Experience[] }) {
             <li key={entry.slug} className="track__row">
               <div className="track__mark" aria-hidden="true">
                 {logo ? (
-                  <Image
-                    src={logo}
-                    alt=""
-                    width={196}
-                    height={97}
+                  // Masked, not greyscaled — the same treatment Featured in uses, and for
+                  // the same reason: greyscale preserves luminance, so UDST's near-black
+                  // mark stayed near-black and disappeared on the dark theme.
+                  <span
                     className="track__logo"
-                    sizes="56px"
+                    style={{ "--logo": `url("${logo}")` } as CSSProperties}
                   />
                 ) : null}
               </div>
