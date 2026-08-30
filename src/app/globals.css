@@ -2183,13 +2183,6 @@
     opacity: 0.75;
   }
 
-  .track__node {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: var(--muted);
-  }
-
   .track__body {
     grid-area: body;
     min-width: 0;

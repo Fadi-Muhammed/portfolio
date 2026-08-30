@@ -7,9 +7,16 @@ import { expect, test, type Page } from "@playwright/test";
  * you are.
  */
 
-/** Waits for the deck to settle on a section rather than guessing at a timeout. */
+/**
+ * Waits for the deck to settle on a section rather than guessing at a timeout.
+ *
+ * The URL alone proves nothing after a deep link: `goto("/#engineering")` makes it true
+ * before a line of JavaScript has run, so this passed while the deck was still on the
+ * hero. `data-active` is the deck's own answer to "where am I", so that is what is asked.
+ */
 async function expectOn(page: Page, id: string) {
   await expect(page).toHaveURL(new RegExp(`#${id}$`));
+  await expect(page.locator(`#${id}[data-active]`)).toHaveCount(1);
 }
 
 /**

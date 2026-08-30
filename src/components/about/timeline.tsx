@@ -13,8 +13,8 @@ import { sortExperience } from "@/lib/about/experience";
  *
  * A row's logo is optional. Three of the four carry UDST's mark, because three of the four
  * happened at UDST — the degree, the job in one of its colleges, and the club. Quitifi is
- * Fadi's own company and has no mark to show, so it gets the rail's node instead. A
- * placeholder square where a logo should be is worse than no square.
+ * Fadi's own company and has no mark, so its column is simply empty: a dot standing in for
+ * a logo is a placeholder, and a placeholder where a mark should be is worse than a gap.
  *
  * The type of each row — work, leadership, education — is not printed. It was, and it made
  * the date column read "JAN 2024 - MAY 2027 (EXPECTED) . EDUCATION", which squeezed the
@@ -46,11 +46,9 @@ export function Timeline({ entries }: { entries: Experience[] }) {
                     width={196}
                     height={97}
                     className="track__logo"
-                    sizes="40px"
+                    sizes="56px"
                   />
-                ) : (
-                  <span className="track__node" />
-                )}
+                ) : null}
               </div>
 
               <div className="track__body">

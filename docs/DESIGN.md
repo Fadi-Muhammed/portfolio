@@ -1088,3 +1088,81 @@ anything would be decoration.
 
 The section has one state change and one only. Nothing moves unprompted, so there is no
 reduced-motion branch to get wrong.
+
+---
+
+## 16. About — the quietest section
+
+Written during Part 12. It introduces no colour, type, radius or spacing value.
+
+### 16.1 Two columns, and what goes in each
+
+The reading on the left, the record on the right. The bio is prose and wants a measure;
+the timeline, the certifications and the CV are facts and want to be scanned. At 390 they
+stack, which puts the prose first — the order it should be read in anyway.
+
+The CV button sits in the reading column rather than under the record. Beneath the timeline
+it fell below the fold of the section's own scroll, and a download nobody can see is not a
+call to action.
+
+### 16.2 The skill filter, and why it hops
+
+B2 item 6 asks that tapping a skill re-lay out the Products and Engineering cards live, so
+that every skill is backed by work. Two things about this site make that literal reading
+impossible, and the second is the interesting one.
+
+**The cards are two and three stops away.** The deck mounts only the active section and its
+neighbours (B3, for the performance reason), and About is hop 6 while Products is hop 2. A
+tap in About re-lays out cards that are not in the document, so nothing visibly happens —
+which is the one thing a control that exists to prove a claim must not do.
+
+So selecting a skill **hops to the work it names**, through the deck's own `hopTo`, and the
+filtered view is what you arrive at. Clearing does not hop: you are already looking at what
+you came to see. The chip's accessible name says which it will do.
+
+**The filter lives in the URL** rather than in state, through the same store the
+Achievements chips use. One source of truth means the link and the list cannot disagree,
+and a shared `?skill=typescript` link needs no special case.
+
+**The cards stay server components.** Only the list and the item wrappers are client code:
+they take an already-rendered card as `children` and decide whether it appears. The case
+study bodies, the images and the card markup never enter the bundle, which is what B12's
+budget cares about.
+
+### 16.3 Only the skills that can prove themselves
+
+Five of twenty-two skills are published. The other seventeen — routing, RF, antennas,
+microwave, signals — name no project, because only three projects exist to name.
+
+That is the section's own rule applied honestly rather than around: a tag that filters to
+nothing is a control that can only disappoint, and B2's promise is that the tag leads to
+the work. The seventeen stay in the table, unpublished, and are published as work arrives
+to back them. The component already renders an unbacked skill as a plain tag rather than a
+control, so the degenerate case is designed rather than merely avoided.
+
+The cost is real and worth stating: the telecom half of a telecommunications portfolio is
+currently the quieter one.
+
+### 16.4 Dates that have not happened yet
+
+A row still running is "present". A row with an end date in the future is "Jan 2024 — May
+2027" with "expected" beneath it — B2 asks for the degree's expected graduation by name,
+and printing it as "present" would throw away the more useful half.
+
+The qualifier sits on its own line rather than inside the range. Inline, "(expected)" made
+the date column ten characters wider than any other row needed, and the degree's title
+wrapped to four lines beside it.
+
+**The timeline sorts by whether something is still running, then by when it started** — not
+by start date alone, which is what the query does and what buried the degree beneath two
+jobs that began later and already finished.
+
+### 16.5 One mark, three times
+
+Three of the four rows carry UDST's mark, because three of the four happened at UDST: the
+degree, the job in one of its colleges, and the club. It is the same monochrome treatment
+Featured in uses, so the two places a logo appears on this site agree with each other.
+
+The fourth row's column is empty. A dot standing in for a missing logo is a placeholder,
+and a placeholder where a mark should be is worse than a gap — which is the rule section 15
+already set for a logo that will not load.

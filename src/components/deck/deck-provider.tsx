@@ -86,11 +86,31 @@ export function DeckProvider({ children }: { children: ReactNode }) {
     [reducedMotion],
   );
 
-  // Deep link: land directly on the section named in the URL, without animating there.
-  // Runs once, before the observer has anything to say.
+  /*
+   * Deep link: land directly on the section named in the URL, without animating there.
+   *
+   * This used to scroll and nothing else, leaving `active` on the hero until the observer
+   * caught up. That works on a fast machine and fails on a slow one: the title, the
+   * mounted section and the rail all follow `active`, so /#engineering could sit there
+   * reading "Fadi Muhammed" with the hero mounted behind a scrolled viewport. It failed
+   * three times in parallel test runs before it was believed rather than retried.
+   *
+   * So the URL is treated as authoritative, exactly as `hopTo` treats a click: set the
+   * destination, mute the observer until it agrees, and let the scroll follow. Landing is
+   * then deterministic rather than a race.
+   *
+   * The state is set in an effect rather than in a lazy initialiser because the server has
+   * no URL to read: initialising from the hash during render would make the prerendered
+   * HTML disagree with the first client render, which is a worse bug than the one being
+   * fixed.
+   */
   useEffect(() => {
     const id = sectionFromHash(window.location.hash);
-    if (!id) return;
+    if (!id || id === SECTIONS[0].id) return;
+
+    hopTarget.current = id;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActive(id);
     document.getElementById(id)?.scrollIntoView({ behavior: "auto", block: "start" });
   }, []);
 
@@ -130,12 +150,47 @@ export function DeckProvider({ children }: { children: ReactNode }) {
     return () => observer.disconnect();
   }, []);
 
-  // Hash follows the active section. replaceState rather than assigning location.hash,
-  // which would scroll the container a second time and fight the snap.
+  /*
+   * Hash and title follow the active section. replaceState rather than assigning
+   * location.hash, which would scroll the container a second time and fight the snap.
+   *
+   * The title is asserted rather than assigned once, and that is the whole point of the
+   * observer below. Next applies the layout's static metadata during hydration, after this
+   * effect has run, so on a deep link the right title was set and then overwritten — and
+   * because `active` never changes again on a landing, nothing put it back. It only ever
+   * failed on /#section, which is why it read as flake for three runs before it was
+   * believed.
+   *
+   * Two fixes were tried and rejected. Rendering a <title> is worse: React hoists it
+   * alongside the one Next already emits and the browser takes the first of three.
+   * Re-applying on the next animation frame fixed it on an idle machine and still lost
+   * under six parallel workers, which is exactly the kind of fix that comes back.
+   *
+   * So: write it, then watch the element and put the value back if anything else changes
+   * it. Bounded to a few seconds because the only competitor is hydration, and idempotent,
+   * so the observer cannot fight itself.
+   */
   useEffect(() => {
     const url = `${window.location.pathname}${window.location.search}#${active}`;
     window.history.replaceState(null, "", url);
-    document.title = documentTitle(active);
+
+    const title = documentTitle(active);
+    const apply = () => {
+      if (document.title !== title) document.title = title;
+    };
+    apply();
+
+    const element = document.querySelector("title");
+    if (!element) return;
+
+    const observer = new MutationObserver(apply);
+    observer.observe(element, { childList: true, characterData: true, subtree: true });
+    const stop = window.setTimeout(() => observer.disconnect(), 4000);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(stop);
+    };
   }, [active]);
 
   // Keepalive: near the bottom of a section, the next teaser lifts and the packet pulses

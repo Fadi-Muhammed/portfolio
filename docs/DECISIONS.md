@@ -609,3 +609,57 @@ Question batch answered in chat, plus the calls made while building.
   above it, and the nav had no background at all. Invisible until Part 10 put "Invite me to
   speak" at the bottom of its section, where it printed over the nav from the Featured in
   stop. The hero keeps a transparent nav because B4 asks for the topology to tuck under it.
+
+### 30 August 2026 — Part 12
+
+Question batch answered in chat, plus the calls made while building.
+
+- **The bio and "currently" line are placeholders written by Claude**, at Fadi's
+  instruction, to be replaced with his own once the site is done. Written only from facts
+  already in the database — the degree, the street-light firmware, Eshrahli's retrieval
+  layer, the Scale AI win, Web Summit — so nothing in them is invented, only assembled.
+- **Two new columns on `site_settings` (bio, currently) and one on `experience`
+  (logo_path)**, by migration, because B11 specified none of them.
+- **Five skills published, seventeen held back**, on the condition that the links are
+  maintained as work is added. Recorded as a standing item at the top of `docs/PROGRESS.md`
+  rather than left as a promise in a report: it is now part of adding any new product or
+  project.
+- **Certifications ship as they stand** — name and issuer, no date, no credential link, no
+  logo. Fadi supplies the rest with the other details after the build.
+- **"College of Engineering & Technology" is one of UDST's colleges**, so the row now names
+  UDST as the organisation and keeps the college in the role. The timeline was reading as
+  two institutions.
+- **UDST's mark appears on three rows, not one.** All three happened at UDST — the degree,
+  the job in one of its colleges, and the club — so the column carries information rather
+  than decorating a single row. Quitifi has no mark and its column is empty.
+- **Selecting a skill hops to the work it names.** A deviation from B2's "re-lay out live",
+  forced by the deck mounting only the active section and its neighbours: About is four
+  stops from Products, so a tap there changes cards that are not in the document. The hop
+  is what makes the control do anything at all. Clearing does not hop.
+- **`useQueryFilter` and `useFlip` were extracted from the Achievements timeline** and it
+  now uses them. Two copies of a URL-backed filter store would have been the parallel
+  convention CLAUDE.md forbids, and the second copy is always the one that drifts.
+
+### 30 August 2026 — the deep-link bug, found during Part 12
+
+Not a Part 12 decision, but the fix landed in it. `e2e/deck.spec.ts` "lands on the section
+named in the URL" had failed once in Part 10, once in Part 11 and once more here, and had
+been recorded twice as flake. It was not.
+
+- **`active` was left to the observer.** The deep-link effect scrolled to the section and
+  nothing more, so `active` stayed on the hero until an IntersectionObserver callback
+  happened to arrive. The title, the mounted section and the rail all follow `active`. The
+  URL is now authoritative, exactly as a click is: set the destination, mute the observer
+  until it agrees, then scroll.
+- **Next overwrote the title.** The layout's static metadata is applied during hydration,
+  after the effect that sets the section title — and because `active` never changes again
+  on a landing, nothing put it back. Rendering a `<title>` was tried and is worse (React
+  hoists it beside Next's and the browser takes the first of three); re-applying on the
+  next frame passed on an idle machine and still lost under six parallel workers. The value
+  is now asserted through a bounded MutationObserver on the title element.
+- **The test was complicit.** It asserted the URL, which `goto("/#engineering")` makes true
+  before any JavaScript has run, so it passed while the deck sat on the hero. It asserts
+  `data-active` now — the deck's own answer to "where am I".
+
+The lesson worth keeping: a test that fails under load and passes alone is reporting the
+conditions of the bug, not the absence of one.

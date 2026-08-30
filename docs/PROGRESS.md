@@ -8,8 +8,8 @@ Definition of done for any part is `docs/BUILD_PLAN.md` B14. UI parts also recor
 
 ## Standing items for the end of the build, not before
 
-Two things are deliberately unfinished and must not be raised again in a part report until the
-part named against each.
+Three things are deliberately unfinished and must not be raised again in a part report
+until the part named against each.
 
 **1. Featured in ships without its coverage links.** B8 is "logos only, each linking to the
 actual coverage", and there is not one URL for any of the nine logos. Fadi decided on 29 August
@@ -30,13 +30,163 @@ the set is normalised by ink rather than height, the monochrome state is a mask 
 a greyscale filter, and UC Berkeley's filled seal has its fill knocked out so it silhouettes
 as engraving. Nothing about the logos is waiting on the URLs.
 
-**2. The hero ships with no proof line, and B1 says it should have one.** B1 requires that the
+**2. Seventeen skills are unpublished until work backs them.** Only five of the twenty-two
+skills name a project, and B2's promise is that tapping a skill leads to the work behind it,
+so the rest stay unpublished rather than becoming controls that can only disappoint. Fadi
+agreed to this on 30 August 2026 **on the condition that the links are maintained**: every
+time a product or engineering project is added, go through `content/seed/skills.json`, add
+the new slug to every skill it evidences, and publish the skills that now have something
+behind them. This is not a thing to be asked about — it is part of adding any new work.
+
+**3. The hero ships with no proof line, and B1 says it should have one.** B1 requires that the
 tagline never stand alone in a viewport without proof, and the A2 eyebrow is positioning rather
 than proof. Fadi decided this deliberately on 29 August 2026 and asked to be reminded **once, at
 the end of the build — and not in any part report before then**. Do not raise it in the reports
 for Parts 8 to 16. Raise it at Part 17 alongside the other launch blocker recorded there, the
 out-of-date CV at `documents/cv.pdf`. The material already exists in the database: Web Summit
 Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
+
+---
+
+## Part 12 — About · 30 August 2026
+
+Status: done. The bio and "currently" line are placeholders Fadi will replace.
+
+### What exists
+
+- `supabase/migrations/20260830120000_about_fields.sql` — `site_settings.bio`,
+  `site_settings.currently`, `experience.logo_path`. Types regenerated.
+- `src/lib/about/skills.ts`, `experience.ts`, `dates.ts` — grouping, the skill filter, the
+  sort, and the date formatting. Pure, and where every rule that can be wrong invisibly is
+  asserted.
+- `src/components/about/about-section.tsx`, `skill-tags.tsx`, `timeline.tsx`,
+  `cv-button.tsx`.
+- `src/components/work/work-filter.tsx` — the filter shared by About, Products and
+  Engineering, with the list and item wrappers that keep the cards on the server.
+- `src/lib/hooks/use-query-filter.ts` and `use-flip.ts` — extracted from the Achievements
+  timeline, which now uses them too rather than carrying its own copy.
+- About styles in `globals.css`; `docs/DESIGN.md` section 16.
+- Content: the bio, the "currently" line, UDST's mark on three rows, the college row
+  reading as UDST, `udst.svg` in the `logos` bucket.
+- Tests: 222 unit (22 new) and 89 Playwright (11 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+Hop to About. Press a skill — the deck goes to the work behind it, that section says what
+it is filtered by, and the URL carries `?skill=`. Press **Clear** there, or come back and
+press the same skill again. Paste `/?skill=typescript#products` into a new tab and it
+lands filtered. **Download CV** shows the file's real size beside it.
+
+```
+npx playwright test about
+npm run screens -- "#about" "?skill=embedded-systems#engineering"
+```
+
+### The skill filter hops, and why
+
+B2 asks that tapping a skill re-lay out the Products and Engineering cards live. It cannot,
+and the reason is structural: the deck mounts only the active section and its neighbours
+(B3), and About is hop 6 while Products is hop 2. A tap in About re-lays out cards that are
+not in the document, so nothing visibly happens.
+
+So selecting a skill hops to the work it names, through the deck's own `hopTo`, and the
+filtered view is what you arrive at. Clearing does not hop. This is a deviation from the
+letter of B2 and, I think, the only way to keep its point: the tap has to lead to the proof.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes, filtered and unfiltered.
+
+- **Tokens only.** No new colours, radii, spacing or type.
+- **Structure encodes something true.** The two skill groups are the two halves of the
+  claim B1 makes. The timeline's order is "still running, then most recent" rather than
+  raw start date. A skill is a control only when it has work behind it.
+- **Motion**: the filter's FLIP and nothing else. No entrance flourish; this is the
+  quietest section and it stays still.
+- **Copy is real** except the bio and "currently", which are placeholders written from
+  facts already in the database — the degree, the sprint win, the Web Summit talk — and
+  marked as Fadi's to replace.
+- **No bars, no radar, no percentages**, as B2 rules out. Nothing here claims a
+  measurement nobody took.
+- **Accessibility**: the chips are `aria-pressed` buttons whose accessible name says what
+  pressing will do; the CV says it opens in a new tab; every control clears 44 px. Zero
+  serious or critical axe violations.
+
+**Six faults:**
+
+1. **Deep links did not reliably land**, and had not since Part 5 — see Known gaps. Found
+   by refusing to retry a test that had "flaked" three times.
+2. **The timeline buried the degree.** Ordered by start date, a four-year degree that began
+   in January 2024 sorted below two roles that started later and had already finished.
+3. **The CV button and the certifications were below the fold** of the section's own
+   scroll — 68 px of overflow at 1440. Closed by moving the CV into the reading column and
+   cutting a duplication, not by shrinking type.
+4. **The degree's summary repeated its own date column**, word for word: "Four-year degree,
+   started January 2024. Expected graduation May to July 2027" beside "JAN 2024 — MAY
+   2027". Only the end of the window is not in the column, so only that stayed.
+5. **The filter notice printed "EMBEDDED SYSTEMS".** The whole line was set in the utility
+   face, which uppercases, and a skill's name is a name rather than a label. The label
+   takes that face now and the name keeps the case it was written in — the same fault as
+   Part 9's console line.
+6. **The section rendered empty for one build** when a `justify-items: center` in Featured
+   in was carried over in spirit here; caught before it shipped, but the underlying lesson
+   went into the CSS: a grid child that shrinks to fit cannot host a `width: 100%` child.
+
+**Remove one accessory.** The dot in the timeline's mark column for rows with no logo. It
+was a placeholder standing in for a missing mark — exactly what section 15 says not to draw
+for a logo that fails to load, so drawing one here was the same mistake with a different
+name. The column is simply empty for Quitifi now.
+
+### Decided without asking
+
+- **The bio and "currently" were written from the database**, not invented: the degree,
+  the street-light firmware, Eshrahli's retrieval layer, the Scale AI win, Web Summit.
+  They say nothing that is not already recorded somewhere in this repo.
+- **The college row reads as UDST.** "College of Engineering & Technology" as an
+  organisation made the timeline look like two institutions; the college moved into the
+  role, where it is the useful detail.
+- **Telecom is listed before software.** The reader arrives having just seen two shipped
+  products and a hackathon win; leading with software would restate what they already
+  believe.
+- **Experience and education are one list**, as B2 words it. Splitting four rows into two
+  lists of two would spend two headings on a distinction the dates already make.
+- **The type label on each row was dropped**, and the schema's `type` is not printed. Role
+  and organisation already say what kind of thing a row is.
+- **The extracted hooks changed the Achievements timeline.** It now uses the shared query
+  store and the shared FLIP rather than its own copies. Its twelve Playwright tests pass
+  unchanged, which is the reason to believe the extraction was faithful.
+
+### Known gaps
+
+- **The bio and "currently" are mine, not Fadi's.** He will replace them once the site is
+  done. Nothing else on the site is placeholder text.
+- **Seventeen skills are unpublished** because no project names them. They publish as work
+  arrives — see the standing item at the top of this file.
+- **The certification has no date, no credential URL and no logo.** Rendered as name and
+  issuer; the rest arrives with the other details Fadi is supplying after the build.
+- **No internships in the timeline**, and B2 mentions them. There are none in the database
+  yet.
+- **The section scrolls internally at 390**, so the CV and the timeline are below the fold
+  on a phone. B3 designs for that, but it is worth a real-device look in Part 16.
+- **The deep-link "flake" was a real bug, and it is fixed.** It failed three times across
+  Parts 10 to 12 and was written off twice. Two faults, both in Part 5's deck provider:
+  the deep-link effect only scrolled, leaving `active` on the hero until the observer
+  happened to catch up; and the title was assigned once in an effect that Next's metadata
+  pass then overwrote — invisible when hopping, because `active` changes again, and
+  permanent on a landing, because it does not. The test was complicit: it asserted the URL,
+  which `goto("/#engineering")` makes true before any JavaScript runs. It now asserts
+  `data-active`. Three consecutive full-suite runs green.
+- **`motion` and `@supabase/ssr` are still installed and unused.**
+
+### Next
+
+Part 13 — Contact: the form, Turnstile, Resend, the handshake animation, the LinkedIn
+slider, the footer and the route recap. It needs accounts created (A16 Resend, A17
+Turnstile), so it opens with setup rather than code.
 
 ---
 
