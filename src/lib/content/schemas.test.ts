@@ -135,6 +135,7 @@ describe("dates", () => {
     location: null,
     summary: null,
     highlights: [],
+    logo_path: null,
   };
 
   it("accepts an ISO date and a null end date meaning present", () => {
@@ -169,6 +170,8 @@ describe("site settings", () => {
   it("requires a timezone, because the contact section prints a local time", () => {
     const settings = {
       tagline: "Unemployed & jobless, but not lost.",
+      bio: null,
+      currently: null,
       eyebrow: null,
       quote: null,
       quote_author: null,
@@ -183,5 +186,25 @@ describe("site settings", () => {
     };
     expect(siteSettingsSchema.safeParse(settings).success).toBe(true);
     expect(siteSettingsSchema.safeParse({ ...settings, timezone: "" }).success).toBe(false);
+  });
+
+  it("will not let a new column be forgotten rather than stated as absent", () => {
+    // The About columns are nullable but not optional, which is the whole point: a field
+    // left out of a seed file is a mistake, and a field written as null is a decision.
+    const settings = {
+      tagline: null,
+      eyebrow: null,
+      quote: null,
+      quote_author: null,
+      availability: null,
+      email: null,
+      socials: {},
+      cv_path: null,
+      hero_primary_label: null,
+      hero_secondary_label: null,
+      timezone: "Asia/Qatar",
+      maintenance_message: null,
+    };
+    expect(siteSettingsSchema.safeParse(settings).success).toBe(false);
   });
 });

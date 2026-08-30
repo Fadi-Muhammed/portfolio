@@ -9,7 +9,7 @@
     "start_date": "2024-01-01",
     "end_date": "2027-05-01",
     "location": "Doha, Qatar",
-    "summary": "Four-year degree, started January 2024. Expected graduation May to July 2027.",
+    "summary": "Expected graduation May to July 2027.",
     "highlights": [],
     "logo_path": "udst.svg"
   },
@@ -39,7 +39,7 @@
     "location": null,
     "summary": null,
     "highlights": [],
-    "logo_path": null
+    "logo_path": "udst.svg"
   },
   {
     "slug": "udst-volunteer-club-president",
@@ -53,7 +53,7 @@
     "location": null,
     "summary": null,
     "highlights": [],
-    "logo_path": null
+    "logo_path": "udst.svg"
   },
   {
     "slug": "dmz-basecamp-health-tech-entrepreneur",

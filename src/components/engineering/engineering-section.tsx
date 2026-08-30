@@ -1,5 +1,10 @@
 import Link from "next/link";
 import type { EngineeringProject } from "@/lib/content/queries";
+import {
+  FilteredWorkItem,
+  FilteredWorkList,
+  WorkFilterNotice,
+} from "@/components/work/work-filter";
 import { EngineeringCard } from "./engineering-card";
 
 /**
@@ -38,13 +43,20 @@ export function EngineeringSection({ projects }: { projects: EngineeringProject[
         what the measurements actually showed.
       </p>
 
-      <ul className="work-strip" data-count={shown.length}>
+      <WorkFilterNotice />
+
+      {/* Same wrappers as Products: the card itself stays a server component. */}
+      <FilteredWorkList
+        slugs={shown.map((project) => project.slug)}
+        className="work-strip"
+        data-count={shown.length}
+      >
         {shown.map((project) => (
-          <li key={project.slug} className="work-strip__item">
+          <FilteredWorkItem key={project.slug} slug={project.slug} className="work-strip__item">
             <EngineeringCard project={project} />
-          </li>
+          </FilteredWorkItem>
         ))}
-      </ul>
+      </FilteredWorkList>
 
       {projects.length > CARDS_IN_DECK ? (
         <p className="section-more">

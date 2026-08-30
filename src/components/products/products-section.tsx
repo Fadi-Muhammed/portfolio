@@ -1,5 +1,10 @@
 import Link from "next/link";
 import type { Product } from "@/lib/content/queries";
+import {
+  FilteredWorkItem,
+  FilteredWorkList,
+  WorkFilterNotice,
+} from "@/components/work/work-filter";
 import { ProductCard } from "./product-card";
 
 /**
@@ -48,13 +53,24 @@ export function ProductsSection({ products }: { products: Product[] }) {
         prove.
       </p>
 
-      <ul className="work-strip" data-count={shown.length}>
+      <WorkFilterNotice />
+
+      {/*
+        The cards are still server components: the list and the item are client wrappers
+        that take an already-rendered card and decide whether it appears, so About's skill
+        filter can re-lay this out without the card markup entering the bundle.
+      */}
+      <FilteredWorkList
+        slugs={shown.map((product) => product.slug)}
+        className="work-strip"
+        data-count={shown.length}
+      >
         {shown.map((product) => (
-          <li key={product.slug} className="work-strip__item">
+          <FilteredWorkItem key={product.slug} slug={product.slug} className="work-strip__item">
             <ProductCard product={product} />
-          </li>
+          </FilteredWorkItem>
         ))}
-      </ul>
+      </FilteredWorkList>
 
       {hasMore ? (
         <p className="section-more">
