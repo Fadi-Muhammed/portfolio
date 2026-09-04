@@ -1166,3 +1166,84 @@ Featured in uses, so the two places a logo appears on this site agree with each 
 The fourth row's column is empty. A dot standing in for a missing logo is a placeholder,
 and a placeholder where a mark should be is worse than a gap — which is the rule section 15
 already set for a logo that will not load.
+
+---
+
+## 17. Contact — the finale
+
+Written during Part 13. It introduces no colour, type, radius or spacing value. Three
+things move in this section and nothing else does.
+
+### 17.1 The handshake
+
+B5 spends the site's third and last orchestrated moment here, and it earns that by being
+literally true rather than decorative: the visitor has just opened a connection, and this
+is what opening a connection looks like. SYN, then SYN-ACK, then ACK, drawn as three
+labelled arrows between two nodes — with the real flag names, because a network engineer's
+contact form does not have to explain the joke.
+
+Three steps at 300 ms apart is a shade under a second end to end, which is B5's ceiling.
+One SVG rather than three elements, because the nodes and the arrows share a coordinate
+space and animating them apart would mean keeping three positions in step by hand.
+
+Under reduced motion the global rule zeroes the duration and the delay, so every arrow is
+simply present. That is the designed end state rather than a degradation, which is why
+there is no separate static version to maintain.
+
+### 17.2 The slider
+
+The one bounce on the site. B5 makes it the single exception because a spring back is
+physical rather than decorative: the handle was dragged and let go, and things that are
+let go return. Nothing else on the site is allowed it.
+
+It is a real drag — pointer events, so one code path covers a finger, a mouse and a
+stylus, and `touch-action: none` on the track so a drag along it does not scroll the deck
+instead. And it is a real button underneath: `role="button"`, focusable, Enter and Space
+open the profile. Someone on a keyboard never has to simulate a drag, which is the failure
+mode of every slider that treats dragging as the only way in.
+
+The handle's travel is written as `100cqw - 100%` against the track's own container, so it
+never leaves the track whatever the track measures. A one-time nudge per session hints
+that it is draggable instead of a caption saying so, and is skipped entirely under reduced
+motion — a control that moves on its own is exactly what that setting asks not to happen.
+
+### 17.3 The route recap
+
+A small copy of the hero's topology with the sections this visit reached lit up. It closes
+the site by being about the visitor rather than about the site: the same seven nodes for
+everyone, a different path for each.
+
+Nothing is stored. Refresh and the route starts again, which is the honest behaviour for
+something describing a single visit. Nothing animates either — a node is lit or it is not
+— so there is no reduced-motion branch to get wrong.
+
+### 17.4 What the section refuses to say
+
+The colophon carries no joke, as B9 asks: "Built with Next.js and Supabase. Source
+viewable." is the whole of it.
+
+The privacy note states what is true today rather than what will be true. A18 chose Umami,
+but Part 15 installs it — writing that sentence now would be a claim about software that is
+not running. Part 15 changes the line when it changes the fact.
+
+The address is assembled in the browser from two halves, so the served HTML never carries
+it. That turned out to require fixing two places it leaked from that had nothing to do with
+this section: the command palette shipped the whole `site_settings` row, and so did the
+hero's buttons. A client component should be handed what it renders, not the row it came
+from.
+
+### 17.5 The failure states are not the visitor's fault
+
+Three different failures, three different answers.
+
+- **A rejected challenge** is answered with "That didn't look like a human", because
+  something did answer it wrongly.
+- **Cloudflare being unreachable** is answered by accepting the message. It is our outage,
+  not theirs, and the honeypot, the validation and the throttle are all still standing.
+  Failing people because a third party is down would take the form offline with it.
+- **A stored message whose notification did not send** is answered with success, because it
+  is true. The message is in the database; a Resend outage costs a prompt reply, not the
+  message, and telling someone it failed would invite them to send it twice.
+
+The throttle is deliberately generous — three in ten minutes. It stops a script, not a
+person with a follow-up thought.

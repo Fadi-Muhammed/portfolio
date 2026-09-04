@@ -269,3 +269,72 @@ is public, and driver errors leak schema details.
 | `ok` / 200           | Reachable                                |
 | `degraded` / 503     | Configured, but the query failed         |
 | `unconfigured` / 503 | No Supabase environment — expected in CI |
+
+---
+
+## The contact flow (Part 13)
+
+What happens between someone pressing "Send message" and Fadi reading it.
+
+### The path
+
+1. **Honeypot.** A field called `company`, off-screen and `aria-hidden`, that no person
+   sees. Filled means a bot, and the answer is `{ status: "sent" }` — success, immediately,
+   with nothing written and nothing sent. Telling a bot it was detected is telling it what
+   to change.
+2. **Validation** against `contactSchema`, the same zod schema the form uses on blur. The
+   client's opinion is a courtesy; this is the control.
+3. **Turnstile**, verified server-side against Cloudflare with the secret and the client's
+   IP. A token is single-use and short-lived, so a replayed one is refused by Cloudflare
+   rather than by us.
+4. **Throttle.** Messages from the same hashed IP in the last ten minutes are counted; three
+   is the limit.
+5. **Insert** into `contact_messages` with the service-role client — the table has no anon
+   policy at all, so this is the only way a row can arrive.
+6. **Notify** through Resend, best-effort.
+
+Cheap and local first, network last: an invalid submission never costs a Cloudflare round
+trip, and a bot caught by the honeypot costs nothing at all.
+
+### What is stored, and what is not
+
+`contact_messages` holds the name, the email, the message, the user agent, and `ip_hash` —
+never the address itself. The hash is a salted SHA-256 using `REVALIDATE_SECRET` as the
+salt: stable enough to count against for ten minutes, irreversible, and useless to anyone
+who reads the table. The salt is reused rather than introduced because it is already
+required, already long, and already server-only.
+
+### Three failures, three answers
+
+| Failure                       | Answer                           | Why                                                                                                                                             |
+| ----------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Turnstile rejects the token   | "That didn't look like a human." | Something answered the challenge wrongly.                                                                                                       |
+| Cloudflare is unreachable     | The message is accepted.         | Our outage, not the visitor's. Four other checks still apply, and the form must not go down when a third party does.                            |
+| Resend fails after the insert | Success.                         | The message is in the database. A missing notification costs a prompt reply, not the message — and saying it failed would invite a second send. |
+| The throttle query fails      | The message is accepted.         | If the limit cannot be measured, the other checks still stand.                                                                                  |
+
+### Environment
+
+| Variable                         | Where  | Notes                                                                                                                      |
+| -------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Client | Rendered into the widget. Public by design.                                                                                |
+| `TURNSTILE_SECRET_KEY`           | Server | Verifies the token. Never prefixed.                                                                                        |
+| `RESEND_API_KEY`                 | Server | **Sending access only.** A full-access key that leaked would let someone read the logs and edit sending domains.           |
+| `CONTACT_FROM_EMAIL`             | Server | `onboarding@resend.dev` until the domain is verified.                                                                      |
+| `CONTACT_TO_EMAIL`               | Server | Must be the address that owns the Resend account while the shared sender is in use — that sender can deliver nowhere else. |
+
+CI and Vercel previews use Cloudflare's published always-pass keys
+(`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA`). A preview runs on
+`*.vercel.app`, which cannot be added to a widget's hostname list and cannot be wildcarded,
+so there is no other workable answer there.
+
+### Verifying a real send
+
+The automated suite deliberately never writes a row: it reaches the success state through
+the honeypot, which returns before touching anything. To check the whole path for real:
+
+1. `npm run dev`, open the site, hop to Contact, and send a message from a normal browser.
+   A headless one cannot solve a Managed challenge, which is the widget working.
+2. Confirm the row: Supabase Studio, `contact_messages`, newest first.
+3. Confirm the email arrives at `CONTACT_TO_EMAIL`, and that replying to it reaches the
+   address that was typed into the form rather than Resend.

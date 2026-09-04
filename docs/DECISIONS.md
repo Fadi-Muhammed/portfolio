@@ -697,3 +697,51 @@ public address and the forwarding address; A20 LinkedIn only, so one slider; A28
 - **The privacy note states what is true today, not what will be true.** A18 chose Umami
   but Part 15 installs it, so writing the Umami sentence now would be a claim about
   software that is not running. Part 15 changes the line when it changes the fact.
+
+### 4 September 2026 — Part 13, decided without asking
+
+- **A server action, not a route handler.** The form then carries a real `action` and works
+  with JavaScript switched off, which B9 asks for where feasible.
+- **The notification email is best-effort.** By the time Resend is called the message is
+  already in `contact_messages`, so an outage there costs a prompt reply rather than the
+  message — and telling someone their message failed when it did not would invite a second
+  send.
+- **An unreachable Cloudflare accepts the message; a rejected token does not.** They are
+  different events. One is our outage, with the honeypot, the validation and the throttle
+  all still standing; the other is something answering a challenge wrongly.
+- **Three messages in ten minutes** is the throttle. Generous on purpose: it stops a
+  script, not a person with a follow-up thought.
+- **`REVALIDATE_SECRET` is reused as the salt for the IP hash** rather than adding a second
+  secret to configure. It is already required, already long and already server-only.
+- **The automated suite never writes a row.** It reaches the success state through the
+  honeypot, which the action answers before touching Turnstile, the database or Resend — so
+  the finale is asserted on every run without a row landing in the real table each time.
+- **`test/server-only-stub.ts` was added** so vitest can import modules carrying the
+  `server-only` guard. Aliased in the test config rather than removed from the source: the
+  protection stays real in every build that ships.
+
+### 4 September 2026 — the Turnstile widget never rendered
+
+Worth recording because the screenshots hid it and nearly shipped it.
+
+`next/script` with `strategy="lazyOnload"` waits for the window load event. Contact is the
+last stop on a deck that mounts a section only when it becomes active, so that event had
+fired long before — the tag was never added and the challenge never appeared. The one path
+that worked was a direct link to `/#contact`, where the section mounts during the initial
+load, and that is exactly what `npm run screens` does. The section looked finished in every
+screenshot and was not.
+
+Three passes to fix, each one a real constraint rather than a preference:
+
+1. **Inject the script on mount.** Correct whenever the component appears, and it keeps the
+   third-party request off every visit that never reaches this section.
+2. **Announce through an external store, not `setState` in an effect.** The lint rule
+   refused the first version and was right: whether a third-party script has loaded is an
+   external system, and `useSyncExternalStore` is how React is told about one.
+3. **Use Cloudflare's `onload` parameter, not `turnstile.ready()`.** The API object exists
+   before it is initialised, so rendering on the script's own load event drew nothing.
+   `ready()` refuses on an async script and says so; dropping async to satisfy it would mean
+   a render-blocking third-party script on a page most visitors never submit from.
+
+The lesson worth keeping: a screenshot script that always deep-links is not exercising the
+path visitors take, and a section can pass its own review on the one route nobody uses.

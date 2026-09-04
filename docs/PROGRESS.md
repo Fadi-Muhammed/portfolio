@@ -48,6 +48,162 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Part 13 — Contact · 4 September 2026
+
+Status: built and tested. **One step outstanding: the manual end-to-end send**, which needs
+a real browser and Fadi's inbox — see "What Fadi still has to do".
+
+### What exists
+
+- `src/lib/contact/` — `schema.ts` (shared by both sides), `turnstile.ts`, `throttle.ts`,
+  `notify.ts`. All pure or injectable, which is why the failures are testable.
+- `src/app/contact/actions.ts` — the server action: honeypot, validation, Turnstile,
+  throttle, insert, notify.
+- `src/components/contact/` — `contact-section.tsx`, `contact-form.tsx`, `handshake.tsx`,
+  `turnstile-widget.tsx`, `contact-details.tsx`, `slide-to-open.tsx`, `route-recap.tsx`,
+  `site-footer.tsx`.
+- `supabase` untouched: `contact_messages` already had the right shape and the right
+  absence of policies from Part 3.
+- Contact styles in `globals.css`; `docs/DESIGN.md` section 17; the contact flow in
+  `docs/BACKEND.md`.
+- Env: five new variables in `env.ts` and `.env.example`; Cloudflare's always-pass keys in
+  CI and in the Playwright web server.
+- `resend` added as a dependency. `test/server-only-stub.ts` lets vitest import modules
+  that carry the `server-only` guard without weakening it in any build that ships.
+- Tests: 251 unit (29 new) and 104 Playwright (14 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+Hop to Contact. Leave a field and it says what is missing beside it. Fill it in properly
+and the challenge ticks itself. Send, and three arrows draw SYN, SYN-ACK, ACK before
+"Message sent". Drag the slider past about 85% and LinkedIn opens; let go early and the
+handle springs back; tab to it and press Enter for the same result without a drag. **Copy
+email** says "Copied". The footer lights the stops you actually visited.
+
+```
+npx playwright test contact
+npm run screens -- "#contact"
+```
+
+### The bug the screenshots hid
+
+The Turnstile widget **never rendered for anyone who navigated to Contact** — only for
+someone landing directly on `/#contact`. `next/script` with `strategy="lazyOnload"` waits
+for the window load event, which fires long before the last stop on a deck that mounts a
+section when it becomes active. The tag was simply never added.
+
+It looked fine because the screenshot script deep-links, which is the one path that worked.
+It was caught by trying to do the manual send and finding no widget on the page.
+
+Fixing it took three passes, each one a real thing learned:
+
+1. **Inject the script on mount** instead of `next/script`. Correct whenever the component
+   appears, and it keeps the third-party request off every visit that never reaches this
+   section.
+2. **Announce through a store**, not `setState` in an effect. The lint rule refused the
+   first version and was right: "has a third-party script loaded" is an external system,
+   and `useSyncExternalStore` is how React is told about one — the same shape the theme and
+   the URL filter already use.
+3. **Use Cloudflare's `onload` parameter**, not `turnstile.ready()`. The API object exists
+   before it is initialised, so rendering on the script's load event drew nothing;
+   `ready()` then refused outright — "Remove async/defer before using turnstile.ready()" —
+   and dropping async would mean a render-blocking third-party script on a page most
+   visitors never submit from.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes, in the form state and the success state.
+
+- **Tokens only.** No new colours, radii, spacing or type. The handshake's arrows are
+  `accent`, its nodes `signal`, its labels `muted`.
+- **Structure encodes something true.** The handshake is a real handshake with the real
+  flag names. The route recap is the visitor's own path, not a decoration.
+- **Motion**: three things move — the handshake once on success, the slider under a finger,
+  the copy confirmation. `signal` marks the live things and nothing else.
+- **The one bounce on the site** is the slider's spring back, which B5 names as the single
+  exception and which is physical rather than decorative.
+- **Copy is real.** Errors say what happened and what to do, and none of them apologises.
+- **Accessibility**: every field's error is wired with `aria-invalid` and
+  `aria-describedby`; the slider is a real button reachable by keyboard; the success state
+  is a live region; the honeypot is hidden from assistive technology as well as from view.
+  Zero serious or critical axe violations.
+
+**Five faults:**
+
+1. **The Turnstile widget never rendered**, as above.
+2. **The section overflowed its own scroll**, hiding the footer and the route recap — the
+   payoff of the whole finale. Closed by tightening the form's gaps and dropping the
+   textarea a row, not by shrinking type.
+3. **The form ran under the rail at 390.** Every other section reserves `--rail-gutter`;
+   this one is the first wide enough to collide and had not.
+4. **"Slide into my LinkedIn→"** had no space before the arrow. The label is a flex
+   container, so the whitespace between the words and the arrow is not a space in the
+   layout — it is a gap between two flex items, or nothing.
+5. **The address was still in the served HTML.** The section split it carefully, and then
+   the command palette shipped the whole `site_settings` row into the page, and so did the
+   hero's buttons. B9's promise was being kept in one place and broken in two others.
+
+**Remove one accessory.** Nothing was removed, and that is worth stating rather than
+inventing a cut: this section arrived without spare parts. Every element is either a
+control, a state, or one of the three things B9 names for the footer. The closest thing to
+a candidate was the "It's 21:27 for me" line, which B9 asks for by name and which is the
+one piece of information here that changes.
+
+### Decided without asking
+
+- **A server action rather than a route handler**, so the form carries a real `action` and
+  works with JavaScript off, which B9 asks for where feasible.
+- **The notification is best-effort.** By the time it is sent the message is already stored,
+  so a Resend outage costs a prompt reply rather than the message.
+- **An unreachable Cloudflare accepts the message.** It is our outage; the honeypot,
+  validation and throttle all still apply. A rejected token is refused, because that is a
+  different event.
+- **Three messages in ten minutes** is the throttle. It stops a script, not a person with a
+  follow-up thought.
+- **`REVALIDATE_SECRET` is reused as the IP hash salt** rather than adding a second secret
+  to configure and get wrong.
+- **The automated suite never writes a row.** It reaches the success state through the
+  honeypot, which returns before touching Turnstile, the database or Resend.
+
+### Known gaps
+
+- **The manual end-to-end send has not been done.** A headless browser cannot solve a
+  Managed challenge — which is the widget working correctly — so this needs a real browser
+  and Fadi's inbox.
+- **The sender is `onboarding@resend.dev`**, which can only deliver to the address that
+  owns the Resend account. Verifying `fadimuhammed.work` is a Part 17 job; the sender is an
+  environment variable, so it is a config change.
+- **The Vercel environment variables are not set.** Five of them, or the form is broken in
+  production while working locally.
+- **The Supabase webhook for `contact_messages` is not needed** and was not added: nothing
+  renders from that table.
+- **`motion` is still installed and unused.** Part 13 was the last part that might have
+  wanted it, and the slider's spring is three lines of CSS. It can go.
+- **`@supabase/ssr` is still installed and unused**, carried since Part 3.
+- **Not tested on a real device.** The slider under a thumb is the thing to check.
+
+### What Fadi still has to do
+
+1. **Send one real message** from a normal browser at `npm run dev`, then confirm the row
+   in Supabase Studio (`contact_messages`, newest first) and the email at
+   `work.fmuhammed@gmail.com`. Check that replying to it reaches the address typed into the
+   form rather than Resend.
+2. **Add the five contact variables to Vercel** — `NEXT_PUBLIC_TURNSTILE_SITE_KEY`,
+   `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL` — for
+   Production and Preview.
+
+### Next
+
+Part 14 — error, empty, loading, offline and maintenance states (B10). Everything it
+covers already has a designed empty state inside its own section; what is missing is the
+routes: 404, `error.tsx`, `global-error.tsx`, offline, and the maintenance flag.
+
+---
+
 ## Part 12 — About · 30 August 2026
 
 Status: done. The bio and "currently" line are placeholders Fadi will replace.
