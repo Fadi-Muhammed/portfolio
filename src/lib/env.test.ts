@@ -3,6 +3,7 @@ import { EnvError, parsePublicEnv, parseServerEnv } from "./env";
 
 /** A complete, valid public environment. Individual tests break one field at a time. */
 const validPublic = {
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: "0x4AAAAAAABbbbbbbbbbbbbb",
   NEXT_PUBLIC_SITE_URL: "https://fadimuhammed.work",
   NEXT_PUBLIC_SUPABASE_URL: "https://hulswrqpouaokbrbrflk.supabase.co",
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "a".repeat(40),
@@ -60,6 +61,10 @@ describe("parseServerEnv", () => {
   const validServer = {
     SUPABASE_SERVICE_ROLE_KEY: "b".repeat(40),
     REVALIDATE_SECRET: "c".repeat(64),
+    TURNSTILE_SECRET_KEY: "0x4AAAAAAACcccccccccccccc",
+    RESEND_API_KEY: "re_" + "d".repeat(30),
+    CONTACT_FROM_EMAIL: "onboarding@resend.dev",
+    CONTACT_TO_EMAIL: "work.fmuhammed@gmail.com",
   };
 
   it("defaults NODE_ENV to development when unset", () => {

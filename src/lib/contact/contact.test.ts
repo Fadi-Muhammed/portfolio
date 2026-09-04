@@ -133,7 +133,7 @@ describe("verifyTurnstile", () => {
       fetchImpl: fetchImpl as never,
     });
 
-    const [url, init] = fetchImpl.mock.calls[0] as [string, RequestInit];
+    const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toContain("challenges.cloudflare.com");
     const body = new URLSearchParams(String(init.body));
     expect(body.get("secret")).toBe("the-secret");
