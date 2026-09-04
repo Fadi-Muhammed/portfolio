@@ -1,5 +1,6 @@
 import { AboutSection } from "@/components/about/about-section";
 import { AchievementsSection } from "@/components/achievements/achievements-section";
+import { ContactSection } from "@/components/contact/contact-section";
 import { Deck, DeckSection } from "@/components/deck/deck";
 import { DeckProvider } from "@/components/deck/deck-provider";
 import { Rail } from "@/components/deck/rail";
@@ -87,6 +88,8 @@ export default async function Home() {
                   <AchievementsSection achievements={achievements} />
                 ) : section.id === "featured-in" ? (
                   <FeaturedSection entries={featured} />
+                ) : section.id === "contact" ? (
+                  <ContactSection settings={settings} />
                 ) : section.id === "about" ? (
                   <AboutSection
                     settings={settings}

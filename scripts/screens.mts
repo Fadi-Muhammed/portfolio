@@ -156,7 +156,19 @@ async function main(): Promise<void> {
             await context.addInitScript(`document.documentElement.dataset.theme = "${theme}";`);
 
             const page = await context.newPage();
-            const response = await page.goto(`${BASE_URL}${route}`, { waitUntil: "networkidle" });
+            /*
+             * `load`, not `networkidle`.
+             *
+             * networkidle waits for two seconds of no requests, which never arrives on a
+             * page carrying a third-party widget: Turnstile's script keeps talking to
+             * Cloudflare, so /#contact timed out rather than being photographed. Part 15
+             * adds analytics, which would have broken it again.
+             *
+             * Nothing is lost by the change, because the wait that actually matters is
+             * the one below — every animation finished, which is what separates the
+             * designed state from a frame on the way to it.
+             */
+            const response = await page.goto(`${BASE_URL}${route}`, { waitUntil: "load" });
             if (!response || !response.ok()) {
               throw new Error(`${route} returned ${response?.status() ?? "no response"}`);
             }

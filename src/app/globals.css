@@ -2297,3 +2297,368 @@
     }
   }
 }
+
+/*
+ * Contact (B2 item 7, B9) — the last stop, and the finale.
+ *
+ * Three things move here and nothing else does: the handshake on success, the slider
+ * under a finger, and the copy confirmation. B5 spends the site's third orchestrated
+ * moment on the first of those.
+ */
+@layer components {
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  .contact__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    align-content: start;
+    /* The rail owns the right-hand strip on every size, and the form is the first thing
+       on this site wide enough to run into it. */
+    padding-right: var(--rail-gutter);
+  }
+
+  .contact__form,
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    max-width: 30rem;
+  }
+
+  .contact-form__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .contact-form__error {
+    margin: 0;
+    flex: 1 1 14rem;
+  }
+
+  /*
+   * The honeypot. Off-screen rather than display:none — some bots skip hidden inputs, and
+   * rather more of them fill in anything with a plausible name.
+   */
+  .honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ---- The handshake -------------------------------------------------------- */
+
+  .contact-sent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .contact-sent p {
+    margin: 0;
+  }
+
+  .handshake {
+    margin: 0;
+    width: 100%;
+    max-width: 20rem;
+  }
+
+  .handshake__svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .handshake__node {
+    fill: var(--signal);
+  }
+
+  .handshake__spine {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  .handshake__arrow,
+  .handshake__head {
+    stroke: var(--accent);
+    stroke-width: 1.25;
+    fill: none;
+  }
+
+  .handshake__label {
+    fill: var(--muted);
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: 7px;
+    letter-spacing: 0.06em;
+    text-anchor: middle;
+  }
+
+  /*
+   * SYN, then SYN-ACK, then ACK — in that order, because that is the order they happen
+   * in. Three steps at 300ms apart is a shade under a second end to end, which is B5's
+   * ceiling for an orchestrated moment.
+   *
+   * Under reduced motion the global rule zeroes the duration and the delay, so every
+   * arrow is simply present. That is the designed end state rather than a degradation,
+   * which is why there is no separate static version to keep in step.
+   */
+  .handshake__step {
+    animation: handshake-step var(--dur) var(--ease) both;
+  }
+
+  .handshake__step[data-step="2"] {
+    animation-delay: 300ms;
+  }
+
+  .handshake__step[data-step="3"] {
+    animation-delay: 600ms;
+  }
+
+  /* ---- Details -------------------------------------------------------------- */
+
+  .contact-details p {
+    margin: 0;
+  }
+
+  .contact-details__email {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .contact-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 0.75rem;
+    margin-left: -0.75rem;
+    border-radius: var(--radius-md);
+    color: var(--ink);
+    transition: background-color var(--dur-fast) var(--ease);
+  }
+
+  .contact-copy:hover {
+    background-color: var(--ghost-hover);
+  }
+
+  .contact-details__toast {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 0.5rem);
+    z-index: 1;
+  }
+
+  .contact-details__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ---- The slider (B7) ------------------------------------------------------ */
+
+  /*
+   * container-type is what lets the handle's transform be written against the track's
+   * own width — `100cqw - 100%` is exactly the free travel, whatever the track measures.
+   * touch-action: none is the line that stops a drag along the track scrolling the deck.
+   */
+  .slider {
+    container-type: inline-size;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 22rem;
+    height: 56px;
+    padding: 4px;
+    border: var(--hairline) solid var(--line);
+    border-radius: 999px;
+    background-color: var(--surface);
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+    overflow: hidden;
+  }
+
+  .slider[data-dragging] {
+    cursor: grabbing;
+  }
+
+  .slider__label,
+  .slider__done {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* The label is flex, so the whitespace between the words and the arrow is not a
+       space in the layout — it is the gap between two flex items, or nothing. */
+    gap: 0.4rem;
+    padding-left: 3rem;
+    color: var(--muted);
+    pointer-events: none;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+
+  .slider__done {
+    opacity: 0;
+    color: var(--ink);
+  }
+
+  .slider[data-opened] .slider__done {
+    opacity: 1;
+  }
+
+  .slider[data-opened] .slider__label {
+    opacity: 0 !important;
+  }
+
+  .slider__handle {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex: none;
+    border-radius: 999px;
+    background-color: var(--accent);
+    color: var(--on-accent);
+    /*
+     * The one bounce on the site, and only when the handle is let go. B5 makes this the
+     * single exception because a spring back is physical rather than decorative: it was
+     * dragged and released, and released things return.
+     */
+    transition: transform var(--dur) cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  /* Dragging follows the finger exactly. A curve here would feel like lag. */
+  .slider[data-dragging] .slider__handle {
+    transition: none;
+  }
+
+  .slider[data-opened] .slider__handle {
+    background-color: var(--signal);
+  }
+
+  /* The one-time hint that it is draggable, instead of a caption saying so. */
+  .slider[data-nudge] .slider__handle {
+    animation: slider-nudge var(--dur-slow) var(--ease) 1;
+  }
+
+  /* ---- Footer --------------------------------------------------------------- */
+
+  .site-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    padding-right: var(--rail-gutter);
+    border-top: var(--hairline) solid var(--line);
+  }
+
+  .site-footer__lines p {
+    margin: 0;
+  }
+
+  .recap {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 22rem;
+  }
+
+  .recap__svg {
+    width: 100%;
+    height: 24px;
+  }
+
+  .recap__line {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  /* A node you reached is filled; one you did not is an outline. Nothing animates: a
+     node is lit or it is not, so there is no reduced-motion branch to get wrong. */
+  .recap__node {
+    fill: var(--bg);
+    stroke: var(--line);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .recap__node[data-visited] {
+    fill: var(--signal);
+    stroke: var(--signal);
+  }
+
+  .recap__caption {
+    margin: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .contact__body {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 3rem;
+      padding-right: calc(var(--rail-gutter) + 4rem);
+    }
+
+    .site-footer {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+      padding-right: calc(var(--rail-gutter) + 4rem);
+    }
+
+    .site-footer__lines {
+      text-align: right;
+    }
+  }
+}
+
+@keyframes handshake-step {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slider-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(10px);
+  }
+}

@@ -32,6 +32,14 @@ import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 type DeckContextValue = {
   active: SectionId;
   activeIndex: number;
+  /**
+   * Every section this visit has reached, for the footer's route recap (A9).
+   *
+   * Held here rather than in the footer because the deck is the only thing that knows
+   * when a section becomes active, and nothing is persisted: a refresh starts the route
+   * again, which is the honest behaviour for something describing one visit.
+   */
+  visited: ReadonlySet<SectionId>;
   hopTo: (id: SectionId) => void;
   /** True once the visitor is near the bottom of the current section (B3 keepalive). */
   nearEnd: boolean;
@@ -55,7 +63,28 @@ export function DeckProvider({ children }: { children: ReactNode }) {
    * never to contradict it.
    */
   const hopTarget = useRef<SectionId | null>(null);
-  const [active, setActive] = useState<SectionId>(SECTIONS[0].id);
+  /*
+   * Where the visitor is, and everywhere they have been, in one piece of state.
+   *
+   * The route recap could have been derived in an effect watching `active`, and that is
+   * how it was written first — but deriving state from state in an effect is the pattern
+   * that produces a render with the two disagreeing, and the lint rule that forbids it is
+   * right. Setting both together means the recap can never be a step behind the deck.
+   */
+  const [deck, setDeck] = useState<{ active: SectionId; visited: ReadonlySet<SectionId> }>(() => ({
+    active: SECTIONS[0].id,
+    visited: new Set([SECTIONS[0].id]),
+  }));
+  const { active, visited } = deck;
+
+  const markActive = useCallback((id: SectionId) => {
+    setDeck((current) => {
+      if (current.active === id) return current;
+      const seen = new Set(current.visited);
+      seen.add(id);
+      return { active: id, visited: seen };
+    });
+  }, []);
   const [nearEnd, setNearEnd] = useState(false);
   const hopTimeout = useRef(0);
   const reducedMotion = useReducedMotion();
@@ -73,7 +102,7 @@ export function DeckProvider({ children }: { children: ReactNode }) {
       });
 
       // Set immediately rather than waiting for the observer, so a click feels answered.
-      setActive(id);
+      markActive(id);
 
       // Safety net: if the destination never becomes the most visible section — a very
       // short last section, an interrupted scroll — stop ignoring the observer rather
@@ -83,7 +112,7 @@ export function DeckProvider({ children }: { children: ReactNode }) {
         hopTarget.current = null;
       }, 1200);
     },
-    [reducedMotion],
+    [reducedMotion, markActive],
   );
 
   /*
@@ -110,9 +139,9 @@ export function DeckProvider({ children }: { children: ReactNode }) {
 
     hopTarget.current = id;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActive(id);
+    markActive(id);
     document.getElementById(id)?.scrollIntoView({ behavior: "auto", block: "start" });
-  }, []);
+  }, [markActive]);
 
   // Which section is active, from how much of each is on screen.
   useEffect(() => {
@@ -137,7 +166,7 @@ export function DeckProvider({ children }: { children: ReactNode }) {
           hopTarget.current = null;
         }
 
-        setActive(next);
+        markActive(next);
       },
       { root, threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] },
     );
@@ -148,7 +177,7 @@ export function DeckProvider({ children }: { children: ReactNode }) {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [markActive]);
 
   /*
    * Hash and title follow the active section. replaceState rather than assigning
@@ -247,8 +276,8 @@ export function DeckProvider({ children }: { children: ReactNode }) {
   }, [active, hopTo]);
 
   const value = useMemo<DeckContextValue>(
-    () => ({ active, activeIndex: sectionIndex(active), hopTo, nearEnd, deckRef }),
-    [active, hopTo, nearEnd],
+    () => ({ active, activeIndex: sectionIndex(active), hopTo, nearEnd, deckRef, visited }),
+    [active, hopTo, nearEnd, visited],
   );
 
   return <DeckContext.Provider value={value}>{children}</DeckContext.Provider>;
