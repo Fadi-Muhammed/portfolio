@@ -25,6 +25,12 @@ jobs:
       # The e2e suite covers /design, which is flag-gated and inlined at build time.
       # Production leaves this unset, so the route is absent there.
       NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: "true"
+      # Cloudflare's published always-pass Turnstile keys. Not secrets — they are in the
+      # public documentation, and they exist so a test environment does not need real
+      # ones. A Vercel preview runs on *.vercel.app, which cannot be added to a widget's
+      # hostname list, so these are the only workable answer there too.
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
 
     steps:
       - uses: actions/checkout@v5

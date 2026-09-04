@@ -50,7 +50,9 @@ export async function getPaletteContent(): Promise<PaletteContent> {
       type,
       event_name,
     })),
-    email: settings?.email ?? null,
+    // Split so the joined address never reaches the served HTML. See items.ts.
+    emailUser: settings?.email?.split("@")[0] ?? null,
+    emailDomain: settings?.email?.split("@")[1] ?? null,
     socials: (settings?.socials as Record<string, string> | null) ?? {},
     cvUrl,
   };

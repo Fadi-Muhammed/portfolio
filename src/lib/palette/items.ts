@@ -43,7 +43,16 @@ export type PaletteContent = {
   products: Array<{ slug: string; title: string; summary: string | null }>;
   engineering: Array<{ slug: string; title: string; type: string; summary: string | null }>;
   achievements: Array<{ slug: string; title: string; type: string; event_name: string | null }>;
-  email: string | null;
+  /*
+   * Split, and joined only in the browser.
+   *
+   * B9 asks that the address be revealed on click rather than printed in the HTML, and
+   * the contact section does that — but the palette ships this same payload into the
+   * served markup, so sending the joined string here would have quietly undone it two
+   * sections away. A scraper reading the HTML finds two halves.
+   */
+  emailUser: string | null;
+  emailDomain: string | null;
   socials: Record<string, string>;
   cvUrl: string | null;
 };
@@ -52,7 +61,8 @@ export const EMPTY_CONTENT: PaletteContent = {
   products: [],
   engineering: [],
   achievements: [],
-  email: null,
+  emailUser: null,
+  emailDomain: null,
   socials: {},
   cvUrl: null,
 };
@@ -64,6 +74,10 @@ function sentence(value: string): string {
 
 export function buildItems(content: PaletteContent): PaletteItem[] {
   const items: PaletteItem[] = [];
+  // Joined here, in the browser, rather than on the server where it would be serialised
+  // into the page.
+  const email =
+    content.emailUser && content.emailDomain ? `${content.emailUser}@${content.emailDomain}` : null;
 
   for (const section of SECTIONS) {
     items.push({
@@ -137,14 +151,14 @@ export function buildItems(content: PaletteContent): PaletteItem[] {
     });
   }
 
-  if (content.email) {
+  if (email) {
     items.push({
       id: "link:email",
       group: "Links",
       label: "Email",
       keywords: ["mail", "contact", "write"],
-      hint: content.email,
-      action: { kind: "external", href: `mailto:${content.email}` },
+      hint: email,
+      action: { kind: "external", href: `mailto:${email}` },
     });
   }
 
@@ -159,14 +173,14 @@ export function buildItems(content: PaletteContent): PaletteItem[] {
     });
   }
 
-  if (content.email) {
+  if (email) {
     items.push({
       id: "action:copy-email",
       group: "Actions",
       label: "Copy email",
       keywords: ["clipboard", "address"],
-      hint: content.email,
-      action: { kind: "copy-email", email: content.email },
+      hint: email,
+      action: { kind: "copy-email", email },
     });
   }
 

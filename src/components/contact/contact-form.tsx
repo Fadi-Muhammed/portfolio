@@ -32,7 +32,16 @@ import { Turnstile } from "./turnstile-widget";
 
 const initial: ContactResult | null = null;
 
-export function ContactForm({ email }: { email: string | null }) {
+export function ContactForm({
+  emailUser,
+  emailDomain,
+}: {
+  emailUser: string | null;
+  emailDomain: string | null;
+}) {
+  // Joined in the browser: the mailto fallback must not put the address back into the
+  // HTML that the section went to the trouble of keeping it out of.
+  const email = emailUser && emailDomain ? `${emailUser}@${emailDomain}` : null;
   const [result, formAction, pending] = useActionState(
     async (_previous: ContactResult | null, formData: FormData) => submitContact(formData),
     initial,
@@ -88,8 +97,10 @@ export function ContactForm({ email }: { email: string | null }) {
 
   return (
     <form ref={formRef} action={formAction} className="contact-form" aria-labelledby={headingId}>
+      {/* Named "Contact form" rather than "Send a message": the latter made the form's
+          accessible name contain the word "Message", which collides with the field. */}
       <h3 id={headingId} className="sr-only">
-        Send a message
+        Contact form
       </h3>
 
       <Input

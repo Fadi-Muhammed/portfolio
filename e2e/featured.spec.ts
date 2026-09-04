@@ -38,6 +38,15 @@ async function ready(page: Page) {
 async function openSection(page: Page): Promise<boolean> {
   await page.goto("/#featured-in");
   await ready(page);
+  /*
+   * Wait for the deck to actually be on this section, not merely for the URL to say so.
+   *
+   * Hovering scrolls the target into view, and the deck is a snap container: with the
+   * scroll still settling, the pointer landed where the logo was rather than where it
+   * ended up, and the hover went to whatever had moved under it. That is why this test
+   * failed under six parallel workers and passed alone, three times.
+   */
+  await expect(page.locator("#featured-in[data-active]")).toHaveCount(1);
   return (await page.locator("#featured-in .featured__item").count()) > 0;
 }
 
@@ -113,6 +122,8 @@ test("a logo changes on hover, and the change is reachable without a pointer", a
   await expect(colour).toHaveCSS("opacity", "0");
   await expect(mono).toHaveCSS("opacity", "1");
 
+  await mark.scrollIntoViewIfNeeded();
+  await settled(page);
   await mark.hover();
   await settled(page);
   // Light is the default theme in a fresh context, where hover reveals the real colours.
@@ -131,6 +142,8 @@ test("the hover state is legible on the dark theme rather than revealing an invi
   const mono = mark.locator(".featured__mono");
   const resting = await mono.evaluate((node) => getComputedStyle(node).backgroundColor);
 
+  await mark.scrollIntoViewIfNeeded();
+  await settled(page);
   await mark.hover();
   await settled(page);
 

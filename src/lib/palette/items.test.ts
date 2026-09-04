@@ -25,7 +25,8 @@ const content: PaletteContent = {
       event_name: "Web Summit Qatar 2026",
     },
   ],
-  email: "work.fmuhammed@gmail.com",
+  emailUser: "work.fmuhammed",
+  emailDomain: "gmail.com",
   socials: {
     linkedin: "https://www.linkedin.com/in/fadi-muhammed-524b75310",
     github: "https://github.com/Fadi-Muhammed",
@@ -81,7 +82,13 @@ describe("links", () => {
   });
 
   it("omits a link entirely when the value is missing, rather than listing a dead one", () => {
-    const items = buildItems({ ...content, socials: {}, cvUrl: null, email: null });
+    const items = buildItems({
+      ...content,
+      socials: {},
+      cvUrl: null,
+      emailUser: null,
+      emailDomain: null,
+    });
     for (const id of ["link:linkedin", "link:github", "link:email", "link:cv"]) {
       expect(items.find((item) => item.id === id)).toBeUndefined();
     }
@@ -100,7 +107,9 @@ describe("actions", () => {
   });
 
   it("drops copy email when there is no address to copy", () => {
-    const ids = buildItems({ ...content, email: null }).map((item) => item.id);
+    const ids = buildItems({ ...content, emailUser: null, emailDomain: null }).map(
+      (item) => item.id,
+    );
     expect(ids).not.toContain("action:copy-email");
   });
 });

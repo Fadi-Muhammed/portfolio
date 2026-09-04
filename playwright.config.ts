@@ -31,9 +31,19 @@ export default defineConfig({
       // CI builds in its own step, so it only needs to start. Locally, build first so
       // `npm run test:e2e` on a clean checkout can never test a stale or missing build.
       command: isCI ? "npm run start" : "npm run build && npm run start",
-      // The /design route is flag-gated and inlined at build time, so the suite that
-      // tests it has to be built with the flag on.
-      env: { NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: "true" },
+      env: {
+        // The /design route is flag-gated and inlined at build time, so the suite that
+        // tests it has to be built with the flag on.
+        NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: "true",
+        /*
+         * Cloudflare's published always-pass Turnstile keys, used even on a machine that
+         * has real ones. The suite should exercise the form's own logic — validation, the
+         * honeypot, the throttle, the states — not whether a challenge in a headless
+         * browser can be solved. Real keys are covered by the manual end-to-end send.
+         */
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
+        TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
+      },
       url: baseURL,
       reuseExistingServer: !isCI,
       timeout: 180_000,

@@ -2,7 +2,6 @@
 
 import { useDeck } from "@/components/deck/deck-provider";
 import { Button } from "@/components/ui/button";
-import type { SiteSettings } from "@/lib/content/queries";
 
 /**
  * The two hero buttons.
@@ -16,16 +15,28 @@ import type { SiteSettings } from "@/lib/content/queries";
  * buttons say if the database is unreachable — the same words, so the site never shows
  * a button whose name nobody chose.
  */
-export function HeroActions({ settings }: { settings: SiteSettings | null }) {
+/*
+ * Two labels, not the whole settings row.
+ *
+ * This is a client component, so every prop it takes is serialised into the page. Handing
+ * it the row put `site_settings.email` into the served HTML — which quietly undid the
+ * trouble the contact section goes to in keeping the address out of it, two stops away and
+ * for no benefit at all. A client component should be given what it renders.
+ */
+export function HeroActions({
+  primaryLabel,
+  secondaryLabel,
+}: {
+  primaryLabel: string | null;
+  secondaryLabel: string | null;
+}) {
   const { hopTo } = useDeck();
 
   return (
     <div className="hero__actions">
-      <Button onClick={() => hopTo("products")}>
-        {settings?.hero_primary_label ?? "See my work"}
-      </Button>
+      <Button onClick={() => hopTo("products")}>{primaryLabel ?? "See my work"}</Button>
       <Button variant="secondary" onClick={() => hopTo("contact")}>
-        {settings?.hero_secondary_label ?? "Work with me"}
+        {secondaryLabel ?? "Work with me"}
       </Button>
     </div>
   );

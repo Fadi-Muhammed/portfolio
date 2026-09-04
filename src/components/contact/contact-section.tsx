@@ -15,8 +15,7 @@ import { SiteFooter } from "./site-footer";
  * appears in the served HTML (B9). It is reassembled in the browser.
  */
 export function ContactSection({ settings }: { settings: SiteSettings | null }) {
-  const email = settings?.email ?? null;
-  const [emailUser, emailDomain] = email ? email.split("@") : [null, null];
+  const [emailUser, emailDomain] = settings?.email ? settings.email.split("@") : [null, null];
   const socials = (settings?.socials as Record<string, string> | null) ?? {};
   const cvUrl = storageUrl("documents", settings?.cv_path);
 
@@ -27,7 +26,7 @@ export function ContactSection({ settings }: { settings: SiteSettings | null }) 
           <p className="section-intro text-body text-ink measure">
             Tell me what you&rsquo;re building, or what you need built.
           </p>
-          <ContactForm email={email} />
+          <ContactForm emailUser={emailUser ?? null} emailDomain={emailDomain ?? null} />
         </div>
 
         <ContactDetails

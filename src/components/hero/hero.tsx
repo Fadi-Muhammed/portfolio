@@ -31,7 +31,10 @@ export function Hero({ settings }: { settings: SiteSettings | null }) {
         {settings?.tagline ?? "Fadi Muhammed"}
       </h1>
 
-      <HeroActions settings={settings} />
+      <HeroActions
+        primaryLabel={settings?.hero_primary_label ?? null}
+        secondaryLabel={settings?.hero_secondary_label ?? null}
+      />
 
       <div className="hero__signature">
         <Topology />
