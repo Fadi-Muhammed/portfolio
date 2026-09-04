@@ -30,6 +30,11 @@ const publicSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z
     .string()
     .min(20, { error: "NEXT_PUBLIC_SUPABASE_ANON_KEY looks too short to be a real key" }),
+  // Public by design: Turnstile's site key is rendered into the widget's markup. The
+  // secret that verifies a token is the other half, and lives in the server schema.
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: z
+    .string()
+    .min(10, { error: "NEXT_PUBLIC_TURNSTILE_SITE_KEY looks too short to be a real key" }),
 });
 
 const serverSchema = z.object({
@@ -44,6 +49,19 @@ const serverSchema = z.object({
   REVALIDATE_SECRET: z
     .string()
     .min(32, { error: "REVALIDATE_SECRET should be at least 32 characters" }),
+  // Verifies a Turnstile token against Cloudflare. Server only.
+  TURNSTILE_SECRET_KEY: z
+    .string()
+    .min(10, { error: "TURNSTILE_SECRET_KEY looks too short to be a real key" }),
+  // Sending-access key. It can send mail and nothing else, which is why a leak is
+  // survivable rather than a domain takeover.
+  RESEND_API_KEY: z.string().startsWith("re_", {
+    error: "RESEND_API_KEY should start with re_",
+  }),
+  // The shared onboarding sender until the domain is verified — see DECISIONS, 4 September
+  // 2026. A variable rather than a literal so verifying the domain is a config change.
+  CONTACT_FROM_EMAIL: z.email({ error: "CONTACT_FROM_EMAIL must be an email address" }),
+  CONTACT_TO_EMAIL: z.email({ error: "CONTACT_TO_EMAIL must be an email address" }),
 });
 
 export type PublicEnv = z.infer<typeof publicSchema>;
@@ -72,6 +90,7 @@ export function parsePublicEnv(source: Record<string, string | undefined>): Publ
     NEXT_PUBLIC_ENABLE_DESIGN_ROUTE: source.NEXT_PUBLIC_ENABLE_DESIGN_ROUTE,
     NEXT_PUBLIC_SUPABASE_URL: source.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: source.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: source.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   });
   if (!result.success) throw new EnvError(issuesOf(result.error));
   return result.data;
@@ -82,6 +101,10 @@ export function parseServerEnv(source: Record<string, string | undefined>): Serv
     NODE_ENV: source.NODE_ENV,
     SUPABASE_SERVICE_ROLE_KEY: source.SUPABASE_SERVICE_ROLE_KEY,
     REVALIDATE_SECRET: source.REVALIDATE_SECRET,
+    TURNSTILE_SECRET_KEY: source.TURNSTILE_SECRET_KEY,
+    RESEND_API_KEY: source.RESEND_API_KEY,
+    CONTACT_FROM_EMAIL: source.CONTACT_FROM_EMAIL,
+    CONTACT_TO_EMAIL: source.CONTACT_TO_EMAIL,
   });
   if (!result.success) throw new EnvError(issuesOf(result.error));
   return result.data;

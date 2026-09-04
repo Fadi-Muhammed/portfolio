@@ -663,3 +663,37 @@ been recorded twice as flake. It was not.
 
 The lesson worth keeping: a test that fails under load and passes alone is reporting the
 conditions of the bug, not the absence of one.
+
+### 4 September 2026 — Part 13 question batch
+
+Already settled in Section A and used as-is: A15 `work.fmuhammed@gmail.com` for both the
+public address and the forwarding address; A20 LinkedIn only, so one slider; A28
+`Asia/Qatar`; A29 no booking link; A9 route recap in the footer, yes.
+
+- **Resend uses the shared `onboarding@resend.dev` sender for now**, not a verified domain.
+  That sender can only deliver to the address that owns the Resend account, which is
+  exactly and only what this form does — the notification goes to Fadi and nobody else.
+  Verifying `fadimuhammed.work` means DKIM and SPF records at the registrar and waiting on
+  DNS, and buys one thing: the notification arrives from `hello@fadimuhammed.work` instead.
+  Worth doing at launch. The sender is an environment variable, so switching is a config
+  change with no code edit.
+- **The Resend key is sending-access, not full access.** It sits in `.env.local` and in
+  Vercel; a full-access key that leaked would let someone read the logs and edit sending
+  domains, while this one can only send mail.
+- **`reply_to` is the visitor's own address**, so a reply from Gmail reaches the person who
+  wrote in rather than Resend.
+- **Turnstile is a Managed widget** with two hostnames, `fadimuhammed.work` and
+  `localhost`. Without the second the widget refuses to render in development and the form
+  is untestable. Managed rather than Invisible: most visitors see a box tick itself, and on
+  a contact form the visible signal that something was checked is worth keeping.
+- **Pre-clearance is off.** It only applies to sites proxied through Cloudflare, and this
+  one is on Vercel with its DNS elsewhere, so it would do nothing.
+- **CI and preview deployments use Cloudflare's published always-pass test keys.** Vercel
+  previews run on `*.vercel.app`, which cannot be added to the widget's hostname list and
+  cannot be wildcarded, so the alternative was tests that depend on Fadi's real keys.
+- **Copy, all three as proposed by Claude and accepted:** the contact line is "Tell me what
+  you're building, or what you need built."; the colophon is "Built with Next.js and
+  Supabase. Source viewable."; the privacy note is "No analytics, no cookies."
+- **The privacy note states what is true today, not what will be true.** A18 chose Umami
+  but Part 15 installs it, so writing the Umami sentence now would be a claim about
+  software that is not running. Part 15 changes the line when it changes the fact.
