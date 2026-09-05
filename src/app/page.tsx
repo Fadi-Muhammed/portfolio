@@ -3,7 +3,6 @@ import { AchievementsSection } from "@/components/achievements/achievements-sect
 import { ContactSection } from "@/components/contact/contact-section";
 import { Deck, DeckSection } from "@/components/deck/deck";
 import { Rail } from "@/components/deck/rail";
-import { SectionPlaceholder } from "@/components/deck/section-placeholder";
 import { EngineeringSection } from "@/components/engineering/engineering-section";
 import { FeaturedSection } from "@/components/featured/featured-section";
 import { Hero } from "@/components/hero/hero";
@@ -80,15 +79,15 @@ export default async function Home() {
               <FeaturedSection entries={featured} />
             ) : section.id === "contact" ? (
               <ContactSection settings={settings} />
-            ) : section.id === "about" ? (
+            ) : (
+              // The last of the seven, and the only id left: TypeScript narrows to
+              // "about" here, so the chain is exhaustive without a fallback branch.
               <AboutSection
                 settings={settings}
                 skills={skills}
                 certifications={certifications}
                 experience={experience}
               />
-            ) : (
-              <SectionPlaceholder section={section} />
             )}
           </DeckSection>
         ))}

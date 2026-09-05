@@ -24,8 +24,6 @@ export type DeckSection = {
   name: string;
   /** One line. Shown as the peek and as the section's subheading. */
   teaser: string;
-  /** Which part builds the real content. Shown in the placeholder until then. */
-  arrivesIn: string;
 };
 
 export const SECTIONS: readonly DeckSection[] = [
@@ -33,43 +31,36 @@ export const SECTIONS: readonly DeckSection[] = [
     id: "hero",
     name: "Home",
     teaser: "Telecommunications and network engineer who ships products.",
-    arrivesIn: "Part 7",
   },
   {
     id: "products",
     name: "Products",
     teaser: "What I've built and shipped.",
-    arrivesIn: "Part 8",
   },
   {
     id: "engineering",
     name: "Engineering",
     teaser: "Hardware and network work from the lab.",
-    arrivesIn: "Part 9",
   },
   {
     id: "achievements",
     name: "Achievements",
     teaser: "Stages, competitions and programmes.",
-    arrivesIn: "Part 10",
   },
   {
     id: "featured-in",
     name: "Featured in",
     teaser: "Where the work has shown up.",
-    arrivesIn: "Part 11",
   },
   {
     id: "about",
     name: "About",
     teaser: "Skills, certifications and the timeline.",
-    arrivesIn: "Part 12",
   },
   {
     id: "contact",
     name: "Contact",
     teaser: "Open to freelance work and collaborations.",
-    arrivesIn: "Part 13",
   },
 ] as const;
 
