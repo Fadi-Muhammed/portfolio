@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { DeckProvider } from "@/components/deck/deck-provider";
 import { SiteNav } from "@/components/deck/site-nav";
@@ -44,6 +44,20 @@ export const metadata: Metadata = {
     locale: "en_GB",
   },
   twitter: { card: "summary_large_image" },
+};
+
+/**
+ * The browser chrome's colour, per theme.
+ *
+ * Two values rather than one, because the site has two grounds and a phone that paints
+ * its status bar the wrong one puts a light band above a dark page. These are `--bg` from
+ * src/styles/tokens.css, and they are the only place those values are repeated outside it.
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eff2f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1419" },
+  ],
 };
 
 /*

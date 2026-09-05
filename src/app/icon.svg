@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Fadi Muhammed">
+  <!--
+    The favicon (docs/DESIGN.md section 5, option a).
+
+    A reduction of the "Fadi" logotype, not a shrink of it: four letters turn to mush at
+    16px, so this keeps the initial and the one thing that identifies the site anywhere it
+    appears — the packet square, which is the tittle of the "i" in the logotype and the
+    moving mark in the rail and the topology.
+
+    The F is drawn as bars rather than set in Archivo. A favicon is a reduction, and bars
+    hold their edges on a 16px grid where a glyph's terminals would blur.
+
+    It carries its own dark ground so it reads on a light or a dark tab strip. The values
+    are the dark theme's bg, ink and signal from src/styles/tokens.css.
+  -->
+  <rect width="32" height="32" fill="#0e1419" />
+  <rect x="7" y="7" width="12" height="4" fill="#e4e9ee" />
+  <rect x="7" y="7" width="4" height="18" fill="#e4e9ee" />
+  <rect x="7" y="14" width="9" height="4" fill="#e4e9ee" />
+  <rect x="21" y="14" width="4" height="4" fill="#ffb84d" />
+</svg>
