@@ -117,8 +117,10 @@ export function SlideToOpen({ href, target }: Props) {
       onPointerCancel={onPointerUp}
       onKeyDown={onKeyDown}
     >
+      {/* No arrow after the label: the handle is an arrow, it is the thing that moves, and
+          it sits in the same 22rem control. Two of them said one thing twice. */}
       <span className="slider__label text-small" style={{ opacity: 1 - progress * 1.4 }}>
-        Slide into my {target} <span aria-hidden="true">→</span>
+        Slide into my {target}
       </span>
 
       <span className="slider__done text-small" aria-hidden="true">

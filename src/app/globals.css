@@ -788,9 +788,18 @@
     height: 100%;
   }
 
+  /*
+   * The links carry more weight than a hairline.
+   *
+   * They were drawn in `--line` at 1px, which is the colour of a table rule on a page that
+   * is nearly the same value — so B4's reading order came out backwards: the tagline
+   * dominated and the site's one signature element read as background texture. The colour
+   * is mixed from `muted` toward the ground rather than invented, so it still sits well
+   * below the tagline while actually being visible.
+   */
   .hero-topology__edge {
-    stroke: var(--line);
-    stroke-width: 1;
+    stroke: color-mix(in oklab, var(--muted) 55%, var(--bg));
+    stroke-width: 1.25;
     vector-effect: non-scaling-stroke;
     fill: none;
   }
@@ -808,7 +817,7 @@
   .hero-topology__glyph {
     fill: none;
     stroke: var(--muted);
-    stroke-width: 1;
+    stroke-width: 1.4;
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
@@ -896,12 +905,24 @@
  * Products (B2 item 2) — the deck section, the cards, and the case-study page.
  */
 @layer components {
+  /*
+   * A section never spills onto the one below it.
+   *
+   * The deck gives every section a fixed height, and until now nothing enforced that its
+   * contents fit — so when the Products grid collapsed to one column at 768, the overflow
+   * simply painted over the Engineering header. B3 already says content that does not fit
+   * is handled by an inner scroll region; this makes that the default rather than
+   * something each section has to remember, and `data-inner-scroll` on the same elements
+   * keeps the deck's arrow keys out of it.
+   */
   .section-body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     height: 100%;
     min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   .section-intro {
@@ -1045,6 +1066,12 @@
    * thing that is genuinely live, measured now. Unreachable is `muted` rather than
    * `danger` — the product being down is not the visitor's error and not this site's
    * fault, and painting it red would say something untrue about both.
+   *
+   * It is spent on the LED and not on the words. docs/DESIGN.md section 3 records
+   * `signal` on light `bg` as 3.69:1 — enough for a graphic, not for 12 px text, and
+   * "Live · 710 ms" was being set in it. The dot is the live thing and carries the
+   * state on its own; colouring the reading as well was the same fact said twice and
+   * failed AA to say it.
    */
   .live-status {
     display: inline-flex;
@@ -1062,10 +1089,6 @@
     background-color: var(--muted);
   }
 
-  .live-status[data-state="up"] {
-    color: var(--signal);
-  }
-
   .live-status[data-state="up"] .live-status__led {
     background-color: var(--signal);
   }
@@ -1081,15 +1104,16 @@
 
   @media (min-width: 48rem) {
     /*
-     * Tracks are capped rather than stretched. With `1fr` columns a single product filled
-     * half a 1440 viewport — a 900 px card with a 500 px screenshot, which read as a
-     * billboard and left the other half of the section empty. Capping the track means a
-     * card is card-sized whether there is one of them or four, and the grid simply has
-     * fewer columns in use.
+     * Two columns, stated. `auto-fill` with a 20rem track was here first and it broke the
+     * site at exactly this width: 768 minus the section padding and the rail's gutter
+     * leaves 640px, which fits one 320px track and not two — so both product cards stacked,
+     * the section ran to twice its own height, and Rubric's tags printed over the
+     * Engineering heading below. The count is now told, not inferred, until there is room
+     * for the tracks to be capped instead.
      */
     .work-strip {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(0, 20rem));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1.5rem;
       overflow-x: visible;
       margin-left: 0;
@@ -1101,6 +1125,19 @@
 
     .work-strip__item {
       max-width: none;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    /*
+     * Tracks are capped rather than stretched. With `1fr` columns a single product filled
+     * half a 1440 viewport — a 900 px card with a 500 px screenshot, which read as a
+     * billboard and left the other half of the section empty. Capping the track means a
+     * card is card-sized whether there is one of them or four, and the grid simply has
+     * fewer columns in use. There is room for that to work from here up.
+     */
+    .work-strip {
+      grid-template-columns: repeat(auto-fill, minmax(0, 20rem));
     }
   }
 
@@ -1923,20 +1960,41 @@
    * waiting to be filled.
    */
   .featured {
+    /* The two numbers each breakpoint sets. Everything else here is derived from them. */
+    --featured-mark: 8.5rem;
+    --featured-row-gap: 1.75rem;
+
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.75rem 1rem;
-    margin: 0;
+    /*
+     * Three rows that share the wall's height rather than three rows sized by the marks.
+     * Sized by the marks, the wall was 459px tall inside a 336px section on a 1280x720
+     * laptop — it scrolled, and a logo wall you have to scroll is not a wall.
+     */
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: var(--featured-row-gap) 1rem;
+    /*
+     * As tall as the marks want, never taller than the section. The first term is what
+     * three rows need at full size — a mark plus the link's padding — so on a tall phone
+     * the wall stays a block instead of stretching into three separate bands, and on a
+     * short laptop it gives up height and the marks shrink into it.
+     */
+    height: min(
+      100%,
+      calc(3 * (var(--featured-mark) * 421 / 600 + 1rem) + 2 * var(--featured-row-gap))
+    );
+    margin: auto 0;
     padding: 0;
     padding-right: var(--rail-gutter);
     list-style: none;
-    align-content: center;
-    flex: 1 1 auto;
     min-height: 0;
   }
 
+  /* Grid, so the link fills its cell and the mark has a definite height to size against. */
   .featured__item {
+    display: grid;
     min-width: 0;
+    min-height: 0;
   }
 
   /*
@@ -1947,18 +2005,29 @@
    */
   .featured__link {
     display: grid;
-    place-items: center;
-    min-height: max(44px, 5rem);
+    /* Stretch down the block axis, centre across the inline one: the mark takes the row's
+       height, which is the only definite dimension in the cell, and stays centred in a
+       column that is wider than it. */
+    place-items: stretch center;
+    min-height: 44px;
     padding: 0.5rem;
     text-decoration: none;
   }
 
+  /*
+   * The mark box is the cell, not the artwork.
+   *
+   * It used to carry the files' own 600x421 and take its height from its width, which is
+   * what made the wall taller than the section it sits in. Both layers already letterbox
+   * with `contain`, so the true proportions belong to the image and this box only has to
+   * say how much room the image may have: as wide as the cap allows, as tall as the row
+   * is. On a short viewport the marks get smaller instead of the wall getting longer.
+   */
   .featured__mark {
     position: relative;
     display: block;
     width: 100%;
-    max-width: 8.5rem;
-    aspect-ratio: 600 / 421;
+    max-width: var(--featured-mark);
   }
 
   .featured__colour,
@@ -2044,11 +2113,9 @@
 
   @media (min-width: 48rem) {
     .featured {
-      gap: 2.5rem 2rem;
-    }
-
-    .featured__mark {
-      max-width: 11rem;
+      --featured-mark: 11rem;
+      --featured-row-gap: 2.5rem;
+      column-gap: 2rem;
     }
   }
 
@@ -2058,12 +2125,10 @@
      * rail's reading — "hop 5 of 7 · featured in" — reaches a step further in than they do.
      */
     .featured {
+      --featured-mark: 13rem;
+      --featured-row-gap: 3rem;
       padding-right: calc(var(--rail-gutter) + 4rem);
-      gap: 3rem 3rem;
-    }
-
-    .featured__mark {
-      max-width: 13rem;
+      column-gap: 3rem;
     }
   }
 }
@@ -2205,6 +2270,12 @@
     margin: 0;
   }
 
+  /* Inline below 64rem, where it needs a space of its own: without one the row read
+     "MAY 2027EXPECTED". */
+  .track__note::before {
+    content: " ";
+  }
+
   /* ---- Certifications -------------------------------------------------------- */
 
   .certs {
@@ -2294,6 +2365,11 @@
 
     .track__note {
       display: block;
+    }
+
+    /* On its own line the leading space would be a stray indent. */
+    .track__note::before {
+      content: none;
     }
   }
 }
@@ -2516,9 +2592,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* The label is flex, so the whitespace between the words and the arrow is not a
-       space in the layout — it is the gap between two flex items, or nothing. */
-    gap: 0.4rem;
     padding-left: 3rem;
     color: var(--muted);
     pointer-events: none;
@@ -2660,5 +2733,93 @@
   }
   40% {
     transform: translateX(10px);
+  }
+}
+
+/*
+ * 404 (B10). The other states in B10 — the render error, offline, maintenance — arrive in
+ * Part 14; this one is here early because without it an unknown URL got Next's own
+ * unstyled page, which is a harder break from the design than any missing feature.
+ */
+@layer components {
+  .notfound {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: calc(var(--nav-h) + 2rem) var(--section-pad) 4rem;
+  }
+
+  .notfound h1,
+  .notfound p {
+    margin: 0;
+  }
+
+  .notfound__figure {
+    margin: 0 0 1rem;
+    width: 100%;
+    max-width: 15rem;
+  }
+
+  .notfound__figure svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .notfound__link {
+    stroke: color-mix(in oklab, var(--muted) 55%, var(--bg));
+    stroke-width: 1.25;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Beyond the last node that answered, the route is drawn but not travelled. */
+  .notfound__link[data-dead] {
+    stroke-dasharray: 2 3;
+  }
+
+  .notfound__node {
+    fill: var(--muted);
+  }
+
+  .notfound__node[data-dead] {
+    fill: var(--bg);
+    stroke: var(--muted);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Stopped short of the node that never answered. */
+  .notfound__packet {
+    fill: var(--signal);
+  }
+
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .notfound__home,
+  .notfound__search {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    transition: text-decoration-thickness var(--dur-fast) var(--ease);
+  }
+
+  .notfound__home:hover,
+  .notfound__search:hover {
+    text-decoration-thickness: 2px;
   }
 }

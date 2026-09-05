@@ -26,7 +26,7 @@ const CARDS_IN_DECK = 4;
 export function ProductsSection({ products }: { products: Product[] }) {
   if (products.length === 0) {
     return (
-      <div className="section-body">
+      <div className="section-body" data-inner-scroll>
         <p className="text-body text-ink measure">
           Nothing here yet. The products are being written up.
         </p>
@@ -42,7 +42,7 @@ export function ProductsSection({ products }: { products: Product[] }) {
   const hasMore = products.length > CARDS_IN_DECK;
 
   return (
-    <div className="section-body">
+    <div className="section-body" data-inner-scroll>
       {/*
         The section header already says "Products — what I've built and shipped". An intro
         that opened by saying it again was the same job done twice, so this only does the

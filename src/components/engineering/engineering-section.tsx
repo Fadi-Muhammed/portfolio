@@ -23,7 +23,7 @@ const CARDS_IN_DECK = 4;
 export function EngineeringSection({ projects }: { projects: EngineeringProject[] }) {
   if (projects.length === 0) {
     return (
-      <div className="section-body">
+      <div className="section-body" data-inner-scroll>
         <p className="text-body text-ink measure">
           Nothing here yet. The lab and course work is being written up.
         </p>
@@ -37,7 +37,7 @@ export function EngineeringSection({ projects }: { projects: EngineeringProject[
   const shown = projects.slice(0, CARDS_IN_DECK);
 
   return (
-    <div className="section-body">
+    <div className="section-body" data-inner-scroll>
       <p className="section-intro text-body text-ink measure">
         Lab and course work. Each one lists the concepts it applied and the tools it used, and says
         what the measurements actually showed.

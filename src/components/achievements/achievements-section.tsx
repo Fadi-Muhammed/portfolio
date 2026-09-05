@@ -17,7 +17,7 @@ import { Timeline } from "./timeline";
 export function AchievementsSection({ achievements }: { achievements: Achievement[] }) {
   if (achievements.length === 0) {
     return (
-      <div className="section-body">
+      <div className="section-body" data-inner-scroll>
         <p className="text-body text-ink measure">
           Nothing here yet. The competitions, talks and programmes are being written up.
         </p>
@@ -28,7 +28,7 @@ export function AchievementsSection({ achievements }: { achievements: Achievemen
   const hasTalk = achievements.some((entry) => entry.type === "talk");
 
   return (
-    <div className="section-body">
+    <div className="section-body" data-inner-scroll>
       <Timeline achievements={achievements} />
 
       {hasTalk ? <InviteToSpeak /> : null}

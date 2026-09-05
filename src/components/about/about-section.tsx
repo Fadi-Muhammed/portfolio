@@ -36,7 +36,7 @@ export function AboutSection({ settings, skills, certifications, experience }: P
 
   if (!hasAnything) {
     return (
-      <div className="section-body">
+      <div className="section-body" data-inner-scroll>
         <p className="text-body text-ink measure">Nothing here yet.</p>
       </div>
     );

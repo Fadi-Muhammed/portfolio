@@ -19,7 +19,7 @@ import { FeaturedLogo } from "./featured-logo";
 export function FeaturedSection({ entries }: { entries: FeaturedIn[] }) {
   if (entries.length === 0) {
     return (
-      <div className="section-body">
+      <div className="section-body" data-inner-scroll>
         <p className="text-body text-ink measure">
           Nothing here yet. Coverage and stages are added as they happen.
         </p>
@@ -28,7 +28,7 @@ export function FeaturedSection({ entries }: { entries: FeaturedIn[] }) {
   }
 
   return (
-    <div className="section-body">
+    <div className="section-body" data-inner-scroll>
       <ul className="featured">
         {entries.map((entry) => (
           <FeaturedLogo key={entry.slug} entry={entry} />

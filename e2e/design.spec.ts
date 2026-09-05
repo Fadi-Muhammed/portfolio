@@ -36,12 +36,16 @@ test("the theme toggle switches the theme and says what it will do", async ({ pa
   await setTheme(page, "light");
   await page.goto("/design");
 
-  const toggle = page.getByRole("button", { name: "Switch to dark theme" });
+  // Scoped to the nav. /design shows a toggle of its own as a specimen, and since the nav
+  // moved into the root layout the page carries both — the one being tested is the one a
+  // visitor uses.
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  const toggle = nav.getByRole("button", { name: "Switch to dark theme" });
   await expect(toggle).toBeVisible();
   await toggle.click();
 
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(page.getByRole("button", { name: "Switch to light theme" })).toBeVisible();
+  await expect(nav.getByRole("button", { name: "Switch to light theme" })).toBeVisible();
 });
 
 test("the invalid field names the fault and is wired to it", async ({ page }) => {

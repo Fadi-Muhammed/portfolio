@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -88,11 +89,21 @@ export function DeckProvider({ children }: { children: ReactNode }) {
   const [nearEnd, setNearEnd] = useState(false);
   const hopTimeout = useRef(0);
   const reducedMotion = useReducedMotion();
+  const router = useRouter();
 
   const hopTo = useCallback(
     (id: SectionId) => {
       const target = document.getElementById(id);
-      if (!target) return;
+      /*
+       * No deck on this page — a case study, or an index route. The nav lives in the root
+       * layout now, so "Work" and "Contact" are pressed from pages that have no sections
+       * to scroll to; the honest answer is to go to the deck and land on that section,
+       * which is what a deep link already does correctly.
+       */
+      if (!target) {
+        router.push(`/#${id}`);
+        return;
+      }
 
       hopTarget.current = id;
 
@@ -112,7 +123,7 @@ export function DeckProvider({ children }: { children: ReactNode }) {
         hopTarget.current = null;
       }, 1200);
     },
-    [reducedMotion, markActive],
+    [reducedMotion, markActive, router],
   );
 
   /*
