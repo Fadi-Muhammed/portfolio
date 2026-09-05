@@ -745,3 +745,34 @@ Three passes to fix, each one a real constraint rather than a preference:
 
 The lesson worth keeping: a screenshot script that always deep-links is not exercising the
 path visitors take, and a section can pass its own review on the one route nobody uses.
+
+### 5 September 2026 — the design audit, and what was approved
+
+Asked for a full pass over the built site against the frontend-design skill, `docs/DESIGN.md`
+and B13, with every finding listed by severity and nothing changed until the list had been
+read.
+
+**Fadi: "all critical and high".** Medium and low were listed and left open; they are
+recorded as a known gap in `docs/PROGRESS.md`.
+
+Two of my own high findings were withdrawn before anything was built, because measuring the
+page contradicted them: the hero has no dead space below its content (`emptyBelow: 0` at
+1440 and 390), and the palette's rows are the 44px touch-target floor with a list that does
+not scroll and three separate values for panel, border and scrim. Both had come from
+reading scaled screenshots. Recorded here rather than quietly dropped, because a withdrawn
+finding is as much a result as a fixed one.
+
+### 5 September 2026 — the audit, decided without asking
+
+- **The live reading's words are `muted`, not `accent`.** `signal` on light `bg` is 3.69:1,
+  which section 2 of `docs/DESIGN.md` already recorded as good for a graphic and not for
+  12px text, and the reading was set in it. `accent` means interactive on this site and a
+  measurement is not; `ink` would outweigh the card's own summary. The LED keeps `signal`
+  and carries the state alone.
+- **The featured wall is sized by its section.** Sized by the files' 600x421 it was 459px
+  tall inside a 336px section on a 1280x720 laptop. The cap is derived from the two values
+  each breakpoint already sets, so it cannot drift away from them.
+- **The skip link moved into the root layout, above the nav.** Once the nav moved up, the
+  nav's controls came first in the tab order, and B3 says the skip link is first.
+- **`/design`'s theme-toggle test is scoped to the nav.** That page shows a toggle as a
+  specimen and now carries the nav's as well; the page is right and the test was ambiguous.

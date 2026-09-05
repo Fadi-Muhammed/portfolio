@@ -48,6 +48,161 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Design audit — the whole site, after Part 13 · 5 September 2026
+
+Status: done. Not a part. A full pass over everything built so far against
+`.claude/skills/frontend-design/SKILL.md`, `docs/DESIGN.md` and B13, at 390, 768 and 1440
+in both themes, over every deck section, both detail-page types, the palette open, and the
+routes nobody had looked at. Fadi approved **all critical and high findings**; medium and
+low were listed and left.
+
+### What was wrong, and what was done
+
+**C1 — Products painted over Engineering at 768.** The card grid used
+`auto-fill, minmax(0, 20rem)`. At exactly 768 the section leaves 640px after its padding
+and the rail's gutter, which fits one 320px track and not two, so both cards stacked and
+the section ran past its own height onto the next header. Two columns are stated now at
+48rem and `auto-fill` starts at 64rem, where it has room to mean something.
+
+**C1b — and nothing was stopping any section doing the same.** B3 says content that does
+not fit gets an inner scroll region, and that was being applied section by section.
+`.section-body` scrolls its own overflow now, with `data-inner-scroll` keeping the deck's
+arrow keys out of it. Measured after the change: About is the only section that scrolls,
+which is what it is for.
+
+**C2 — a case study had no chrome.** The nav, the palette, the theme toggle and the skip
+link were all rendered inside the home page, so anyone following a link straight to
+`/products/rubric` got a page with no name, no search, no way to Work or Contact, and no
+way to change the theme. All four moved to the root layout. The deck provider moved with
+them and degrades: `hopTo` navigates to `/#section` when there is no deck on the page.
+
+**C3 — "MAY 2027expected".** The About timeline's note ran into the date it qualifies at
+every width below 64rem. It has a separator now, and none above 64rem, where it is already
+on its own line.
+
+**C4 — an unknown URL was the framework's own page.** White, system font, "This page could
+not be found." B10's 404 shipped early because the alternative was worse than a missing
+feature. See `docs/DESIGN.md` 18.5.
+
+**H1 — the hero topology was nearly invisible.** Its edges were drawn at a weight and a
+tint that read as a smudge on the light theme. Edges are `color-mix(in oklab, muted 55%,
+bg)` at 1.25, glyphs at 1.4.
+
+**H2 and H3 — withdrawn.** Both were mine, both were wrong, and both came from reading
+scaled screenshots instead of measuring. The hero has zero empty space below its content
+(`emptyBelow: 0` at 1440 and at 390) and the availability line's absence under 64rem is
+`docs/DESIGN.md` 11.2, decided and written down. The palette's rows are 44px — the touch
+target floor, not a squeeze — the list does not scroll at any size it is used at, and the
+panel, its border and the scrim are three separate values. Nothing was changed for either.
+
+### What the tests found afterwards, which the screenshots had not
+
+Seven Playwright failures after the changes, six of them real:
+
+1. **The skip link was no longer the first stop in the tab order.** Moving the nav into the
+   layout put its controls above it. B3 makes the skip link first, so it moved into the
+   layout too, above the nav — which also gives a case study one for the first time.
+2. **The logo wall did not fit the section it was in.** The hover tests could not settle on
+   a mark because the section had become a scroller under it. Measured: 459px of wall in a
+   336px section on a 1280x720 laptop, and 33px over at 1440. The overflow backstop from
+   C1b had turned a silent overflow into a visible scrollbar, which is how it was found.
+   The wall is sized by the section now — `docs/DESIGN.md` 18.3.
+3. **`scrollable-region-focusable`** on that same section: a region that scrolls and holds
+   nothing focusable needs keyboard access. Fixed by the wall fitting, not by adding a tab
+   stop to every section.
+4. **`color-contrast` on the live reading.** "Live · 710 ms" was set in `signal`, which
+   section 2 of `docs/DESIGN.md` records as 3.69:1 on light `bg` — enough for a graphic,
+   not for 12px text. Pre-existing, and only visible when the ping resolves before axe
+   runs, which is why it had never failed before. The LED keeps `signal`; the words are
+   `muted` like the other two states.
+5. **Two theme toggles on `/design`.** The page shows one as a specimen and now carries the
+   nav's as well. The test was ambiguous, not the page; it is scoped to the nav.
+6. A seventh failure, the footer's route recap, did not reproduce and has passed in every
+   run since. Left alone rather than "fixed" — the first run had collided with a stale dev
+   server on port 3000 and started no server of its own.
+
+### Remove one accessory
+
+**The arrow after "Slide into my LinkedIn".** The handle is an arrow, it is the thing that
+moves, and it sat 40px away inside the same 22rem control: two arrows for one direction.
+The `gap` on the label existed only to put a space in front of it and went with it.
+
+Three other candidates were weighed and kept, with reasons, because a cut has to lose
+something that was not doing a job:
+
+- **The packet on the palette's selected row.** It is a second marker for a state the row
+  fill already carries. Kept because it is the one place the packet motif reaches a surface
+  that is not the deck, and the fill on its own is a cmdk default. First to reconsider.
+- **The 2px teaser lift.** A second keepalive alongside the rail's pulse. Kept because B3
+  asks for the keepalive and the two are at opposite edges of the screen, not on top of
+  each other.
+- **`· FEATURED IN` in the rail's reading**, which repeats the section header six lines
+  away. Not ours to cut: B5 and the Part 5 prompt specify the label as "hop N of M · name".
+
+### B13 "not vibe-coded" checklist
+
+- **Tokens only.** No new colour, radius, type or spacing value in any of the changes. The
+  404 uses `signal` for the packet, `muted` for the dead node and `accent` for both links.
+- **Structure encodes something true.** The 404's drawing is a route that stops, which is
+  what a 404 is. The featured wall's rows are fractions of the section because the section
+  is what constrains them.
+- **Motion.** Nothing was added. The one thing removed from motion was a static arrow.
+- **Copy.** "Route not found." is what happened; "Back to home" and "Search the site" are
+  what the controls do; neither apologises.
+- **Accessibility.** Zero serious or critical axe violations on the deck, both detail
+  types, Featured in, Products and `/design` in both themes. Skip link first in the tab
+  order. The 44px floor held everywhere, including the logo cells as they shrink.
+
+### How to test
+
+```
+npm run build
+npm run start
+```
+
+- Open `http://localhost:3000/products/rubric` directly: it has the name, search, Work,
+  Contact and the theme toggle, and Tab lands on "Skip to contact" first.
+- Open `http://localhost:3000/not-a-real-page`: "Route not found.", the stopped packet, and
+  two ways out. "Search the site" opens the palette.
+- Resize to 768 and hop to Products: two cards side by side, nothing over the Engineering
+  header.
+- Resize the window short — 1280x720 — and hop to Featured in: nine logos, no scrollbar.
+- On the light theme, look at a live reading on a product card: grey words, orange dot.
+
+```
+npx vitest run
+npx playwright test
+npm run screens -- "#featured-in" "#contact"
+```
+
+251 unit tests and 104 Playwright tests pass.
+
+### Decided without asking
+
+- **The live reading's words are `muted`, not `accent`.** `accent` means interactive on
+  this site and the reading is not; `ink` would have made it louder than the card's own
+  summary. `muted` is what the other two states already use.
+- **The featured wall's height cap is derived, not typed.** It is written from the two
+  values each breakpoint already sets — the mark cap and the row gap — so it cannot drift
+  away from them.
+- **The seventh test failure was not chased.** It has not reproduced in four full runs.
+
+### Known gaps
+
+- **Medium and low findings were listed and not acted on**, per Fadi's "all critical and
+  high". They are still open.
+- **The `/design` route's own specimens were not re-reviewed** against the nav now sitting
+  above them.
+- The Part 13 gaps below are unchanged, including the Turnstile hostname for the Vercel
+  preview domain and the manual end-to-end send.
+
+### Next
+
+Part 14 — the rest of B10: `error.tsx`, `global-error.tsx`, offline and the maintenance
+flag. The 404 is done and is the pattern the other four follow.
+
+---
+
 ## Part 13 — Contact · 4 September 2026
 
 Status: built and tested. **One step outstanding: the manual end-to-end send**, which needs

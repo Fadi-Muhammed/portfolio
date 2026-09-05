@@ -833,6 +833,9 @@ bled to both edges, the live reading printed straight over the rail's dots.
 `signal`, because this is exactly what section 2 reserves it for: something genuinely live,
 measured now. Three designed states — checking, a reading, and unreachable.
 
+Amended by 18.4: `signal` is on the LED, not on the words. It does not carry 12px text at
+AA on the light theme, and the dot says the same thing.
+
 Unreachable is `muted`, never `danger`. A product being down is not the visitor's mistake and
 not this site's fault, and painting it red would say something untrue about both. `danger` stays
 reserved for errors the visitor can act on.
@@ -1009,6 +1012,8 @@ fight its snap, which B3 forbids outright.
 
 Written during Part 11. It introduces no colour, type, radius or spacing value. The only
 new idea is how a set of logos with nothing in common is made to look like a set.
+
+Amended by 18.3: the wall is sized by the section it sits in, not by the files.
 
 ### 15.1 Not a constellation, and not a collage
 
@@ -1192,6 +1197,8 @@ there is no separate static version to maintain.
 
 ### 17.2 The slider
 
+Amended by 18.6: the label carries no arrow. The handle is one.
+
 The one bounce on the site. B5 makes it the single exception because a spring back is
 physical rather than decorative: the handle was dragged and let go, and things that are
 let go return. Nothing else on the site is allowed it.
@@ -1247,3 +1254,80 @@ Three different failures, three different answers.
 
 The throttle is deliberately generous — three in ten minutes. It stops a script, not a
 person with a follow-up thought.
+
+## 18. The audit after Part 13
+
+A full pass over the built site against the frontend-design skill, this document and B13,
+at 390, 768 and 1440 in both themes, plus the detail pages and the routes that had never
+been looked at. Everything below is a change to what sections 1 to 17 describe; where the
+two disagree, this section is the later decision.
+
+Two findings from the audit are recorded here as **withdrawn**, because they did not
+survive measurement and it would be dishonest to file them as fixes. Reading scaled
+screenshots is not measuring:
+
+- **"The hero has dead space below the quote."** It has none. `contentEndsAt` equals
+  `bodyHeight` at both 1440 and 390 — the section ends where the content ends. The
+  availability line being absent under 64rem is 11.2, decided and written down.
+- **"The palette's rows are cramped and the panel does not separate from the page."**
+  The rows are 44px, which is the touch-target floor, not a squeeze; the list does not
+  scroll at any size the palette is used at; and the panel, its border and the scrim are
+  three distinct values.
+
+### 18.1 The chrome belongs to the site, not to the home page
+
+The nav, the palette, the theme toggle and the skip link were rendered inside the deck.
+Anyone who followed a link straight to `/products/rubric` got a page with no name, no
+search, no way to Work or Contact, and no way to change the theme. All four moved to the
+root layout.
+
+Two consequences worth stating. The deck provider moved up with them and now degrades:
+with no sections on the page its observer finds nothing to watch and `hopTo` navigates to
+`/#section` instead of scrolling to an element that is not there. And the skip link is
+first in the body — B3 makes it the first stop in the tab order, and putting the nav above
+it would have quietly cost that.
+
+### 18.2 A section never paints over the one below it
+
+`.section-body` scrolls its own overflow. B3 already said content that does not fit gets an
+inner scroll region; it was being applied per section, and the one section that had not
+remembered it — Products, at exactly 768 — printed its cards over the Engineering header.
+It is the default now, with `data-inner-scroll` keeping the deck's arrow keys out.
+
+The two-column card grid at 768 is stated rather than inferred. `auto-fill` with a 20rem
+track fitted one column in the 640px that is left at that width, so both cards stacked and
+the section overflowed. `auto-fill` starts at 64rem, where it has room to mean something.
+
+### 18.3 The logo wall is sized by the section, not by the files
+
+Section 15 sized each mark from the files' own 600x421 and let the rows follow. On a
+1280x720 laptop that made a 459px wall inside a 336px section: it scrolled, and a logo wall
+you have to scroll is not a wall.
+
+The wall is now three rows that share a height, capped at what the marks want at full size
+— `3 × (mark + the link's padding) + 2 × the row gap`, derived from the same two values
+each breakpoint already set. Above the cap it stays a block instead of stretching into
+three separate bands on a tall phone; below it, the marks shrink into the space. The mark
+box is the cell rather than the artwork, and both layers were already letterboxing with
+`contain`, so the proportions still belong to the files.
+
+### 18.4 `signal` is spent on the LED, not on the words
+
+Section 12.2 said the live reading is `signal`. Section 2 says `signal` on light `bg` is
+3.69:1 — enough for a graphic, not for 12px text. "Live · 710 ms" was set in it and failed
+AA in the light theme. The dot keeps `signal` and carries the state; the reading is `muted`
+like the other two states. Saying it twice was what made it fail.
+
+### 18.5 404
+
+B10's "Route not found." shipped early, ahead of the rest of Part 14, because without it an
+unknown URL landed on the framework's own white page in a system font — a harder break from
+the design than any missing feature. A packet stopped at a dead node, the link beyond it
+dashed: the same drawing vocabulary as the hero and the footer. Two ways out, back or
+search, and nothing on it apologises.
+
+### 18.6 Remove one accessory
+
+The arrow after "Slide into my LinkedIn". The handle is an arrow, it is the thing that
+moves, and it sat 40px away in the same 22rem control. Two arrows said one thing twice.
+The flex `gap` that existed only to put a space in front of it went too.
