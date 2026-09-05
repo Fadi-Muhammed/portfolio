@@ -48,7 +48,7 @@ export function SiteNav() {
       className="fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 data-solid:bg-bg sm:px-10 lg:px-16"
     >
       {bare ? (
-        <span className="flex items-center gap-2">
+        <span className="flex min-h-11 items-center gap-2">
           <span aria-hidden="true" className="size-2 bg-signal" />
           <span className="text-small font-medium text-ink">Fadi Muhammed</span>
         </span>
@@ -59,7 +59,7 @@ export function SiteNav() {
             event.preventDefault();
             hopTo("hero");
           }}
-          className="flex items-center gap-2"
+          className="flex min-h-11 items-center gap-2"
         >
           {/* The mark: the packet square that recurs in the rail and the topology. */}
           <span aria-hidden="true" className="size-2 bg-signal" />

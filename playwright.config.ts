@@ -23,9 +23,33 @@ export default defineConfig({
     baseURL,
     trace: "on-first-retry",
   },
-  // Chromium only for now. Section F requires Firefox and Safari, but on real devices
-  // before launch (Part 16) — running three engines on every push buys nothing yet.
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  /*
+   * Desktop Chromium runs everything. The two phone projects run only e2e/mobile.spec.ts,
+   * which asserts what a phone actually breaks — overflow, hit targets, section height,
+   * snapping. Running the whole suite three times would buy repetition rather than
+   * coverage, and would treble the slowest job in CI.
+   *
+   * Mobile Safari is the one that matters most here: it is WebKit, it is where 100svh and
+   * scroll-snap are decided, and it is where Part 5's two real-device bugs came from.
+   * Emulation cannot move an address bar, so that check stays manual in docs/QA.md.
+   */
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+      testIgnore: /mobile\.spec\.ts/,
+    },
+    {
+      name: "mobile-chrome",
+      use: { ...devices["Pixel 7"] },
+      testMatch: /mobile\.spec\.ts/,
+    },
+    {
+      name: "mobile-safari",
+      use: { ...devices["iPhone 14"] },
+      testMatch: /mobile\.spec\.ts/,
+    },
+  ],
   webServer: [
     {
       // CI builds in its own step, so it only needs to start. Locally, build first so

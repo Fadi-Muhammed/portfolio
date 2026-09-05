@@ -40,6 +40,21 @@ const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
 const TURNSTILE = "https://challenges.cloudflare.com";
 const UMAMI = "https://cloud.umami.is";
 
+/*
+ * Only meaningful, and only safe, over HTTPS.
+ *
+ * upgrade-insecure-requests rewrites http subresource requests to https. On the real
+ * domain that is exactly right. Served over plain http — a local production build, or
+ * CI — it upgrades the stylesheet to an https URL that nothing is listening on, and the
+ * page renders with no CSS at all.
+ *
+ * That is not hypothetical: it silently broke every WebKit test in this suite. Chromium
+ * tolerated it, Safari did not, and the failure looked like fifteen hit targets being too
+ * small rather than like a missing stylesheet. Derived from the site URL so the directive
+ * is present exactly where it applies.
+ */
+const servesHttps = (process.env.NEXT_PUBLIC_SITE_URL ?? "").startsWith("https://");
+
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' ${TURNSTILE} ${UMAMI}`,
@@ -56,7 +71,7 @@ const csp = [
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
-  "upgrade-insecure-requests",
+  ...(servesHttps ? ["upgrade-insecure-requests"] : []),
 ].join("; ");
 
 const nextConfig: NextConfig = {
