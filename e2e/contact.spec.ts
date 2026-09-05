@@ -152,6 +152,12 @@ test("the slider opens the target when dragged past the threshold", async ({ pag
   const slider = page.locator("#contact .slider");
   if ((await slider.count()) === 0) test.skip();
 
+  /*
+   * Into view before measuring. The section scrolls inside the deck, and boundingBox()
+   * reports where an element is whether or not it is on screen — so a slider below the
+   * fold gave coordinates that put the pointer on whatever was on top of it instead.
+   */
+  await slider.scrollIntoViewIfNeeded();
   await expect(slider).toBeVisible();
   const box = await slider.boundingBox();
   expect(box).not.toBeNull();
@@ -179,6 +185,7 @@ test("released early, the handle springs back and nothing opens", async ({ page,
   const slider = page.locator("#contact .slider");
   if ((await slider.count()) === 0) test.skip();
 
+  await slider.scrollIntoViewIfNeeded();
   const box = await slider.boundingBox();
   expect(box).not.toBeNull();
   if (!box) return;

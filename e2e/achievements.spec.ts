@@ -143,6 +143,12 @@ test("opening a hop near the bottom brings it into view, without moving the deck
     return;
   }
 
+  /*
+   * Into view first, then measure. Playwright scrolls an element into view before clicking
+   * it, so a baseline taken before that captures the deck's position from before the
+   * harness moved it — and the assertion then blames the app for a scroll it did not do.
+   */
+  await toggle.scrollIntoViewIfNeeded();
   const deckBefore = await page.evaluate(() => document.querySelector(".deck")?.scrollTop ?? 0);
   await toggle.click();
 
