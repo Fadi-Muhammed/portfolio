@@ -982,3 +982,27 @@ nothing — a real architectural change to a specified behaviour, with real risk
 thing the site is built around. Recorded rather than attempted: it is worth doing on
 evidence from real traffic, not on a lab number, and it is not worth risking the deck for
 before launch.
+
+### 5 September 2026 — Part 17 question batch
+
+- **Registrar is Namecheap**, domain `fadimuhammed.work` (A10).
+- **Launch dark, then flip.** The domain is deployed with `MAINTENANCE_MODE=true` so it serves
+  "Out of service." to everyone but Fadi, who verifies the Section F checklist on the real
+  domain through the bypass key. Two variables flip it live. Nothing half-finished is ever
+  publicly visible, and the alternative — verifying on a preview URL — cannot test the things
+  that only exist on the real domain: the certificate, the canonical redirect, Turnstile's
+  hostname list and the analytics domain filter.
+- **Two blockers to clear before launch, and two deliberately not.**
+  - The out-of-date CV: Fadi replaces the file in Storage.
+  - The colophon's "Source viewable.": removed, because A11 records the repo as private and
+    the site was claiming something a reader could not act on. B9 offers that wording as an
+    example rather than a requirement. If the repo is ever made public the sentence goes back.
+  - **The hero's missing proof line is not a launch blocker.** Raised once at Part 17 as
+    agreed on 29 August, and declined. B1's requirement stands unmet on purpose and the
+    standing item is now closed rather than carried.
+  - **Featured in ships with no coverage links.** Nine logos, no URLs, asked for and declined
+    for launch. A logo with no URL renders as a logo rather than a link, so nothing is broken
+    — the section is simply quieter than B8 describes.
+- **The hero copy ships as it stands**, with "will change later on" noted against it. The
+  tagline, availability and quote all come from `site_settings`, so changing any of them is a
+  Studio edit rather than a deploy.

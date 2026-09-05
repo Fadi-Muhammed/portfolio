@@ -251,7 +251,7 @@ test("the footer lights the sections this visit reached", async ({ page }) => {
 test("the footer says what the site is made of and what it records", async ({ page }) => {
   await openContact(page);
 
-  await expect(page.getByText("Built with Next.js and Supabase. Source viewable.")).toBeVisible();
+  await expect(page.getByText("Built with Next.js and Supabase.")).toBeVisible();
   await expect(page.getByText(`© ${new Date().getFullYear()} Fadi Muhammed`)).toBeVisible();
 
   /*
