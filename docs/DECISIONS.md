@@ -804,3 +804,22 @@ survive the session that collected them.
 Still open, and needed before the maintenance page is built: **the maintenance message**.
 `site_settings.maintenance_message` is `null` today, so there is copy to write and it is
 Fadi's to write, not mine to invent.
+
+### 5 September 2026 — Part 14 question batch
+
+The bypass, the 404's recent pages and the service worker were answered before the prompt
+arrived and are recorded in the entry above. Two remained.
+
+- **The maintenance line is "This node is down for scheduled maintenance. Back shortly."**
+  Chosen from four. It uses `node` from B12's glossary — the same word the hero topology,
+  the 404 and the footer recap use for a destination — and "scheduled" does the real work:
+  it says this was planned rather than broken, which is the one thing a visitor needs to
+  know before deciding whether to come back. No time is promised, so nothing goes stale if
+  the flag stays on longer than intended.
+  The line Fadi did not take, recorded because the reasoning outlives the choice: a
+  Claude-flavoured line was offered and declined. A portfolio that credits an AI on its own
+  downtime page invites a question about who built the rest of it, and the colophon's
+  "Source viewable" already makes the point without raising it.
+- **B10's copy is built as written.** "Route not found.", "Packet dropped.", "No signal." /
+  "Signal restored", "No hops match. Clear filters.", "Endpoint unreachable — demo video
+  below." No changes.
