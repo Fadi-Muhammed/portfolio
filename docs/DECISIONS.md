@@ -823,3 +823,37 @@ arrived and are recorded in the entry above. Two remained.
 - **B10's copy is built as written.** "Route not found.", "Packet dropped.", "No signal." /
   "Signal restored", "No hops match. Clear filters.", "Endpoint unreachable — demo video
   below." No changes.
+
+### 5 September 2026 — Part 14, decided without asking
+
+- **`proxy.ts` rather than `middleware.ts`.** Next 16 deprecated the middleware file
+  convention and renamed it, with the same signature and the same behaviour. The Part 14
+  prompt says middleware and this is it; the spec's word for the mechanism has not changed,
+  only the framework's word for the file.
+- **`retry()` rather than `reset()`** on the error boundary. Next 16 split them: `retry()`
+  re-fetches and re-renders the boundary's children, which is what "Try again" promises,
+  while `reset()` only clears the error state and would recover from a transient failure by
+  showing the same failure again.
+- **No route-level loading UI anywhere, and the 404's status is why.** A `loading.tsx` is a
+  Suspense boundary for its segment and every child of it, so the response commits its
+  headers before the page can call `notFound()` — adding one turned every unknown product
+  slug into a 200 serving 404 content. There is no arrangement that keeps both: the
+  boundary has to sit above the page and the status has to be settled below it. The status
+  is worth more than a placeholder on a rare miss, and the loading states that visitors
+  actually see — "Checking…" on a live reading, "Sending…" on the form — already exist.
+- **The maintenance page offers no navigation at all.** While the flag is on every route is
+  rewritten to it, so Search, Work, Contact and the skip link would all land back on the
+  same page. The palette's keyboard shortcut is off there too: removing the button and
+  keeping the keystroke would hide the broken promise from whoever uses a mouse.
+- **"Out of service." is the heading**, not "Down for maintenance." The message Fadi chose
+  says "This node is down for scheduled maintenance", and a heading that restates the
+  sentence below it word for word is a heading doing no work.
+- **The rewrite answers 503**, so a crawler is told the site is temporarily down rather
+  than that this page is the site.
+- **The bypass cookie holds the key itself**, httpOnly and compared in constant time.
+- **The offline state is an overlay and its probe is a HEAD of the current URL.**
+  `/api/health` also reports on the database and answers 503 wherever Supabase is
+  unconfigured, which would read as "still offline" on a good connection.
+- **`SectionPlaceholder` was deleted.** Every section is built, so the branch rendering
+  "This section is built in Part 9" was unreachable, and `arrivesIn` was a note about the
+  build schedule living in the deck's data.

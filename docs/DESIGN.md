@@ -1331,3 +1331,99 @@ search, and nothing on it apologises.
 The arrow after "Slide into my LinkedIn". The handle is an arrow, it is the thing that
 moves, and it sat 40px away in the same 22rem control. Two arrows said one thing twice.
 The flex `gap` that existed only to put a space in front of it went too.
+
+---
+
+## 19. The states — Part 14
+
+B10's five states, built as one thing. The rule they are all held to is that a visitor who
+lands on any of them can tell it is still this site.
+
+### 19.1 One drawing vocabulary, four sentences
+
+The 404 shipped during the audit with a small drawing that turned out to be a language
+rather than a picture. It has four words:
+
+| Mark                      | Means                                 |
+| ------------------------- | ------------------------------------- |
+| Solid line                | a route traffic passes along          |
+| Dashed line               | a route drawn but not travelled       |
+| Filled circle             | a node that answers                   |
+| Hollow circle             | a node that does not                  |
+| Square in `signal`        | the packet                            |
+| Dashed ring around a node | out of service on purpose, not broken |
+
+The four states are four sentences in it, and the differences carry the meaning:
+
+- **Route not found.** The packet stops at a hollow node, and the route beyond it is
+  dashed. The destination does not exist.
+- **Packet dropped.** Every node answers and the line runs end to end — the route is not
+  the problem. The packet has fallen out of it at the middle hop, which is where a drop
+  actually happens: at a node, not between them.
+- **No signal.** The break is at the first hop, immediately after "you". There is no
+  packet anywhere, because with no signal nothing is in flight. The absence is the drawing.
+- **Out of service.** A hollow node with a dashed ring, the route dashed either side. The
+  ring is the whole difference from the 404's dead node: somebody put it there and will
+  take it away.
+
+Remove the packet from the 404 and it stops being a 404. That is the test for whether a
+mark in these drawings is doing a job.
+
+### 19.2 The shape they share
+
+`StatePage`: drawing, what happened, what it means, the ways out — and optionally one line
+of machine detail. Three of the four are built on it (`not-found.tsx`, `error.tsx` and
+`global-error.tsx`, `maintenance/page.tsx`). One component rather than three layouts,
+because three separately written pages drift the moment one is edited.
+
+The error digest is that optional line, and it is a line rather than a clause. Set inline
+at the end of the paragraph it read as a typo in the sentence: uppercase mono running
+straight on from "gets through." A reference number is not part of what the page is saying.
+
+### 19.3 Offline is an overlay, not a page
+
+Losing connectivity does not undo what the visitor is reading. The section they are on is
+already in the document and stays readable, and replacing it to announce the loss would
+cost them their place to tell them something a corner can tell them. So the panel sits
+bottom-left over the site at z-index 55 — above the page and the nav, below the palette's
+scrim at 60, because a status must not cover a dialog somebody opened on purpose.
+
+It carries no drawing. The no-signal figure was in it and was removed: at the width a
+corner panel can spare, a stub, a gap and two hollow nodes read as a dotted line. A drawing
+that cannot be decoded is decoration. The full-page states have the room to draw; this one
+has the words.
+
+### 19.4 The maintenance page offers no navigation
+
+While the flag is on, every route is rewritten to it. The nav's Search, Work and Contact
+would all land back on the same page, the palette would list seven sections and two
+projects that all lead to it, and the skip link points at a contact section that is not
+there. All of them are gone on `/maintenance`, and so is the palette's keyboard shortcut —
+removing the button and keeping the keystroke hides a broken promise from whoever uses a
+mouse rather than fixing it.
+
+What stays is the mark and the name, which is identity rather than navigation, and the
+theme toggle, which still does exactly what it says.
+
+The heading is "Out of service." rather than "Down for maintenance.", which is what it said
+first and which restated the sentence underneath it almost word for word. The heading names
+the state and matches the ring; the line from `site_settings` says it is scheduled and that
+it will be back, which is the part a visitor does not already know.
+
+### 19.5 What has no loading state, and why
+
+Every content route on this site is prerendered or revalidated, so the only route-level
+loading boundary a visitor would ever see is on a detail page — and that is exactly the
+one that cannot have it. `loading.tsx` is a Suspense boundary for its segment and all its
+children, so the response commits its headers before the page can call `notFound()`:
+adding one turned `/products/does-not-exist` from a 404 into a 200 serving 404 content.
+The index route's own file does it too, because it covers its children.
+
+A correct status is worth more than a placeholder on a rare miss. The loading states that
+are real here are the client-side ones, and they already exist: "Checking…" on a live
+reading, "Sending…" on the contact form. B10's actual requirement — no blank screens, no
+spinner in the middle of nothing — holds either way.
+
+### 19.6 Remove one accessory
+
+The no-signal drawing, out of the offline panel — 19.3.

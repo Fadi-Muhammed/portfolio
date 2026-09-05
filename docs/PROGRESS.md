@@ -48,6 +48,142 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Part 14 — Error, empty, loading, offline and maintenance states · 5 September 2026
+
+Status: done. B10's five states, built as one thing rather than five pages.
+
+### What exists
+
+- `src/components/states/` — `state-figure.tsx` (the four drawings in one vocabulary),
+  `state-page.tsx` (the shape they share), `signal-watch.tsx` (the offline overlay and its
+  store), `email-out.tsx` (the maintenance page's one way to reach him).
+- `src/app/not-found.tsx` — moved onto the shared scaffold. Same words, same drawing.
+- `src/app/error.tsx` and `src/app/global-error.tsx` — "Packet dropped."
+- `src/app/maintenance/page.tsx` — "Out of service.", message from `site_settings`.
+- `src/app/debug/throw/page.tsx` — a route that fails on purpose. Development only, gated
+  on NODE_ENV like `/debug/content`.
+- `src/proxy.ts` and `src/lib/maintenance.ts` — the flag, the rewrite, the bypass.
+- `scripts/screens.mts` — two new flags, `SCREENS_OFFLINE` and `SCREENS_DEV`, because two
+  of the four states cannot be reached by a URL on a production build.
+- Env: `MAINTENANCE_MODE` and `MAINTENANCE_BYPASS_KEY` in `.env.example`. Neither is in
+  `env.ts`: both are optional, and unset means the site is up.
+- `docs/DESIGN.md` section 19.
+- Tests: 283 unit (32 new) and 118 Playwright (14 new).
+
+### How to test
+
+```
+npm run dev
+```
+
+- `http://localhost:3000/not-a-real-page` — "Route not found.", 404 in the network tab,
+  both ways out work.
+- `http://localhost:3000/debug/throw` — "Packet dropped." with a reference number. Press
+  Escape to dismiss Next's development overlay first; "Try again" re-runs the route.
+- Turn Wi-Fi off with the site open: "No signal." appears bottom-left within a moment.
+  Turn it back on: "Signal restored." shows, then the panel removes itself.
+- Maintenance, which needs two variables in `.env.local` and a restart:
+
+```
+MAINTENANCE_MODE=true
+MAINTENANCE_BYPASS_KEY=<any long random string>
+```
+
+Every route now shows "Out of service." Visit `http://localhost:3000/?key=<your key>`
+once: it redirects to `/` with the key stripped from the URL, and the site works normally
+from then on. Clear the `maintenance_bypass` cookie to become a normal visitor again.
+
+```
+npx vitest run
+npx playwright test
+npm run screens -- this-does-not-exist maintenance
+SCREENS_OFFLINE=1 SCREENS_SKIP_BUILD=1 npm run screens
+SCREENS_DEV=1 npm run screens -- debug/throw
+```
+
+### The two things this part got wrong first
+
+**A loading state cost the 404 its status code.** Adding `loading.tsx` to the products and
+engineering segments turned every unknown slug into a 200 serving 404 content: a loading
+file is a Suspense boundary for its segment _and its children_, so the response commits
+its headers before the page can call `notFound()`. Two existing tests caught it. There is
+no arrangement that keeps both — the boundary has to be above the page and the status has
+to be settled below it — so the loading files were removed and the status kept. See
+`docs/DESIGN.md` 19.5 for what that means for B10's loading requirement.
+
+**The maintenance page offered navigation it could not honour.** It carried the full nav —
+Search, Work, Contact — plus a skip link to a contact section that is not there, on a page
+reached because every route is being rewritten to it. Found by looking at the screenshot,
+not by a test. The nav is bare there now, and the palette's keyboard shortcut went with
+its button.
+
+### B13 "not vibe-coded" checklist
+
+Reviewed at 390, 768 and 1440 in both themes, on all four states.
+
+- **Tokens only.** No new colour, spacing, radius or type value. The drawings use `muted`
+  for the route and the nodes, `signal` for the packet, and `color-mix` against `bg` for
+  the edges — the same three the 404 was reviewed with in the audit.
+- **Structure encodes something true.** Each drawing is the network condition it names,
+  and they differ where the conditions differ: where the break is, and whether there is a
+  packet at all. A packet in flight would be a lie on the offline state.
+- **Motion.** Nothing new. The offline panel reuses `hop-in`, the site's existing entrance.
+- **Copy is real** and none of it apologises. The error page says the fault is at this end
+  without saying sorry for it.
+- **Accessibility.** Zero serious or critical axe violations on all four. Every drawing has
+  a label naming the condition rather than the shapes. The offline panel is a polite live
+  region that never takes focus. Actions clear 44px.
+- **Remove one accessory:** the no-signal drawing, out of the offline panel. At 4.5rem it
+  read as a dotted line rather than as a broken route.
+
+### Decided without asking
+
+- **`proxy.ts`, not `middleware.ts`.** Next 16 deprecated that file convention and renamed
+  it. Same signature, same behaviour; the prompt's word for the mechanism is unchanged.
+- **`retry()`, not `reset()`.** Next 16 split them: `retry()` re-fetches and re-renders,
+  which is what "Try again" promises, while `reset()` would recover from a transient
+  failure by showing the same failure again.
+- **The maintenance rewrite answers 503**, so a crawler is told the site is down rather
+  than that this is the site.
+- **`/api` is inside the rewrite.** During maintenance the contact form should not accept
+  a message it may not be able to store, and an endpoint still answering while the site
+  says it is down is not down.
+- **The maintenance page keeps its own copy of the message.** The database is one of the
+  things that can be under maintenance.
+- **The offline probe is a HEAD of the current URL, not `/api/health`.** Health reports on
+  the database too and answers 503 wherever Supabase is unconfigured, which would read as
+  "still offline" on a perfectly good connection.
+- **The maintenance page's email is revealed on click**, keeping B9's rule about the
+  address not being in the served HTML — this page is served to every request during a
+  window, crawlers included.
+- **`SectionPlaceholder` was deleted.** All seven sections exist, so the branch that
+  rendered "This section is built in Part 9" was unreachable, along with the `arrivesIn`
+  field that fed it. Found by the audit this part is.
+
+### Known gaps
+
+- **The maintenance flag has never been switched on outside a test.** The proxy is
+  asserted against real `NextRequest` objects — the rewrite, the 503, the redirect, the
+  cookie's flags — but no browser has been pointed at a server running with it on. A third
+  Playwright web server would race the build the other two share.
+- **`site_settings.maintenance_message` is only in the seed file.** Run `npm run db:seed`
+  or paste the line into Studio, or the page falls back to its built-in copy — which is
+  the same sentence, so nothing looks wrong while the database says nothing.
+- **No service worker**, so the offline state covers losing the connection while on the
+  site, not reloading while disconnected. Decided on 5 September.
+- **The `.state` pages centre their content vertically**, which leaves a lot of empty space
+  at 1440. Inherited from the 404 as reviewed in the audit, and left deliberately.
+- The Part 13 gaps are unchanged: the manual end-to-end send, the five Vercel variables,
+  `motion` and `@supabase/ssr` still installed and unused.
+
+### Next
+
+Part 15 — SEO, sharing images, analytics, colophon and easter eggs. It will want the
+domain for canonical URLs, the Umami account walked through, and a decision on whether the
+site stays noindex until launch.
+
+---
+
 ## Design audit — the whole site, after Part 13 · 5 September 2026
 
 Status: done. Not a part. A full pass over everything built so far against
