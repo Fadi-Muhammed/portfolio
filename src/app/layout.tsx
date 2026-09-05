@@ -4,6 +4,7 @@ import { DeckProvider } from "@/components/deck/deck-provider";
 import { SiteNav } from "@/components/deck/site-nav";
 import { SkipLink } from "@/components/deck/skip-link";
 import { PaletteProvider } from "@/components/palette/palette-provider";
+import { SignalWatch } from "@/components/states/signal-watch";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeScript } from "@/components/theme/theme-script";
 import { archivo, plexMono } from "@/lib/fonts";
@@ -55,6 +56,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <SkipLink />
               <SiteNav />
               {children}
+              {/* Every route, because connectivity is not a property of one of them. */}
+              <SignalWatch />
             </PaletteProvider>
           </DeckProvider>
         </ThemeProvider>

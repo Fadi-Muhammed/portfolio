@@ -2834,3 +2834,48 @@
     text-decoration-thickness: 2px;
   }
 }
+
+/*
+ * "No signal." (B10). A panel over the site rather than a page, because losing the
+ * network does not undo what is already on screen — see signal-watch.tsx.
+ */
+@layer components {
+  .signal {
+    position: fixed;
+    /* Above the page and the nav, below the palette's scrim at 60: a status should not
+       cover a dialog the visitor deliberately opened. */
+    z-index: 55;
+    left: var(--section-pad);
+    right: var(--section-pad);
+    bottom: var(--section-pad);
+    max-width: 26rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--surface);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+    animation: hop-in var(--dur) var(--ease) both;
+  }
+
+  .signal p {
+    margin: 0;
+  }
+
+  .signal__figure {
+    flex: none;
+    width: 4.5rem;
+    /* The drawing is shared with the full-page states, which size it for a page. */
+    margin-top: 0.125rem;
+  }
+
+  .signal__figure .state__figure {
+    margin: 0;
+    max-width: none;
+  }
+
+  .signal__detail {
+    margin-top: 0.25rem;
+  }
+}
