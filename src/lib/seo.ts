@@ -38,7 +38,14 @@ export const SITE_DESCRIPTION =
  */
 export const isIndexable = process.env.NEXT_PUBLIC_INDEXABLE === "true";
 
-/** An absolute URL for a path. Canonical tags, OG tags and the sitemap all need one. */
+/**
+ * An absolute URL for a path. Canonical tags, OG tags and the sitemap all need one.
+ *
+ * The root comes back as `https://…/` with the slash, and every caller uses this rather
+ * than SITE_URL directly, so the home page's canonical tag and its sitemap entry are the
+ * same string. They were not, briefly: the layout used the bare origin and the sitemap
+ * used this, which are the same page written two ways.
+ */
 export function absoluteUrl(path = "/"): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }

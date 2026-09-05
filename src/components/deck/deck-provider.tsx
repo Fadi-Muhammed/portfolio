@@ -211,6 +211,22 @@ export function DeckProvider({ children }: { children: ReactNode }) {
    * so the observer cannot fight itself.
    */
   useEffect(() => {
+    /*
+     * Only where there is a deck.
+     *
+     * This used to run everywhere, because the provider moved into the root layout during
+     * the design audit so that a case study would have a nav. On a page with no sections
+     * `active` stays on the hero, so every case study had `#hero` pushed into its address
+     * bar and its own title — "Rubric — Fadi Muhammed" — replaced with the deck's, which
+     * is the bare name. The observer below then defended the wrong title for four seconds
+     * against the page trying to set the right one.
+     *
+     * Crawlers read the server's HTML and were never affected. What was affected is every
+     * tab, bookmark and history entry a person made from a case study, and the address
+     * they would have copied out of the bar to share it.
+     */
+    if (!deckRef.current) return;
+
     const url = `${window.location.pathname}${window.location.search}#${active}`;
     window.history.replaceState(null, "", url);
 

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, isIndexable } from "@/lib/seo";
+import { SITE_URL, absoluteUrl, isIndexable } from "@/lib/seo";
 
 /**
  * robots.txt (B12).
@@ -28,6 +28,6 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [{ userAgent: "*", allow: "/", disallow: ["/design", "/debug/", "/maintenance"] }],
     sitemap: absoluteUrl("/sitemap.xml"),
-    host: absoluteUrl("/"),
+    host: SITE_URL,
   };
 }

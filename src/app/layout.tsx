@@ -11,7 +11,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeScript } from "@/components/theme/theme-script";
 import { archivo, plexMono } from "@/lib/fonts";
 import { getPaletteContent } from "@/lib/palette/content";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, robotsRules } from "@/lib/seo";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl, robotsRules } from "@/lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
-  alternates: { canonical: SITE_URL },
+  alternates: { canonical: absoluteUrl("/") },
   /*
    * Off until launch day, and off by default: NEXT_PUBLIC_INDEXABLE has to be set to
    * "true" for anything here to be indexed. Part 17 sets it in Vercel, so launching is a
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   robots: robotsRules,
   openGraph: {
     type: "website",
-    url: SITE_URL,
+    url: absoluteUrl("/"),
     siteName: SITE_NAME,
     title: `${SITE_NAME} — telecommunications and network engineer`,
     description: SITE_DESCRIPTION,
