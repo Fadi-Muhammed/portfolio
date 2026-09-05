@@ -156,7 +156,6 @@ export function Palette({ open, onOpenChange, content }: PaletteProps) {
                 onSelect={() => run(item)}
                 className="palette-item"
               >
-                <span aria-hidden="true" className="palette-packet" />
                 <span className="palette-label text-small text-ink">{item.label}</span>
                 {item.hint ? (
                   <span className="palette-hint text-data text-muted">{item.hint}</span>

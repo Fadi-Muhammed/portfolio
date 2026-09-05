@@ -1613,3 +1613,41 @@ The keyboard had the identical trap and it is fixed the same way. Every key insi
 the bottom of About could not leave it with the keyboard at all. The region now keeps the
 key while it can still move in that direction, and the deck takes over at the end of it.
 Home and End are not directional and never belonged to the region.
+
+---
+
+## 22. The audit after Part 16
+
+Full findings, measurements and what was left are in `docs/PROGRESS.md`. Three changes to what
+sections 1 to 21 describe.
+
+### 22.1 A work grid fills its field without becoming a billboard
+
+`repeat(auto-fit, minmax(20rem, 28rem))` from 64rem up. Two rules had to hold at once, and
+each had already broken the other: `1fr` columns made a single product a 900px billboard, and
+capped `auto-fill` tracks left two products hugging the left edge of a 1216px field. `auto-fit`
+collapses the tracks nothing occupies; the cap keeps what remains card-sized.
+
+28rem and not 32: at 32 a card came to 449px against 421px of strip and the tag row was cut
+through its own glyphs. A section that needs eleven pixels of scroll reads as broken.
+
+A card's `sizes` attribute belongs to this decision. It still claimed 20rem after the cards
+grew, which serves a 320px image into a 448px slot.
+
+### 22.2 The palette's selected row is marked once
+
+The fill, and nothing else. The 4px packet that sat beside it was a second marker for one
+state — named in the previous audit as the first thing to reconsider, and cut here. Its width
+and gap had also pushed every label 16px right of its own group heading; the labels and the
+headings now share a left edge.
+
+### 22.3 A flex chain has to be flex the whole way down
+
+`div.palette` — cmdk's root, between the panel and the list — had no rule at all, and that one
+omission hid twelve of the palette's twenty-two entries. A block child of a flex column takes
+its full content height and refuses to shrink, so the capped panel simply clipped it, and the
+list's own `overflow-y: auto` never engaged because the list was never constrained.
+
+The general lesson is worth more than the fix: when a scroll region inside a capped container
+does not scroll, the fault is usually an ancestor that is not a flex item, not the region
+itself.

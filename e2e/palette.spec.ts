@@ -148,3 +148,39 @@ test("no serious accessibility violations with the palette open", async ({ page 
 
   expect(serious, serious.map((v) => `${v.id}: ${v.help}`).join("; ")).toEqual([]);
 });
+
+test("every entry is reachable without typing", async ({ page }) => {
+  await page.goto("/");
+  await ready(page);
+  await page.keyboard.press("Control+k");
+  await expect(input(page)).toBeVisible();
+
+  /*
+   * The bug this guards against hid twelve of twenty-two entries.
+   *
+   * The panel is a flex column that caps at 70svh, and cmdk's root between it and the
+   * list had no rule of its own — so as a block it took its full content height, refused
+   * to shrink, and the panel clipped everything past the tenth row. Links, Actions and
+   * Achievements were all below the cut.
+   *
+   * Every other test in this file types a query first, and a filtered list is short
+   * enough to fit, which is exactly why fourteen of them never saw it. This one browses.
+   */
+  const reach = await page.evaluate(() => {
+    const panel = document.querySelector(".palette-panel") as HTMLElement;
+    const list = document.querySelector(".palette-list") as HTMLElement;
+    const items = Array.from(document.querySelectorAll("[cmdk-item]"));
+    list.scrollTop = list.scrollHeight;
+    const last = items[items.length - 1].getBoundingClientRect();
+    const box = panel.getBoundingClientRect();
+    return {
+      count: items.length,
+      listScrolls: list.scrollHeight > list.clientHeight + 2,
+      lastInsidePanel: last.top >= box.top - 1 && last.bottom <= box.bottom + 1,
+    };
+  });
+
+  expect(reach.count).toBeGreaterThan(10);
+  expect(reach.listScrolls).toBe(true);
+  expect(reach.lastInsidePanel).toBe(true);
+});

@@ -57,7 +57,9 @@ export function WorkCard({
               width={1917}
               height={962}
               className="work-card__image"
-              sizes="(min-width: 48rem) 20rem, 85vw"
+              // A card is capped at 28rem from 64rem up, half the viewport between
+              // 48 and 64, and nearly the full width on a phone.
+              sizes="(min-width: 64rem) 28rem, (min-width: 48rem) 45vw, 85vw"
             />
           ) : (
             <p className="work-card__no-image text-data text-muted">{emptyMediaLabel}</p>

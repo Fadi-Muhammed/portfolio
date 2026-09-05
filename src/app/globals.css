@@ -468,6 +468,22 @@
     }
   }
 
+  /*
+   * cmdk's root, which sits between the panel and the list and had no rule of its own.
+   *
+   * That was the whole of the clipping bug. The panel is a flex column that caps at
+   * 70svh; this div was an unstyled block, so it took its full content height, refused
+   * to shrink, and the panel clipped it — and because it is a block, the list's own
+   * flex and min-height did nothing at all. The chain has to be flex the whole way down
+   * for the list at the bottom of it to be the thing that scrolls.
+   */
+  .palette {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+    flex-direction: column;
+  }
+
   .palette-input-row {
     display: flex;
     flex: none;
@@ -498,7 +514,23 @@
     color: var(--muted);
   }
 
+  /*
+   * `min-height: 0` is what makes this list scroll, and without it twelve of the
+   * palette's twenty-two entries were unreachable.
+   *
+   * The panel is a flex column with `max-height: 70svh` and `overflow: hidden`. A flex
+   * item defaults to `min-height: auto`, which refuses to shrink below its content — so
+   * the list stayed at its full 1221px inside a 630px panel, its own `overflow-y: auto`
+   * never engaged because it was never constrained, and the panel simply clipped
+   * everything past the tenth row. Links, Actions and Achievements were all below the cut.
+   *
+   * Every palette test types a query first, and a filtered list is short enough to fit,
+   * which is why a suite of fourteen palette tests never saw it. Browsing was the broken
+   * path, and browsing is what the palette is for.
+   */
   .palette-list {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     padding-bottom: 0.5rem;
@@ -524,21 +556,17 @@
     cursor: pointer;
   }
 
-  /* The packet marks the selected row — the same object as the rail and the topology. */
-  .palette-packet {
-    flex: none;
-    width: 4px;
-    height: 4px;
-    background-color: transparent;
-    transition: background-color var(--dur-fast) var(--ease);
-  }
-
+  /*
+   * The selected row is marked by its fill and nothing else.
+   *
+   * It used to carry a 4px packet in `signal` as well — two markers for one state, which
+   * the audit after Part 13 named as the first thing to reconsider and then kept. It is
+   * the accessory this pass removes. The fill already says which row is selected, and
+   * dropping the packet also lines every label up with its own group heading, which the
+   * packet's width and gap had pushed 16px out of true.
+   */
   .palette-item[data-selected="true"] {
     background-color: var(--ghost-hover);
-  }
-
-  .palette-item[data-selected="true"] .palette-packet {
-    background-color: var(--signal);
   }
 
   .palette-label {
@@ -1145,14 +1173,26 @@
 
   @media (min-width: 64rem) {
     /*
-     * Tracks are capped rather than stretched. With `1fr` columns a single product filled
-     * half a 1440 viewport — a 900 px card with a 500 px screenshot, which read as a
-     * billboard and left the other half of the section empty. Capping the track means a
-     * card is card-sized whether there is one of them or four, and the grid simply has
-     * fewer columns in use. There is room for that to work from here up.
+     * Tracks are capped rather than stretched, and they collapse when empty.
+     *
+     * `1fr` was tried first and rejected: a single product filled half a 1440 viewport —
+     * a 900px card with a 500px screenshot that read as a billboard. Capping the track
+     * fixed that and introduced the opposite problem, measured in the design audit: with
+     * `auto-fill` the grid lays out three 20rem tracks whether or not there is anything
+     * to put in them, so two products ended at 728px of a 1216px field and Products and
+     * Engineering used 55% of the width at 1440.
+     *
+     * `auto-fit` collapses the tracks nothing occupies, and the cap keeps what is left
+     * card-sized: two products share the field as two 28rem cards rather than hugging the
+     * left edge, and one product is a 28rem card rather than a billboard. Both failures
+     * are answered by the same rule.
+     *
+     * 28rem and not 32: at 32 the card came to 449px against 438px of strip and the tag
+     * row was cut through its own glyphs at the fold. A section that has to be scrolled
+     * by eleven pixels reads as broken rather than as scrollable.
      */
     .work-strip {
-      grid-template-columns: repeat(auto-fill, minmax(0, 20rem));
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 28rem));
     }
   }
 

@@ -48,6 +48,157 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Design audit — the whole site, after Part 16 · 5 September 2026
+
+Status: done. Not a part. A second full pass against `.claude/skills/frontend-design/SKILL.md`,
+`docs/DESIGN.md` and B13, over every deck section, both detail types, the palette open and the
+four states, at 390, 768 and 1440 in both themes. Ninety screenshots. Fadi approved
+**all critical and high findings**; medium and low were listed and left.
+
+Every structural claim below was measured in a real browser at a controlled viewport rather
+than read off a scaled screenshot — the lesson from the audit after Part 13, where two
+findings had to be withdrawn for exactly that reason.
+
+### C1 — the command palette was hiding twelve of its twenty-two entries
+
+Critical, and invisible until measured. The panel is a flex column capped at `70svh` with
+`overflow: hidden`. Between it and the list sits cmdk's own root, `div.palette`, which **had
+no CSS rule at all**: as a block it took its full 1221px content height, refused to shrink,
+and the panel clipped everything past the tenth row. The list's own `overflow-y: auto` never
+engaged because the list was never constrained, and its `flex`/`min-height` did nothing
+because its parent was not a flex container.
+
+Below the cut: all of **Links** (LinkedIn, GitHub, email, CV), all of **Actions** (toggle
+theme, copy email, ping) and all of **Achievements & talks**.
+
+Fourteen palette tests never saw it because every one of them types a query first, and a
+filtered list is short enough to fit. Browsing was the broken path, and browsing is what a
+command palette is for. The new test browses.
+
+Fixed by giving `.palette` the flex column it always needed. Verified: 22 items, the list
+scrolls, the last item sits inside the panel.
+
+### H2 — Products and Engineering used half the width at 1440
+
+Measured against a 1216px field: Products content ended at **728px (45% unused)**,
+Engineering at 726px (46%), Achievements at 817px (38%). About, Contact and Featured in were
+fine at 13–17%.
+
+The cause was `repeat(auto-fill, minmax(0, 20rem))` from 64rem up. `auto-fill` lays out three
+20rem tracks whether or not anything occupies them, so two products hugged the left edge and
+the rest of the field stayed empty.
+
+That rule was itself a considered fix — `1fr` columns had made a single product a 900px
+billboard — so the answer had to fill the field **without** uncapping the card.
+`repeat(auto-fit, minmax(20rem, 28rem))` does both: `auto-fit` collapses the tracks nothing
+occupies, and the cap keeps a card card-sized. Products now uses 76% of the field, up from
+55%, and the image `sizes` attribute was corrected to match — it still claimed 20rem, which
+would have served a 320px image into a 448px slot.
+
+**A regression this introduced, and how it was caught.** The first attempt capped at 32rem.
+The cards grew to 449px against 421px of strip, and the tag row was cut through its own
+glyphs at the fold — a section that needs eleven pixels of scroll reads as broken rather than
+as scrollable. Found by measuring the card against its section rather than by looking at the
+screenshot and calling it fine. 28rem fits with 25px to spare.
+
+A welcome side effect: Eshrahli's summary no longer truncates mid-word, which was listed as a
+separate medium finding (M1) and is now moot.
+
+**Engineering is still at 46%, and that is not a layout bug.** Measured after the change: the
+grid collapses its empty track to 0px and the single card caps at 448px, exactly as intended.
+The widest thing in the section is the intro paragraph at 726px, capped by `measure`. With one
+project there is nothing to fill the field with; the rule is correct and Products proves it.
+It will fill the moment a second project lands.
+
+### H3 — withdrawn, and corrected
+
+Filed as "the Achievements list is capped at 380px and scrolls while the section has spare
+room". The premise was wrong and measurement killed it.
+
+At 1440×900 the section body is 644px, of which `--section-pad` takes 128px vertically,
+leaving 516px. Filters, the CTA and two 24px gaps account for the rest exactly: 516 − 48 − 44
+− 44 = **380**. The list is already taking every pixel available to it. There is no slack to
+reclaim.
+
+The user-facing problem is real and worse than reported — **only two of five entries are fully
+visible**, and the hidden ones include the National Cyber Drill and DMZ Basecamp. But it
+cannot be fixed by giving the list room it does not have. The honest options are to make each
+entry denser at desktop, to show the three `featured` entries and link to the rest, or to
+accept the scroll now that scroll chaining works. Each is a design decision rather than a bug
+fix, so none was taken unasked.
+
+### Remove one accessory
+
+**The packet on the palette's selected row.** A 4px square in `signal` on a row that already
+carries a background fill — two markers for one state. The audit after Part 13 named it "first
+to reconsider" and kept it; this pass cuts it.
+
+It also fixes an alignment nobody had noticed: the packet's width and gap pushed every label
+16px right of its own group heading. With the packet gone, `SECTIONS` and `Home` share a left
+edge.
+
+### Left in place, with reasons
+
+- **The section intro on Products and Engineering**, which sits under a teaser that already
+  describes the section. It says something the teaser does not — that each card has a case
+  study — so it is information rather than decoration.
+- **The hop numbers** in the Achievements timeline. B13 allows them because the deck is a real
+  sequence, and this is a real sequence.
+- **The `+` before "Show detail"**, which is a collapsed/expanded state, not an ornament.
+
+### Withdrawn after measuring
+
+**"The Featured in logo wall is centred while its header is left-aligned."** It is not. The
+section header, the wall and the first logo all sit at exactly 64px. The logos are centred
+within their grid cells, which made the ink look inset. Recorded rather than quietly dropped,
+because a withdrawn finding is as much a result as a fixed one.
+
+### The three AI defaults and the terminal trap
+
+Checked on screen at every width and in both themes.
+
+- **Cream + serif + terracotta.** Avoided; the ground is a cool blue-grey and there is no
+  serif anywhere. One watch item: the filled "See my work" button reads close to terracotta in
+  isolation on the light theme. The cool field is what keeps it honest, and it is the closest
+  call on the site.
+- **Near-black + acid accent.** Avoided. The dark ground is a blue-slate and the accent is
+  amber.
+- **Broadsheet hairlines.** Avoided. The radius scale is live and the grid is generous.
+- **The terminal-green trap.** Absent entirely.
+
+### Medium and low, listed and left
+
+- **M2** — the deck is left-aligned; detail, index and state pages are centred. Clicking a
+  card moves the eye from a left column to a centred one, against `docs/DESIGN.md` section 4.
+- **M3** — the hero topology stops at 1201px, short of both the rail gutter and the right
+  edge, where B4 says it "bleeds off the right edge".
+- **M4** — About's date column breaks a range across lines: "JAN 2024 — MAY / 2027 /
+  EXPECTED".
+- **L1** — hero, Products and Engineering leave 31–32% of the section body empty vertically at
+  1440×900.
+- **L2** — Eshrahli has no live reading where Rubric has one, so the cards' feet do not align.
+
+### How to test
+
+```
+npm run build
+npm run start
+```
+
+- Press ⌘K or Ctrl+K and scroll the palette without typing: Links, Actions and Achievements
+  are all there.
+- Hop to Products at 1440: two cards share the field, tags fully visible, nothing cut.
+- Hop to Engineering: one card at its cap, not a billboard.
+
+```
+npx vitest run
+npx playwright test
+```
+
+300 unit tests and 172 Playwright tests across three browser projects.
+
+---
+
 ## Fix — inner scrollers trapped the wheel · 5 September 2026
 
 Status: done. Not a part. Reported by Fadi after Part 16.
