@@ -776,3 +776,31 @@ finding is as much a result as a fixed one.
   nav's controls came first in the tab order, and B3 says the skip link is first.
 - **`/design`'s theme-toggle test is scoped to the nav.** That page shows a toggle as a
   specimen and now carries the nav's as well; the page is right and the test was ambiguous.
+
+### 5 September 2026 — Part 13's tag, and Part 14 answered in advance
+
+Asked at the start of a session, before Part 14's own prompt. Recorded here so the answers
+survive the session that collected them.
+
+- **`part13-done` is tagged at `1496679`**, the last Part 13 commit, not at the head. Part 13
+  was built, tested, documented and pushed on 4 September and never tagged, which left it the
+  one part of thirteen with no tag and made Prompt 14's first instruction — confirm
+  `part13-done` exists — impossible to satisfy. Tagging the head instead would have put the
+  design audit's four fixes inside Part 13's tag, and the audit was not Part 13.
+- **The maintenance bypass is a query key that sets a cookie.** Visiting the site once with
+  `?key=<MAINTENANCE_BYPASS_KEY>` sets an httpOnly cookie and every later page loads
+  normally. A key on every request was the alternative and means appending it to every link
+  you follow; no bypass at all means checking the site by turning the flag off, which is not
+  checking the site.
+- **The 404 does not list recently visited pages.** B10 offers it as optional. It keeps the
+  page pure server output with no script, and it avoids keeping a record of where a visitor
+  has been for a feature that repeats what "Back to home" and "Search the site" already do.
+- **No service worker for the offline state.** The events cover losing signal while on the
+  site, which is the case B10 describes. A worker would additionally cover reloading while
+  disconnected, at the cost of a cache with its own lifecycle that can serve a stale site
+  after a deploy — the usual source of "why am I seeing the old version". If the offline
+  state later has to survive a reload, that is the moment to add one, deliberately.
+
+Still open, and needed before the maintenance page is built: **the maintenance message**.
+`site_settings.maintenance_message` is `null` today, so there is copy to write and it is
+Fadi's to write, not mine to invent.
