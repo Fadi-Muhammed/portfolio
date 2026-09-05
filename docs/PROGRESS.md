@@ -160,9 +160,16 @@ themes, along with the share cards at their own size.
 
 ### Known gaps
 
-- **Umami is not connected.** No account exists yet, so `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is
-  unset, no script loads, and the footer still reads "No analytics, no cookies." — which is
-  true. The walkthrough is in the report.
+- ~~Umami is not connected.~~ **Connected on 5 September**, EU region. Verified in a
+  production build: the script loads, the website ID is a valid UUID, no cookie is set, and
+  `data-domains` means localhost made zero collect calls — so development traffic cannot
+  reach the numbers. The footer flipped itself to "Visits are counted with Umami. No
+  cookies, no personal data." `NEXT_PUBLIC_UMAMI_WEBSITE_ID` still needs adding in Vercel
+  for Production.
+- **The EU region needs no code change.** `eu.umami.is/script.js` answers 301 to
+  `cloud.umami.is/script.js` and the two files are byte-identical — one CDN host, with the
+  region deciding only where data is stored. The hardcoded URL is the redirect target, so
+  it saves a hop rather than taking one.
 - **`NEXT_PUBLIC_SITE_URL` is `http://localhost:3000` in `.env.local`,** which is right for
   development and means every canonical URL and share-card URL built locally points at
   localhost. Vercel needs the real domain set for Production and Preview.

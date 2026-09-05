@@ -252,8 +252,23 @@ test("the footer says what the site is made of and what it records", async ({ pa
   await openContact(page);
 
   await expect(page.getByText("Built with Next.js and Supabase. Source viewable.")).toBeVisible();
-  await expect(page.getByText("No analytics, no cookies.")).toBeVisible();
   await expect(page.getByText(`© ${new Date().getFullYear()} Fadi Muhammed`)).toBeVisible();
+
+  /*
+   * The privacy note depends on the environment, and asserting one of its two wordings
+   * was a test that passed in CI and failed on the machine that had just configured
+   * analytics. What must hold in both is that the sentence matches what the page is
+   * actually doing — so the script decides which line to expect, exactly as the footer
+   * does.
+   */
+  const tracked = (await page.locator('script[src*="umami"]').count()) > 0;
+  await expect(
+    page.getByText(
+      tracked
+        ? "Visits are counted with Umami. No cookies, no personal data."
+        : "No analytics, no cookies.",
+    ),
+  ).toBeVisible();
 });
 
 test("no serious accessibility violations on the section", async ({ page }) => {
