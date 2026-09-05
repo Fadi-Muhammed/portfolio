@@ -28,12 +28,14 @@ type DeckSectionProps = {
 };
 
 export function DeckSection({ section, showHeader = true, children }: DeckSectionProps) {
-  const { active, activeIndex, hopTo, nearEnd } = useDeck();
+  const { active, activeIndex, hopTo, nearEnd, printing } = useDeck();
 
   const isActive = active === section.id;
   const index = sectionIndex(section.id);
   const isNext = index === activeIndex + 1;
-  const mounted = shouldMount(section.id, active);
+  // Everything mounts for a print, so the PDF has all seven sections rather than the
+  // two the deck happens to be showing.
+  const mounted = printing || shouldMount(section.id, active);
 
   const onHeaderClick = (event: MouseEvent<HTMLAnchorElement>) => {
     // Everything goes through hopTo, so the hash, the title and the reduced-motion
@@ -78,7 +80,7 @@ export function DeckSection({ section, showHeader = true, children }: DeckSectio
         className={cn("deck-section-body", showHeader ? "" : "deck-section-body--full")}
         // The body is made inert rather than the whole section, so the header stays
         // clickable while it is serving as the next section's peek strip.
-        inert={!isActive}
+        inert={!isActive && !printing}
       >
         {mounted ? children : null}
       </div>

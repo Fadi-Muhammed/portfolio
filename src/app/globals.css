@@ -2868,3 +2868,140 @@
     margin-top: 0.25rem;
   }
 }
+
+/*
+ * Print (B12).
+ *
+ * The deck is a scroll container with one section on screen at a time, which is exactly
+ * the wrong shape for paper. Printing unwinds it: the container stops being a viewport,
+ * every section becomes a block in sequence, and the chrome that only means something on
+ * a screen — the rail, the nav, the palette, the slider, the skip link — is dropped.
+ *
+ * The other half of this is in the deck provider: CSS cannot lay out content that is not
+ * in the document, and only the active section and its neighbours are mounted, so the
+ * provider mounts all seven while a print is being prepared.
+ *
+ * Always on white, whichever theme the visitor was reading. Ink on paper is not a theme
+ * choice, and a dark background would empty a cartridge to say so.
+ */
+@media print {
+  :root,
+  [data-theme="dark"],
+  [data-theme="light"] {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --ink: #000000;
+    --muted: #3a3a3a;
+    --line: #b0b0b0;
+    --accent: #000000;
+    --signal: #000000;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  /* The deck stops being a viewport and becomes a document. */
+  .deck {
+    display: block;
+    height: auto;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .deck-section {
+    height: auto;
+    min-height: 0;
+    display: block;
+    padding-top: 0;
+    scroll-snap-align: none;
+    /* A section is a unit of reading, so it starts a page rather than being split
+       across one wherever the previous section happened to end. */
+    break-before: page;
+    break-inside: auto;
+  }
+
+  .deck-section:first-of-type {
+    break-before: auto;
+  }
+
+  .deck-section-body,
+  .section-body {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    animation: none;
+  }
+
+  /* Inner scrollers hold content back on paper for no reason. */
+  [data-inner-scroll],
+  .work-strip {
+    overflow: visible !important;
+    display: block;
+  }
+
+  /*
+   * Screen-only chrome. Each of these either cannot be used on paper or describes a
+   * position in a document that no longer has one.
+   */
+  .rail,
+  .skip-link,
+  .palette-scrim,
+  .palette-panel,
+  .signal,
+  .site-nav,
+  header[class*="fixed"],
+  .slide,
+  .cv,
+  .contact__form form,
+  .turnstile,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  /* The peek strip is a control, but its name is the section's heading. Keep the name,
+     drop the teaser that only makes sense as a promise about what is coming next. */
+  .deck-section-teaser {
+    display: none;
+  }
+
+  .deck-section-header {
+    text-decoration: none;
+  }
+
+  /*
+   * A link is only useful on paper if you can read where it goes. Internal fragments are
+   * skipped: "#contact" tells a reader nothing they can act on.
+   */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: #3a3a3a;
+    word-break: break-all;
+  }
+
+  /* Nothing animates, and nothing is held at opacity 0 waiting for an animation that
+     will never run. */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+  }
+
+  img {
+    max-width: 100%;
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

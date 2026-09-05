@@ -45,6 +45,15 @@ type DeckContextValue = {
   /** True once the visitor is near the bottom of the current section (B3 keepalive). */
   nearEnd: boolean;
   deckRef: RefObject<HTMLDivElement | null>;
+  /**
+   * True while the browser is preparing a print or a PDF.
+   *
+   * B12 asks that the deck print linearly with every section on the page, and a deck that
+   * only mounts the active section and its neighbours would otherwise print two sections
+   * and five empty shells. CSS alone cannot fix that — the content is not in the document
+   * to lay out — so the print media query and this flag are two halves of one feature.
+   */
+  printing: boolean;
 };
 
 const DeckContext = createContext<DeckContextValue | null>(null);
@@ -87,6 +96,32 @@ export function DeckProvider({ children }: { children: ReactNode }) {
     });
   }, []);
   const [nearEnd, setNearEnd] = useState(false);
+
+  /*
+   * Mount everything while printing.
+   *
+   * Both signals are used because neither is enough on its own: Chrome and Firefox fire
+   * beforeprint reliably, while a "Save as PDF" that goes straight to the print media
+   * query is caught by matchMedia. Whichever arrives first wins, and afterprint puts the
+   * deck back to one section at a time.
+   */
+  const [printing, setPrinting] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("print");
+    const on = () => setPrinting(true);
+    const off = () => setPrinting(false);
+    const onQuery = (event: MediaQueryListEvent) => setPrinting(event.matches);
+
+    window.addEventListener("beforeprint", on);
+    window.addEventListener("afterprint", off);
+    query.addEventListener("change", onQuery);
+    return () => {
+      window.removeEventListener("beforeprint", on);
+      window.removeEventListener("afterprint", off);
+      query.removeEventListener("change", onQuery);
+    };
+  }, []);
   const hopTimeout = useRef(0);
   const reducedMotion = useReducedMotion();
   const router = useRouter();
@@ -312,8 +347,16 @@ export function DeckProvider({ children }: { children: ReactNode }) {
   }, [active, hopTo]);
 
   const value = useMemo<DeckContextValue>(
-    () => ({ active, activeIndex: sectionIndex(active), hopTo, nearEnd, deckRef, visited }),
-    [active, hopTo, nearEnd, visited],
+    () => ({
+      active,
+      activeIndex: sectionIndex(active),
+      hopTo,
+      nearEnd,
+      deckRef,
+      visited,
+      printing,
+    }),
+    [active, hopTo, nearEnd, visited, printing],
   );
 
   return <DeckContext.Provider value={value}>{children}</DeckContext.Provider>;
