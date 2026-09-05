@@ -857,3 +857,26 @@ arrived and are recorded in the entry above. Two remained.
 - **`SectionPlaceholder` was deleted.** Every section is built, so the branch rendering
   "This section is built in Part 9" was unreachable, and `arrivesIn` was a note about the
   build schedule living in the deck's data.
+
+### 5 September 2026 — Part 15 question batch
+
+- **The site stays noindex until launch.** The root layout has blocked indexing since Part 1
+  and Part 17 flips it as a launch step, when the content is final and the CV is current.
+  Google indexes a new site within days of being allowed to, so nothing is bought by
+  starting early — and an early index of half-finished content is harder to correct than to
+  avoid.
+- **Canonical URLs use `https://fadimuhammed.work`** rather than a placeholder. A10 records
+  the domain as owned, `NEXT_PUBLIC_SITE_URL` already exists to hold it, and a placeholder
+  would only need undoing. Decided rather than asked, because the spec already answers it.
+- **The favicon is the letter F with the packet**, which is option (a) of the two
+  `docs/DESIGN.md` section 5 left open at implementation. The full "Fadi" logotype turns to
+  mush at 16px. Option (b), the packet on a link, is kept for a social avatar, where the
+  name is written next to it and the mark does not have to carry identification.
+- **Umami, as A18 chose.** Its free Hobby tier was checked before asking rather than assumed
+  from memory: 100,000 events a month, 3 websites, 6 months of retention, which a portfolio
+  will not come close to. No cookies, so the footer needs no consent banner and the privacy
+  note stays a true sentence rather than a disclosure.
+- **The console easter egg is a link-up line** — `link up · 1000 Mb/s · full duplex`
+  followed by the name and the role. It borrows the console's own idiom, a line a real
+  interface logs, and it is the exact inverse of the "No signal." state Part 14 built. It
+  also avoids repeating the palette's `ping`, which is already a mock reply.
