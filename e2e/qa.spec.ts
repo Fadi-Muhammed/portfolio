@@ -50,6 +50,45 @@ test.describe("accessibility, every route and both themes", () => {
   }
 });
 
+test.describe("zoom", () => {
+  /*
+   * 200% browser zoom, which B12 asks for, is the same thing as halving the CSS pixels
+   * available: a 1440x1200 window at 200% gives the page 720x600 to lay out in. That is
+   * what this emulates. It is not identical to real zoom — text scaling and pinch zoom
+   * behave differently — but it catches what zoom usually breaks, which is a layout that
+   * assumed it would always have room.
+   */
+  test.use({ viewport: { width: 720, height: 600 } });
+
+  test("nothing overflows sideways at 200%", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForLoadState("domcontentloaded");
+
+    const { documentWidth, viewport } = await page.evaluate(() => ({
+      documentWidth: document.documentElement.scrollWidth,
+      viewport: window.innerWidth,
+    }));
+    expect(documentWidth).toBeLessThanOrEqual(viewport + 1);
+  });
+
+  test("a case study still reads at 200%", async ({ page }) => {
+    const response = await page.goto("/products/rubric");
+    if (response?.status() === 404) test.skip(true, "No products seeded in this environment.");
+
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    const { documentWidth, viewport } = await page.evaluate(() => ({
+      documentWidth: document.documentElement.scrollWidth,
+      viewport: window.innerWidth,
+    }));
+    expect(documentWidth).toBeLessThanOrEqual(viewport + 1);
+  });
+
+  test("no serious accessibility violations at 200%", async ({ page }) => {
+    await page.goto("/");
+    expect(await serious(page)).toEqual([]);
+  });
+});
+
 test.describe("print", () => {
   test("the deck prints every section, not the two it happens to be showing", async ({ page }) => {
     await page.goto("/");

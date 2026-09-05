@@ -79,7 +79,7 @@ an instrument and a validated form. The home page is 70 KB over. `motion` and
 
 ## Accessibility
 
-**Automated, every run:** axe on eight routes × both themes — `/`, `/products`,
+**Automated, every run:** axe at 200% zoom equivalent, and on eight routes × both themes — `/`, `/products`,
 `/products/[slug]`, `/engineering`, `/engineering/[slug]`, the 404, `/maintenance` and
 `/design`. **Zero serious or critical violations in all sixteen combinations.**
 
@@ -125,7 +125,7 @@ _readable_.
 | Desktop Firefox           | Not covered     | See below                                              |
 | Desktop Safari            | Not covered     | See below                                              |
 | 13-inch laptop at 100%    | Not covered     | Manual                                                 |
-| 200% browser zoom         | Not covered     | Manual                                                 |
+| 200% browser zoom         | Automated       | No sideways overflow, no serious axe violations        |
 | Real iOS Safari           | **Outstanding** | The one that matters most — see below                  |
 | Real Android Chrome       | **Outstanding** | Manual                                                 |
 
