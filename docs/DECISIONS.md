@@ -927,3 +927,58 @@ whatever hydration is doing.
 
 The lesson: a provider that moves up a tree brings its effects with it, and the effects
 that assume the page they came from are the ones that go quiet rather than loud.
+
+### 5 September 2026 — Part 16 question batch
+
+Asked which devices were available and whether any B12 budget should change. The answers
+were "I want it to be smooth on all of these devices" and "whichever makes the smoothest
+website", so the budgets stand as written and are treated as the way smoothness is
+checked rather than as the goal itself. Where a budget and smoothness would conflict, the
+site wins and the miss is reported — which is what happened with the JavaScript budget.
+
+No device was named, so everything mobile in this part is emulation. `docs/QA.md` keeps
+measured, emulated and manual apart, and ends with the checklist for whichever phone is
+to hand.
+
+### 5 September 2026 — Part 16, decided without asking
+
+- **CI asserts accessibility, best practices and layout shift, and only warns on
+  performance and LCP.** Those three are properties of the markup and the stylesheet and
+  come out the same on any machine. A GitHub runner is a shared virtual machine with a
+  contended CPU; this project's own laptop scored the same build 87 and 91 depending on
+  what else was running. A budget that fails for that reason teaches everyone to ignore
+  the job.
+- **`upgrade-insecure-requests` is emitted only where the site URL is https.** It rewrites
+  http subresource requests to https, which on plain http upgrades the stylesheet to a URL
+  nothing is listening on. Chromium tolerated it; WebKit rendered the site with no CSS.
+- **The two phone projects run one spec rather than the whole suite.** Running 135 tests
+  three times buys repetition rather than coverage.
+- **200% zoom is emulated as half the CSS pixels.** A 720x600 viewport is a 1440x1200
+  window at 200%. Not identical — text scaling and pinch differ — and it catches what zoom
+  actually breaks.
+- **Firefox and Safari desktop stay out of CI** until the launch checklist, as Section F
+  asks.
+- **The hero's entrance animation stays**, having been tested for removal: LCP measured
+  3.9 s without it against 3.8 s with it.
+
+### 5 September 2026 — the two budgets that are missed, and why they are one problem
+
+LCP is 3.2–3.4 s against B12's 2.0 s, and the home page ships 270 KB of gzipped JavaScript
+against a budget of about 200 KB. They have the same cause.
+
+The home route hands the deck all seven sections as children. The deck mounts two — the
+active one and its neighbour — which is what B3 asks for, and the implementation is
+faithful to it. But children are rendered before they are passed, so every section's data
+is serialised into the payload, and every section's client component is in the bundle,
+whether or not it is ever mounted. Lighthouse measures the result as render delay: 84–88%
+of the LCP is the browser holding finished content while the main thread works.
+
+Ruled out first, by measurement: the entrance animation, and the machine the numbers were
+taken on. The framework itself is 152 KB of the 270, which leaves 48 KB of the budget for
+a deck, a palette, a topology, an instrument and a validated form.
+
+Fixing it means changing how the deck receives its sections so that unmounted ones cost
+nothing — a real architectural change to a specified behaviour, with real risk to the one
+thing the site is built around. Recorded rather than attempted: it is worth doing on
+evidence from real traffic, not on a lab number, and it is not worth risking the deck for
+before launch.

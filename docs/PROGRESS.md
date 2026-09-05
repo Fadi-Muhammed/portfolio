@@ -48,6 +48,126 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Part 16 — Performance, accessibility, print and cross-device QA · 5 September 2026
+
+Status: done. Five of B12's seven budgets are met, two are missed and both are explained
+with measurements rather than excuses. Full results in `docs/QA.md`.
+
+### What exists
+
+- `docs/QA.md` — the matrix, the numbers, and a checklist of what only a real phone can
+  answer.
+- `lighthouserc.json` and a `lighthouse` job in CI, with assertions split by what a shared
+  runner can actually measure.
+- `e2e/qa.spec.ts` — axe on eight routes × both themes, the print rules, and 200% zoom.
+- `e2e/mobile.spec.ts` and two Playwright projects, emulated Pixel 7 and iPhone 14.
+- Security headers in `next.config.ts`: CSP, frame-ancestors, referrer policy,
+  permissions policy, nosniff, HSTS.
+- The print stylesheet in `globals.css`, and `printing` in the deck provider.
+- Tests: 300 unit and 154 Playwright (19 new), across three projects.
+
+### The numbers
+
+Lighthouse mobile, median of three, on an idle machine:
+
+| Route              | Perf | A11y | BP  | SEO  | LCP   | CLS |
+| ------------------ | ---- | ---- | --- | ---- | ----- | --- |
+| `/`                | 91   | 100  | 100 | 66\* | 3.4 s | 0   |
+| `/products/rubric` | 92   | 100  | 100 | 69\* | 3.2 s | 0   |
+
+\* Entirely the deliberate `noindex`. The same build with `NEXT_PUBLIC_INDEXABLE=true`
+scores **100 with nothing failing** — measured, not assumed.
+
+**Met:** Performance, Accessibility, Best practices, SEO (once indexable), CLS.
+**Missed:** LCP at 3.2–3.4 s against 2.0 s, and home JavaScript at 270 KB against ~200 KB.
+
+### What was measured rather than assumed
+
+- **The hero entrance animation is not the cause of the LCP.** Disabling it entirely
+  measured 3.9 s against 3.8 s. It stays, on evidence.
+- **The first numbers were polluted.** Five stray dev servers from earlier experiments
+  cost the home page four Lighthouse points. Any performance figure from a busy machine
+  is worthless, which is also why CI only warns on that metric.
+- **LCP is 84–88% render delay**, not download. The largest image on a case study is 16 KB
+  and arrives in a quarter of a second. The cost is main-thread work: the home route ships
+  every section's client code and serialises every section's data, because the deck passes
+  all seven sections as children and mounts two. That is B3 working as specified.
+
+### The three bugs this part found
+
+1. **The skip link pointed at nothing on every page but the deck.** "Skip to contact" on a
+   case study, which has no `#contact` — focus moved nowhere. Found by Lighthouse. The
+   state pages and `/design` gained a `main` landmark so there is always somewhere to land.
+2. **The peek header's accessible name did not contain its visible text** (WCAG 2.5.3).
+3. **The nav's name was a 21px hit target** against the site's own 44px floor. Found by
+   the emulated phone projects on their first run.
+
+And one that was mine: **`upgrade-insecure-requests` emptied the stylesheet** on anything
+served over plain http. Chromium tolerated it, WebKit did not, and it surfaced as fifteen
+hit targets being too small rather than as a missing stylesheet.
+
+### B13 "not vibe-coded" checklist
+
+- **Tokens only.** The one new value is `min-h-11`, which is 44px on the existing 4px
+  scale — the floor every other control already keeps.
+- **Motion.** Nothing added. The entrance was tested for removal and kept because the
+  measurement did not support removing it.
+- **Print** is a designed state, not a disabled one: it decides what a section is on paper,
+  which chrome is meaningless there, and that a link has to say where it goes.
+- **Accessibility.** Zero serious or critical violations across eight routes in both
+  themes, and at 200% zoom.
+- **No unused dependencies.** `motion` and `@supabase/ssr` removed.
+- **Remove one accessory:** those two dependencies, since this part added almost nothing
+  to look at.
+
+### Decided without asking
+
+- **CI asserts accessibility, best practices and layout shift; performance and LCP only
+  warn.** Those three are properties of markup and stylesheet and come out the same
+  anywhere. A shared runner cannot measure the other two reliably, and a budget that fails
+  for that reason teaches everyone to ignore it.
+- **`upgrade-insecure-requests` is emitted only where the site URL is https.**
+- **The two phone projects run one spec, not the whole suite.** Running 135 tests three
+  times buys repetition rather than coverage and trebles the slowest job.
+- **200% zoom is emulated as half the CSS pixels.** Not identical to real zoom, and it
+  catches what zoom actually breaks.
+- **Firefox and Safari desktop stay out of CI.** Section F asks for them before launch
+  rather than on every push.
+
+### Known gaps
+
+- **LCP and the JavaScript budget are missed.** The cause is understood and written down;
+  fixing it means changing how the deck receives its sections, which is a change to
+  specified behaviour and needs a decision rather than a quiet edit. See the open question.
+- **No real device has been tested.** Everything mobile here is emulation. Part 5's two
+  bugs came from a real phone and **the fix for them has still never been confirmed on
+  hardware** — the checklist is at the end of `docs/QA.md`.
+- **The print preview has not been read by a person.** The rules are asserted; whether the
+  pages are pleasant to read is not something a test can say.
+- **Firefox and Safari desktop are unverified**, deliberately, until the launch checklist.
+- Parts 13–15 gaps unchanged: the manual contact send, the Vercel variables, the
+  maintenance flag never switched on outside a test, and the colophon's "Source viewable."
+  against a private repo.
+
+### Open questions
+
+- **Should the deck stop passing all seven sections to the client?** It is the single
+  cause of both missed budgets: every section's client code and data ships on the home
+  page although two sections mount. B3 specifies the mounting behaviour and the current
+  code implements it faithfully; what it does not do is avoid the cost. Changing it is a
+  real architectural change with a real risk to the deck's behaviour, and it is worth
+  doing only if the numbers matter more than the risk. My recommendation is to leave it
+  until after launch and revisit with real traffic.
+
+### Next
+
+Part 17 — launch. It needs the domain in Vercel, the production environment variables,
+`NEXT_PUBLIC_INDEXABLE=true`, and the launch checklist in Section F run against the live
+domain. The standing items recorded at the top of this file are due then, along with the
+out-of-date CV and the colophon's claim about the source.
+
+---
+
 ## Part 15 — SEO, sharing images, analytics, colophon and easter eggs · 5 September 2026
 
 Status: done, with one line of copy waiting on an answer — see "Open questions".

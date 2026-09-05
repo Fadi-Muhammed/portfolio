@@ -22,7 +22,9 @@ function serialise(data: unknown): string {
 }
 
 function Script({ data }: { data: unknown }) {
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serialise(data) }} />;
+  return (
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serialise(data) }} />
+  );
 }
 
 function socialUrls(settings: SiteSettings | null): string[] {
@@ -46,11 +48,7 @@ export function HomeJsonLd({ settings }: { settings: SiteSettings | null }) {
     url: SITE_URL,
     description: settings?.eyebrow ?? SITE_DESCRIPTION,
     jobTitle: "Telecommunications and network engineer",
-    knowsAbout: [
-      "Telecommunications engineering",
-      "Computer networks",
-      "Product engineering",
-    ],
+    knowsAbout: ["Telecommunications engineering", "Computer networks", "Product engineering"],
     alumniOf: {
       "@type": "CollegeOrUniversity",
       name: "University of Doha for Science and Technology",

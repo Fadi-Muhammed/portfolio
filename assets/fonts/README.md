@@ -9,11 +9,11 @@ data and cannot select an axis on a variable font. Google Fonts will serve a sta
 instance at an exact axis position, which is how the display face here keeps the width
 the design actually uses:
 
-| File                 | Family        | Axes                    | Matches                        |
-| -------------------- | ------------- | ----------------------- | ------------------------------ |
-| `archivo-display.ttf`| Archivo       | `wdth 118`, `wght 600`  | `--wdth-display`, `text-h1`    |
-| `archivo-body.ttf`   | Archivo       | `wdth 100`, `wght 400`  | `--wdth-body`, body copy       |
-| `plex-mono.ttf`      | IBM Plex Mono | `wght 500`              | `text-data`                    |
+| File                  | Family        | Axes                   | Matches                     |
+| --------------------- | ------------- | ---------------------- | --------------------------- |
+| `archivo-display.ttf` | Archivo       | `wdth 118`, `wght 600` | `--wdth-display`, `text-h1` |
+| `archivo-body.ttf`    | Archivo       | `wdth 100`, `wght 400` | `--wdth-body`, body copy    |
+| `plex-mono.ttf`       | IBM Plex Mono | `wght 500`             | `text-data`                 |
 
 Both families are licensed under the SIL Open Font License 1.1, which permits
 redistribution in a bundle like this one:

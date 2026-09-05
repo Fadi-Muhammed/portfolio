@@ -61,8 +61,8 @@ export default function GlobalError({
           }
         >
           The request reached this end and did not come back. The fault is here, not with your
-          connection or the address you asked for. One request failed rather than the whole site,
-          so trying again usually gets through.
+          connection or the address you asked for. One request failed rather than the whole site, so
+          trying again usually gets through.
         </StatePage>
       </body>
     </html>

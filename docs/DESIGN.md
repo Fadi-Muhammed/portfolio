@@ -1511,3 +1511,77 @@ The candidate weighed and rejected was the "view source" hint B12 offers as opti
 colophon already says the source is viewable, `humans.txt` says what the site is built
 from, and the console greets anyone who opens it. A fourth pointer at the same fact is not
 craft, it is repetition.
+
+---
+
+## 21. Paper, phones and the things that were measured — Part 16
+
+### 21.1 Print unwinds the deck
+
+The deck is a scroll container showing one section at a time, which is exactly the wrong
+shape for paper. Printing turns it back into a document: the container stops being a
+viewport, each section becomes a block that starts its own page, and the chrome that only
+means something on a screen goes — the rail, the palette, the slider, the skip link, the
+nav. Each of those either cannot be used on paper or describes a position in a document
+that no longer has one.
+
+The half of this that is not CSS: the deck mounts the active section and its neighbours,
+so a print would otherwise produce two sections and five empty shells. CSS cannot lay out
+content that is not in the document. The provider listens for `beforeprint` — and for the
+print media query, since a "Save as PDF" may go straight there — and mounts all seven.
+
+It prints on white whichever theme was on screen. Ink on paper is not a theme choice, and
+a dark ground would empty a cartridge to say so. External links print their address after
+them, because paper cannot be clicked; internal fragments do not, because "#contact" tells
+a reader nothing they can act on.
+
+### 21.2 The 44px floor, kept where it had slipped
+
+The nav's name and mark had no padding of its own: 122×21 on a phone, against the site's
+own rule that everything a thumb has to hit clears 44px. It has `min-h-11` now — 44px on
+the 4px scale, the same floor every other control keeps. Found by the emulated phone
+projects, which is exactly the kind of thing they exist for.
+
+### 21.3 What the accessible name has to contain
+
+The peek header carried `aria-label="Hop to Products"` while visibly reading "Products"
+and its teaser. WCAG 2.5.3 asks that a control's accessible name contain its visible text,
+because someone using voice control says what they can see.
+
+The label is gone rather than lengthened. The link's own content already names the
+destination, its role already says it is a link, and "Hop to" was a word only screen-reader
+users were given — now both are told the same thing.
+
+### 21.4 What was measured, and what was only assumed
+
+Recorded here because two of the three turned out differently than expected, and the
+difference is the point.
+
+- **The hero entrance is not what delays the paint.** Removing it entirely measured LCP at
+  3.9 s against 3.8 s with it. The load sequence B5 asks for stays, and it stays on
+  evidence rather than on preference.
+- **A performance number from a busy machine is not a number.** The first Lighthouse run
+  scored the home page 87 with five stray dev servers running; the same build on a quiet
+  machine is 91. This is why CI only warns on performance — a shared runner is never
+  quiet.
+- **The SEO score of 66 is entirely the deliberate `noindex`.** The same build with
+  indexing on scores 100 with no failing audits. Verified, not assumed, so Part 17 knows
+  exactly what it is turning on.
+
+Full numbers, budgets and the device matrix are in `docs/QA.md`.
+
+### 21.5 The one directive that emptied the stylesheet
+
+`upgrade-insecure-requests` rewrites http subresource requests to https. On the real
+domain that is right; served over plain http it upgrades the stylesheet to a URL nothing
+is listening on, and the page renders with no CSS at all.
+
+Chromium tolerated it and WebKit did not, so it surfaced as fifteen hit targets being too
+small rather than as a missing stylesheet — which is worth remembering the next time an
+accessibility failure looks absurd. It is emitted only where the site URL is https.
+
+### 21.6 Remove one accessory
+
+Two dependencies rather than a visual element, because this part added almost nothing to
+look at. `motion` and `@supabase/ssr` had been installed since Parts 13 and 3, were
+confirmed absent from every client chunk, and are gone.

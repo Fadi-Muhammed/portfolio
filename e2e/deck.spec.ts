@@ -64,8 +64,16 @@ test("the rail hops, and the URL follows", async ({ page }) => {
 test("the peek strip hops to the section it names", async ({ page }) => {
   await page.goto("/");
 
-  // From the hero, the visible peek is Products.
-  await page.getByRole("link", { name: "Hop to Products" }).click();
+  /*
+   * Located by what it visibly says. It used to be found by aria-label "Hop to Products",
+   * which Part 16 removed: the accessible name has to contain the visible text, and the
+   * link visibly reads "Products" and its teaser. Matching on the heading inside it is
+   * both the durable locator and the one a voice-control user would speak.
+   */
+  await page
+    .getByRole("link", { name: /^Products/ })
+    .first()
+    .click();
 
   await expectOn(page, "products");
 });

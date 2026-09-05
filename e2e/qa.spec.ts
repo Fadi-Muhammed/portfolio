@@ -99,16 +99,21 @@ test.describe("print", () => {
      * that is the signal the provider mounts on, so the test fires what the browser
      * fires. Every engine this site supports dispatches it.
      */
-    await page.evaluate(() => window.dispatchEvent(new Event("beforeprint")));
-
+    /*
+     * Dispatched inside the poll rather than once before it. A single dispatch can land
+     * before React has hydrated and attached the listener — which it did, but only in a
+     * full parallel run, where this test passed alone and failed alongside 160 others.
+     */
     await expect
-      .poll(async () =>
-        page.evaluate(
-          () =>
-            [...document.querySelectorAll(".deck-section")].filter(
+      .poll(
+        async () =>
+          page.evaluate(() => {
+            window.dispatchEvent(new Event("beforeprint"));
+            return [...document.querySelectorAll(".deck-section")].filter(
               (s) => (s.querySelector(".deck-section-body")?.children.length ?? 0) > 0,
-            ).length,
-        ),
+            ).length;
+          }),
+        { timeout: 15_000 },
       )
       .toBe(7);
   });
