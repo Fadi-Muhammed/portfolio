@@ -132,7 +132,7 @@ Reviewed at 390, 768 and 1440 in both themes, in the form state and the success 
   is a live region; the honeypot is hidden from assistive technology as well as from view.
   Zero serious or critical axe violations.
 
-**Five faults:**
+**Seven faults:**
 
 1. **The Turnstile widget never rendered**, as above.
 2. **The section overflowed its own scroll**, hiding the footer and the route recap — the
@@ -146,6 +146,16 @@ Reviewed at 390, 768 and 1440 in both themes, in the form state and the success 
 5. **The address was still in the served HTML.** The section split it carefully, and then
    the command palette shipped the whole `site_settings` row into the page, and so did the
    hero's buttons. B9's promise was being kept in one place and broken in two others.
+6. **Two tests measured where the harness had already moved things.** Playwright scrolls an
+   element into view before clicking or dragging it, so the slider's drag started from
+   coordinates taken before that scroll and landed on whatever was on top, and the
+   achievements test read the deck's position from before the harness moved it and then
+   blamed the app for the difference. Both now scroll first and measure second. They failed
+   six times out of six, which is what stopped them being written off.
+7. **Three contact tests asserted against controls CI never renders.** Without Supabase
+   credentials there is no `site_settings` row, so no address and no LinkedIn URL — the
+   Copy email button and the slider are simply absent. One failed outright and two passed
+   by doing nothing, which is worse. They skip now, like the rest of the suite.
 
 **Remove one accessory.** Nothing was removed, and that is worth stating rather than
 inventing a cut: this section arrived without spare parts. Every element is either a
