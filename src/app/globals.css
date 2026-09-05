@@ -2737,12 +2737,15 @@
 }
 
 /*
- * 404 (B10). The other states in B10 — the render error, offline, maintenance — arrive in
- * Part 14; this one is here early because without it an unknown URL got Next's own
- * unstyled page, which is a harder break from the design than any missing feature.
+ * The states (B10, docs/DESIGN.md section 19).
+ *
+ * One block for the 404, the render error, maintenance and the offline overlay, because
+ * B10's demand is that they read as the same site as each other. The drawing vocabulary —
+ * an edge that is solid where traffic passes and dashed where it does not, a node filled
+ * or hollow, a packet in `signal` — is shared by all four and defined once here.
  */
 @layer components {
-  .notfound {
+  .state {
     min-height: 100svh;
     display: flex;
     flex-direction: column;
@@ -2754,51 +2757,61 @@
     padding: calc(var(--nav-h) + 2rem) var(--section-pad) 4rem;
   }
 
-  .notfound h1,
-  .notfound p {
+  .state h1,
+  .state p {
     margin: 0;
   }
 
-  .notfound__figure {
+  .state__figure {
     margin: 0 0 1rem;
     width: 100%;
     max-width: 15rem;
   }
 
-  .notfound__figure svg {
+  .state__figure svg {
     width: 100%;
     height: auto;
     overflow: visible;
   }
 
-  .notfound__link {
+  .state__edge {
     stroke: color-mix(in oklab, var(--muted) 55%, var(--bg));
     stroke-width: 1.25;
     vector-effect: non-scaling-stroke;
   }
 
-  /* Beyond the last node that answered, the route is drawn but not travelled. */
-  .notfound__link[data-dead] {
+  /* A route that is drawn but not travelled: past a dead node, across a broken link,
+     or around a node that is out of service. */
+  .state__edge[data-dead] {
     stroke-dasharray: 2 3;
   }
 
-  .notfound__node {
+  .state__node {
     fill: var(--muted);
   }
 
-  .notfound__node[data-dead] {
+  .state__node[data-dead] {
     fill: var(--bg);
     stroke: var(--muted);
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
   }
 
-  /* Stopped short of the node that never answered. */
-  .notfound__packet {
+  /* Out of service rather than unreachable: someone put this ring here, and someone
+     will take it away. The dash says the same thing the copy does — temporarily. */
+  .state__ring {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .state__packet {
     fill: var(--signal);
   }
 
-  .notfound__actions {
+  .state__actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -2806,8 +2819,7 @@
     margin-top: 0.5rem;
   }
 
-  .notfound__home,
-  .notfound__search {
+  .state__action {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -2818,8 +2830,7 @@
     transition: text-decoration-thickness var(--dur-fast) var(--ease);
   }
 
-  .notfound__home:hover,
-  .notfound__search:hover {
+  .state__action:hover {
     text-decoration-thickness: 2px;
   }
 }
