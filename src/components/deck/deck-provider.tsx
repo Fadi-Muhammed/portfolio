@@ -328,12 +328,31 @@ export function DeckProvider({ children }: { children: ReactNode }) {
       if (event.metaKey || event.ctrlKey || event.altKey) return;
 
       const target = event.target as HTMLElement | null;
-      if (target?.closest("input, textarea, select, [contenteditable=true], [data-inner-scroll]")) {
-        return;
-      }
+      if (target?.closest("input, textarea, select, [contenteditable=true]")) return;
 
       const intent = intentForKey(event.key);
       if (!intent) return;
+
+      /*
+       * An inner scroller gets the key until it has nowhere left to go.
+       *
+       * This used to hand every key inside `[data-inner-scroll]` straight back, which
+       * meant a keyboard visitor who scrolled to the bottom of Products could not leave
+       * it with the keyboard at all — the same trap the wheel had, and for the same
+       * reason. Now the region keeps the key while it can still move in that direction,
+       * and the deck takes over at the end of it.
+       *
+       * Home and End are not directional: they mean the first and last section, and a
+       * region in the middle of its own scroll has no claim on them.
+       */
+      const region = target?.closest("[data-inner-scroll]") as HTMLElement | null;
+      if (region && (intent === "next" || intent === "previous")) {
+        const atEnd =
+          intent === "next"
+            ? Math.ceil(region.scrollTop + region.clientHeight) >= region.scrollHeight - 1
+            : region.scrollTop <= 1;
+        if (!atEnd) return;
+      }
 
       const destination = resolveIntent(active, intent);
       if (!destination) return;

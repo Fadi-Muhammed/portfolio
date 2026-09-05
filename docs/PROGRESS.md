@@ -48,6 +48,39 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Fix — inner scrollers trapped the wheel · 5 September 2026
+
+Status: done. Not a part. Reported by Fadi after Part 16.
+
+**What was wrong.** Every section with its own scroll region — Products, Engineering,
+Achievements, About, Contact — stopped the wheel dead at the bottom of that region. The
+deck has seven stops and its own inner scrollers were hiding six of them: the only way on
+was to find a strip of the section that was not a scroller and scroll there instead.
+
+**Why.** `overscroll-behavior-y: contain` on those five regions. It is the declaration
+that refuses to chain a scroll to the parent, and it was doing precisely that.
+
+**The fix.** Removed from the four section scrollers. The deck keeps its own, so the page
+behind it never rubber-bands, and so does the palette's list, because a dialog must not
+scroll the page underneath it. The filmstrip keeps its horizontal containment, where an
+overscroll is a browser back gesture.
+
+The keyboard had the same trap for the same reason — every key inside `[data-inner-scroll]`
+was handed straight back, so a keyboard visitor could not leave About at all once they had
+scrolled it. The region now keeps a directional key while it can still move that way, and
+the deck takes over at its end.
+
+**Tests.** Three in `e2e/deck.spec.ts`: the wheel chains at the end of a region, it does
+not chain before, and the keyboard does both. Writing them turned up a second thing worth
+keeping — a deep link sets the active section immediately and scrolls afterwards, so
+measuring an element's position in between finds it three viewports down the page. The
+new `settledOn` helper waits for the deck to arrive rather than to decide.
+
+**How to test.** `npm run dev`, hop to About, scroll to the bottom of its list, and keep
+scrolling: the deck moves to Contact. Scroll a little way into About and it does not.
+
+---
+
 ## Part 16 — Performance, accessibility, print and cross-device QA · 5 September 2026
 
 Status: done. Five of B12's seven budgets are met, two are missed and both are explained

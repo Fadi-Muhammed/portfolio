@@ -37,6 +37,29 @@ async function ready(page: Page) {
   );
 }
 
+/**
+ * Wait until the deck has actually arrived, not just decided to.
+ *
+ * A deep link sets the active section immediately — the provider does that on purpose, so
+ * a click feels answered — and the scroll follows. Measuring an element's position in
+ * between gives its box three viewports down the page, which is how the first version of
+ * the wheel tests below ended up aiming at nothing.
+ */
+async function settledOn(page: Page, id: string) {
+  await expectOn(page, id);
+  await expect
+    .poll(async () =>
+      page.evaluate((section) => {
+        const deck = document.querySelector(".deck") as HTMLElement;
+        const element = document.getElementById(section) as HTMLElement;
+        if (!deck || !element) return Number.MAX_SAFE_INTEGER;
+        const padding = parseFloat(getComputedStyle(deck).scrollPaddingTop) || 0;
+        return Math.abs(element.offsetTop - padding - deck.scrollTop);
+      }, id),
+    )
+    .toBeLessThan(4);
+}
+
 test("lands on the section named in the URL", async ({ page }) => {
   await page.goto("/#engineering");
 
@@ -160,4 +183,75 @@ test("no serious accessibility violations on the deck", async ({ page }) => {
   );
 
   expect(serious, serious.map((v) => `${v.id}: ${v.help}`).join("; ")).toEqual([]);
+});
+
+test("an inner scroller lets go of the wheel once it reaches its end", async ({ page }) => {
+  await page.goto("/#about");
+  await settledOn(page, "about");
+
+  const region = page.locator("#about [data-inner-scroll]").first();
+  const scrollable = await region.evaluate((el) => el.scrollHeight > el.clientHeight + 4);
+  if (!scrollable) test.skip(true, "About does not overflow at this size in this environment.");
+
+  // Put it at its own bottom, which is where the trap used to be: the wheel died there
+  // and the only way on was to aim at whatever strip of the section was not a scroller.
+  await region.evaluate((el) => {
+    el.scrollTop = el.scrollHeight;
+  });
+  await page.waitForTimeout(200);
+
+  const box = await region.boundingBox();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.mouse.wheel(0, 600);
+
+  // The next gesture carries into the deck rather than stopping dead.
+  await expectOn(page, "contact");
+});
+
+test("an inner scroller keeps the wheel while it still has somewhere to go", async ({ page }) => {
+  await page.goto("/#about");
+  await settledOn(page, "about");
+
+  const region = page.locator("#about [data-inner-scroll]").first();
+  const scrollable = await region.evaluate((el) => el.scrollHeight > el.clientHeight + 4);
+  if (!scrollable) test.skip(true, "About does not overflow at this size in this environment.");
+
+  await region.evaluate((el) => {
+    el.scrollTop = 0;
+  });
+
+  const box = await region.boundingBox();
+  await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
+  await page.mouse.wheel(0, 120);
+  await page.waitForTimeout(300);
+
+  // Still reading About: a small scroll inside the region must not jump the deck.
+  expect(await region.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  await expectOn(page, "about");
+});
+
+test("the keyboard leaves an inner scroller at its end, and not before", async ({ page }) => {
+  await page.goto("/#about");
+  await settledOn(page, "about");
+
+  const region = page.locator("#about [data-inner-scroll]").first();
+  const scrollable = await region.evaluate((el) => el.scrollHeight > el.clientHeight + 4);
+  if (!scrollable) test.skip(true, "About does not overflow at this size in this environment.");
+
+  // Mid-scroll, ArrowDown belongs to the region.
+  await region.evaluate((el) => {
+    el.scrollTop = 0;
+    el.focus();
+  });
+  await page.keyboard.press("ArrowDown");
+  await page.waitForTimeout(200);
+  await expectOn(page, "about");
+
+  // At its end, the same key hops.
+  await region.evaluate((el) => {
+    el.scrollTop = el.scrollHeight;
+    el.focus();
+  });
+  await page.keyboard.press("ArrowDown");
+  await expectOn(page, "contact");
 });

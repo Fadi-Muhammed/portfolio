@@ -1585,3 +1585,31 @@ accessibility failure looks absurd. It is emitted only where the site URL is htt
 Two dependencies rather than a visual element, because this part added almost nothing to
 look at. `motion` and `@supabase/ssr` had been installed since Parts 13 and 3, were
 confirmed absent from every client chunk, and are gone.
+
+### 21.7 An inner scroller has to let go
+
+Reported by Fadi after Part 16: the sections with their own scroll — Products, Engineering,
+Achievements, About, Contact — were trapping the wheel. Reaching the bottom of one left
+scrolling dead, and the only way to the next section was to aim at whatever strip of the
+page was not a scroller.
+
+The cause was `overscroll-behavior-y: contain` on those regions, which is the declaration
+that stops a scroll chaining to its parent. It was doing exactly what it says, and what it
+says is wrong here: a deck of seven stops was hiding six of them behind its own inner
+regions.
+
+Removing it restores the browser's own behaviour, which is what was wanted — a gesture
+that starts inside a region stays there until it runs out, and the next one carries into
+the deck, which snaps to the following section. Scroll latching is what stops a single
+flick doing both, so it does not overshoot.
+
+Two scrollers keep their containment, because for them it is right: the deck itself, so
+the page behind it never rubber-bands, and the command palette's list, because a dialog
+must not scroll the page underneath it. The horizontal filmstrip keeps its `-x`
+containment for the same reason — a sideways overscroll there is a browser back gesture.
+
+The keyboard had the identical trap and it is fixed the same way. Every key inside
+`[data-inner-scroll]` used to be handed straight back, so a keyboard visitor who reached
+the bottom of About could not leave it with the keyboard at all. The region now keeps the
+key while it can still move in that direction, and the deck takes over at the end of it.
+Home and End are not directional and never belonged to the region.
