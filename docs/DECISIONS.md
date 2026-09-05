@@ -1006,3 +1006,26 @@ before launch.
 - **The hero copy ships as it stands**, with "will change later on" noted against it. The
   tagline, availability and quote all come from `site_settings`, so changing any of them is a
   Studio edit rather than a deploy.
+
+### 5 September 2026 — the CV was replaced, clearing one of the two launch blockers
+
+Fadi sent an updated PDF and it is now the file the site serves. Uploaded through
+`npm run assets:upload -- --force`, which is the project's own tooling and the same path
+the original took — not by signing in to Supabase, which Part 17 rules out.
+
+Two things worth recording about it.
+
+**The old file had no backup and nearly did not get one.** `content/assets/**` is gitignored,
+so the repo copy is not in version control and overwriting it destroys the only local copy.
+The previous CV was pulled out of Storage before the upload and kept at
+`scratchpad/cv-old-backup.pdf` (65,888 bytes). If a CV ever needs rolling back, that is the
+only copy of the old one.
+
+**The first verification said the upload had failed, and it was wrong.** The public URL
+returned the old 65,888 bytes after a successful upload, because Supabase serves Storage
+through a CDN and the cached response outlived the object. A cache-busted request returned
+the new 74,528 bytes immediately, and the plain URL caught up a moment later. Worth knowing
+before anyone concludes an asset upload did not work.
+
+The size beside the button is read from a HEAD at render time rather than baked in, so it
+follows the file without a rebuild.
