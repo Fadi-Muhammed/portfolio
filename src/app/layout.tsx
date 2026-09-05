@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { DeckProvider } from "@/components/deck/deck-provider";
+import { Analytics } from "@/components/analytics/umami";
 import { SiteNav } from "@/components/deck/site-nav";
 import { SkipLink } from "@/components/deck/skip-link";
 import { PaletteProvider } from "@/components/palette/palette-provider";
+import { ConsoleNote } from "@/components/seo/console-note";
 import { SignalWatch } from "@/components/states/signal-watch";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeScript } from "@/components/theme/theme-script";
@@ -100,9 +102,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {children}
               {/* Every route, because connectivity is not a property of one of them. */}
               <SignalWatch />
+              <ConsoleNote />
             </PaletteProvider>
           </DeckProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

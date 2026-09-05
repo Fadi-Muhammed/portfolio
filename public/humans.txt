@@ -1,0 +1,19 @@
+/* TEAM */
+
+  Engineer, designer and author: Fadi Muhammed
+  Site: fadimuhammed.work
+  From: Doha, Qatar
+
+/* SITE */
+
+  Standards: HTML5, CSS, TypeScript
+  Components: Next.js, React, Tailwind CSS, Supabase, cmdk, Lucide
+  Typefaces: Archivo and IBM Plex Mono, both SIL Open Font License 1.1
+  Hosting: Vercel
+  Analytics: Umami — no cookies, no personal data
+  Doctype: designed at 390px first, then 768, then 1440
+
+/* THANKS */
+
+  Every colour, space and radius on this site comes from one token file.
+  If you are reading this, you are the kind of person who checks. Hello.
