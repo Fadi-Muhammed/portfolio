@@ -880,3 +880,50 @@ arrived and are recorded in the entry above. Two remained.
   followed by the name and the role. It borrows the console's own idiom, a line a real
   interface logs, and it is the exact inverse of the "No signal." state Part 14 built. It
   also avoids repeating the palette's `ping`, which is already a mock reply.
+
+### 5 September 2026 — Part 15, decided without asking
+
+- **Canonical URLs use `fadimuhammed.work`, and the root is written one way** — with the
+  trailing slash — so the home page's canonical tag and its sitemap entry are the same
+  string. They were not, briefly, and a unit test is what noticed.
+- **`pageMetadata` never names a share image.** Next writes those tags from the
+  `opengraph-image` route it resolves per segment; a URL typed into the metadata as well
+  would be a second copy of the same fact, free to drift and invisible when it did.
+- **`CreativeWork`, not `SoftwareApplication`, on the detail pages.** The richer type's
+  rich results want `offers` and `aggregateRating`, and this site has no honest values for
+  either. One accurate type beats a more flattering one with holes in it.
+- **The sitemap lists no deck sections.** They are fragments of one page; listing
+  `/#contact` would ask a crawler to treat one page as seven.
+- **`data-domains` on the Umami script.** Vercel previews are built as production, so
+  without it the first week's numbers would be Fadi refreshing his own preview.
+- **`display: "browser"` in the manifest.** A portfolio installed to a home screen with the
+  browser chrome hidden loses the address bar and the back button and gains nothing.
+- **The "view source" hint was not added.** B12 offers it as optional, and the colophon,
+  `humans.txt` and the console note already point at the same fact three times.
+- **The sitemap's `revalidate` is a literal.** Next reads segment configuration by static
+  analysis before any module is evaluated, so the shared `REVALIDATE_SECONDS` constant
+  fails the build with "Invalid segment configuration export".
+
+### 5 September 2026 — the deck was renaming every page that is not the deck
+
+Worth recording because it shipped in the audit's fix and survived a full part before a
+test asked the right question.
+
+Moving the deck provider into the root layout gave a case study its nav, and also gave it
+the deck's title-and-hash effect. On a page with no sections `active` stays on the hero, so
+every case study had `#hero` pushed into its address bar and its title replaced with the
+bare site name — defended for four seconds by the `MutationObserver` that exists to keep
+the deck's own title from being overwritten during hydration.
+
+Crawlers were never affected; they read the server's HTML. Every tab, bookmark, history
+entry and copied link made by a person was.
+
+The first fix was also wrong. Gating on `deckRef.current` is a race: the provider is in the
+layout and the deck is in the page, so with streaming hydration the shell can run its
+effects before the page's ref attaches, which loses the hash on the home page instead. It
+failed once under six parallel workers in a hero test that passed on its own. The gate asks
+the document for the section, which is server-rendered and present from first paint
+whatever hydration is doing.
+
+The lesson: a provider that moves up a tree brings its effects with it, and the effects
+that assume the page they came from are the ones that go quiet rather than loud.

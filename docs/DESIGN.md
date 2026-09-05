@@ -1427,3 +1427,87 @@ spinner in the middle of nothing — holds either way.
 ### 19.6 Remove one accessory
 
 The no-signal drawing, out of the offline panel — 19.3.
+
+---
+
+## 20. What the site says to a machine — Part 15
+
+Everything in this section is invisible on the page, which is exactly why it is written
+down: a canonical tag pointing at the wrong URL and a share card that fails to render are
+both silent until someone posts a link and it comes out wrong.
+
+### 20.1 The share card
+
+1200×630, dark ground, and the same three faces the site uses.
+
+Dark on purpose. These land in a feed of overwhelmingly white cards, the routing drawing
+and the one warm packet carry further on that ground, and it is a theme the site genuinely
+has rather than a costume put on for the occasion.
+
+Three slots: what kind of thing this is (mono, `text-data`'s register, because it is a
+label and not a sentence), what it is called (the display face), and what it is (body,
+`muted`). The title drops from 88px to 72px past thirty characters, which is where a
+two-line title starts to crowd the drawing.
+
+**The route along the bottom is information, not ornament.** Seven nodes because the deck
+has seven stops; the packet parked on the stop this page actually is; the stops before it
+filled and the ones after hollow. A case study genuinely is the second hop. The same four
+marks as section 19 — a line traffic passes along, a node that answers, a node that does
+not, a packet in `signal`.
+
+Two things Satori cannot do shaped the implementation. It has no line clamp, so a summary
+is cut at a word boundary before layout — "a potentiometer settin…" reads as a rendering
+fault, "a potentiometer…" reads as a sentence that continues on the page the card links
+to. And it cannot select an axis on a variable font, which is why `assets/fonts` holds
+three static instances and why the display face there is a real `wdth 118` rather than the
+normal width that a variable file would have defaulted to.
+
+It also cannot read CSS variables. The palette is transcribed once in `src/lib/og/card.tsx`,
+named after the tokens it comes from. That is the one place on this site where token values
+are repeated, and it is a repetition rather than an invention.
+
+### 20.2 The favicon
+
+Section 5 left two candidates open at implementation. It is (a): the initial with the
+packet.
+
+The F is drawn as bars rather than set in Archivo. A favicon is a reduction, not a shrink,
+and a glyph's terminals blur on a 16px grid where a bar holds its edge. It carries its own
+dark ground so it reads on a light or a dark tab strip — the mark cannot know which one it
+lands in, and a transparent mark in `ink` would vanish on half of them.
+
+The `theme-color` meta tags do vary by theme, because a phone that paints its status bar
+the wrong ground puts a light band above a dark page. The manifest takes only one value and
+gets the dark one, matching the icon.
+
+Option (b), the packet on a link, is kept for a social avatar, where the name is written
+next to the mark and the mark does not have to do the identifying.
+
+### 20.3 One flag, two halves of the same instruction
+
+`NEXT_PUBLIC_INDEXABLE` drives both `robots.txt` and every page's robots meta tag, so the
+two cannot disagree. Both are needed: robots.txt stops the crawl, and `noindex` stops a
+page that was reached some other way from being listed — a page linked from elsewhere can
+be indexed without ever being crawled, which is the case robots.txt cannot cover.
+
+It defaults to false. A variable that is missing or misspelled should fail towards being
+invisible, never towards being indexed, because a site that indexes early cannot be
+un-indexed on request.
+
+### 20.4 A privacy note that cannot go stale
+
+The footer's line is read from the same module that decides whether the analytics script
+loads. It said "No analytics, no cookies." from Part 13 — true when it was written, and a
+false statement about what the site records the moment Umami shipped.
+
+It names the tool rather than saying "privacy-friendly analytics", which is a claim about
+intent. Naming it lets a visitor go and check what Umami collects.
+
+### 20.5 Remove one accessory
+
+Nothing was removed, and nothing was added to the visible page either — this part is almost
+entirely tags, and the two things it does put on screen are a favicon and a console line.
+The candidate weighed and rejected was the "view source" hint B12 offers as optional. The
+colophon already says the source is viewable, `humans.txt` says what the site is built
+from, and the console greets anyone who opens it. A fourth pointer at the same fact is not
+craft, it is repetition.

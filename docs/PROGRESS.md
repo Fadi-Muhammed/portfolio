@@ -48,6 +48,148 @@ Qatar 2026 (speaker), DMZ Basecamp 2025, 12th National Cyber Drill 2025.
 
 ---
 
+## Part 15 — SEO, sharing images, analytics, colophon and easter eggs · 5 September 2026
+
+Status: done, with one line of copy waiting on an answer — see "Open questions".
+
+### What exists
+
+- `src/lib/seo.ts` — the site URL, the canonical builder, the indexing flag and
+  `pageMetadata`, which every page's title, description, canonical and share tags come
+  from.
+- `src/app/sitemap.ts` and `src/app/robots.ts` — both from the data layer, both reading the
+  same indexing flag.
+- `src/components/seo/json-ld.tsx` — `Person` and `WebSite` on the home page,
+  `CreativeWork` on each detail page, written from the rows the page renders.
+- `src/lib/og/card.tsx` and three `opengraph-image.tsx` routes — home, product, engineering.
+- `assets/fonts/` — three static instances of the site's own faces, server-side only, with
+  their licensing recorded in a README.
+- `src/app/icon.svg`, `src/app/apple-icon.tsx`, `src/app/manifest.ts`, and per-theme
+  `theme-color` in the root layout's viewport export.
+- `src/lib/analytics.ts` and `src/components/analytics/umami.tsx` — Umami, production only,
+  and the value the footer's privacy note reads.
+- `src/components/seo/console-note.tsx` — the link-up line.
+- `public/humans.txt`.
+- Tests: 300 unit (17 new) and 135 Playwright (17 new).
+
+### How to test
+
+```
+npm run build
+npm run start
+```
+
+- `view-source:http://localhost:3000/products/rubric` — title, description, canonical,
+  `og:*`, `twitter:*`, and a `CreativeWork` block that names the product.
+- `http://localhost:3000/opengraph-image` and
+  `http://localhost:3000/products/rubric/opengraph-image` — the share cards as PNGs.
+- `http://localhost:3000/robots.txt` — `Disallow: /` until launch, and the sitemap named.
+- `http://localhost:3000/sitemap.xml` — the home page, both index routes and every
+  published product and project. No `/design`, no `/debug`, no `#sections`.
+- `http://localhost:3000/humans.txt`, `/manifest.webmanifest`, `/icon.svg`, `/apple-icon`.
+- Open the console on any page: one grey and orange line, and nothing else.
+- Look at the tab: the F and the packet.
+
+```
+npx vitest run
+npx playwright test seo
+```
+
+### The bug the tests found, which nothing else would have
+
+**The deck was renaming every page that is not the deck.** The provider moved into the root
+layout during the design audit so a case study would have a nav, and its title-and-hash
+effect went with it. On a page with no sections `active` stays on the hero, so every case
+study had `#hero` pushed into its address bar and its own title — "Rubric — Fadi Muhammed"
+— replaced with the bare site name. The `MutationObserver` that defends the deck's title
+then held the wrong one for four seconds against the page trying to set the right one.
+
+Crawlers read the server's HTML and never saw it. What did see it: every tab, bookmark and
+history entry made from a case study, the address anyone would have copied from the bar to
+share one, and what "Copy link" put on the clipboard.
+
+Found by a Part 15 test asserting a case study's title ends with the site name.
+
+The first fix was itself wrong and the suite caught that too. Gating on `deckRef.current`
+is a race — the provider is in the layout and the deck is in the page, so with streaming
+hydration the shell can run its effects before the page's ref attaches, which loses the
+hash on the home page instead. It failed once, under six parallel workers, in a hero test
+that passed on its own. The gate asks the document for the section instead, which is
+server-rendered and therefore present from first paint whatever hydration is doing.
+
+### B13 "not vibe-coded" checklist
+
+Almost nothing in this part is visible; what is, was reviewed at 390, 768 and 1440 in both
+themes, along with the share cards at their own size.
+
+- **Tokens only.** No new value. The one repetition is the palette in the OG card, which
+  Satori forces — it cannot read CSS variables — and it is named after the tokens it
+  transcribes.
+- **Structure encodes something true.** The route on the share card is the deck's seven
+  stops with the packet on the one that page is, not a decorative line.
+- **Typography.** The cards use the site's own faces, including the display width the
+  design is built on, which took vendoring a static instance at `wdth 118` rather than
+  accepting the normal width a variable file defaults to.
+- **Copy is real.** The privacy note is read from the same module that loads the script, so
+  it cannot claim something the site is not doing.
+- **No console errors.** The easter egg is `console.info` and is asserted alongside a check
+  that nothing logs an error or a warning on load.
+- **Remove one accessory:** the "view source" hint B12 offers as optional. The colophon,
+  `humans.txt` and the console note already point at the same fact three times.
+
+### Decided without asking
+
+- **Canonical URLs use the real domain**, not a placeholder. A10 records it as owned and a
+  placeholder would only need undoing.
+- **The root URL is written one way everywhere**, with the trailing slash, so the home
+  page's canonical tag and its sitemap entry are the same string. They were not, briefly.
+- **`pageMetadata` never names a share image.** Next writes those tags from the
+  `opengraph-image` route; a URL typed in as well would be a second copy free to drift.
+- **`CreativeWork`, not `SoftwareApplication`,** for the products. The richer type wants
+  `offers` and `aggregateRating`, which there are no honest values for.
+- **The sitemap lists no deck sections.** They are fragments of one page, and listing
+  `/#contact` would ask a crawler to treat one page as seven.
+- **`display: "browser"` in the manifest.** A portfolio installed to a home screen with the
+  browser chrome hidden loses the address bar and gains nothing.
+- **`data-domains` on the analytics script**, so localhost and every `*.vercel.app` preview
+  stay out of the numbers — previews are built as production and would otherwise report
+  into the same bucket as the real site.
+- **The sitemap's `revalidate` is a literal 300**, not the shared constant. Next reads
+  segment configuration by static analysis before any module is evaluated, so an imported
+  constant fails the build.
+
+### Known gaps
+
+- **Umami is not connected.** No account exists yet, so `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is
+  unset, no script loads, and the footer still reads "No analytics, no cookies." — which is
+  true. The walkthrough is in the report.
+- **`NEXT_PUBLIC_SITE_URL` is `http://localhost:3000` in `.env.local`,** which is right for
+  development and means every canonical URL and share-card URL built locally points at
+  localhost. Vercel needs the real domain set for Production and Preview.
+- **The structured data has not been through a validator.** It parses, and the tests assert
+  the types, but Google's Rich Results Test needs a public URL — a Part 17 job, listed with
+  the other launch verifications.
+- **LinkedIn's Post Inspector has not been run** for the same reason.
+- **The colophon says "Source viewable." and the repo is private** (A11). See below.
+- Part 13 and 14 gaps are unchanged: the manual end-to-end send, the five Vercel contact
+  variables, the maintenance flag never switched on outside a test, and `motion` and
+  `@supabase/ssr` still installed and unused.
+
+### Open questions
+
+- **Does the repo go public before launch, or does the colophon change?** Step 6 asked for
+  the colophon to be verified, and as it stands "Source viewable." is not true: A11 records
+  the repo as private. Both answers are fine and neither is mine to pick. It is not urgent
+  while the site is noindex and unlaunched, but it is a launch blocker and belongs with the
+  two already recorded for Part 17.
+
+### Next
+
+Part 16 — performance, accessibility, print and cross-device QA. It will ask which real
+devices are available to test on, and whether any budget in B12 should change.
+
+---
+
 ## Part 14 — Error, empty, loading, offline and maintenance states · 5 September 2026
 
 Status: done. B10's five states, built as one thing rather than five pages.
