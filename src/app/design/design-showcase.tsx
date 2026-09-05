@@ -87,7 +87,7 @@ export function DesignShowcase() {
   const [sending, setSending] = useState(false);
 
   return (
-    <main className="min-h-dvh px-6 pb-24 sm:px-10 lg:px-16">
+    <main id="main" className="min-h-dvh px-6 pb-24 sm:px-10 lg:px-16">
       <div className="flex items-center justify-between gap-4 py-4">
         <p className="text-data text-muted">Tokens · primitives · states</p>
         <ThemeToggle />

@@ -41,7 +41,7 @@ export function StatePage({
   actions?: ReactNode;
 }) {
   return (
-    <main className="state">
+    <main className="state" id="main">
       <StateFigure variant={variant} />
       <h1 className="text-h1 text-ink">{title}</h1>
       <p className="text-body text-muted measure">{children}</p>

@@ -56,9 +56,16 @@ export function DeckSection({ section, showHeader = true, children }: DeckSectio
           onClick={onHeaderClick}
           className="deck-section-header"
           data-lift={isNext && nearEnd ? "" : undefined}
-          // Not a heading link when it is the peek: it is announced as the way into the
-          // next section, which is what it does from there.
-          aria-label={isActive ? undefined : `Hop to ${section.name}`}
+          /*
+           * No aria-label. It used to read "Hop to Products" while the link visibly says
+           * "Products" and its teaser, and WCAG 2.5.3 asks that a control's accessible
+           * name contain its visible text — someone using voice control says what they
+           * can see. Lighthouse flagged it as label-content-name-mismatch.
+           *
+           * Dropping it rather than lengthening it: the link's own content already names
+           * the destination, the role already says it is a link, and "Hop to" was a word
+           * only screen-reader users were given. Now both are told the same thing.
+           */
         >
           <h2 id={`${section.id}-name`} className="deck-section-name text-h3 text-ink">
             {section.name}
