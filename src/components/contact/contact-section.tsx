@@ -1,8 +1,28 @@
+import dynamic from "next/dynamic";
 import { storageUrl } from "@/lib/content/media";
 import type { SiteSettings } from "@/lib/content/queries";
-import { ContactDetails } from "./contact-details";
-import { ContactForm } from "./contact-form";
 import { SiteFooter } from "./site-footer";
+
+/*
+ * The two interactive halves of this section are imported lazily, and the reason is
+ * measured rather than assumed.
+ *
+ * Contact is the seventh stop of seven, and the deck only mounts a section when it is
+ * active or next — so this markup does not render on a visit that never gets here, and
+ * its JavaScript was being parsed on every visit anyway. The form's chunk carries zod,
+ * because the validation rules are shared with the server so the two cannot drift; that
+ * is the right call and the wrong thing to put on the critical path of a page most
+ * visitors leave from the hero.
+ *
+ * Lighthouse measured the home page's Largest Contentful Paint at 3.8s with 88% of it
+ * spent in render delay — the browser holding finished content while the main thread
+ * parsed script. This is that script.
+ *
+ * Nothing about the behaviour changes: the chunk is fetched when the section mounts,
+ * which is exactly when it was previously rendered from code already in the bundle.
+ */
+const ContactForm = dynamic(() => import("./contact-form").then((m) => m.ContactForm));
+const ContactDetails = dynamic(() => import("./contact-details").then((m) => m.ContactDetails));
 
 /**
  * The Contact stop on the deck (B2 item 7, B9) — the last one, and the finale.
