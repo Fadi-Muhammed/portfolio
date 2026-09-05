@@ -222,10 +222,19 @@ export function DeckProvider({ children }: { children: ReactNode }) {
      * against the page trying to set the right one.
      *
      * Crawlers read the server's HTML and were never affected. What was affected is every
-     * tab, bookmark and history entry a person made from a case study, and the address
-     * they would have copied out of the bar to share it.
+     * tab, bookmark and history entry a person made from a case study, the address anyone
+     * would have copied out of the bar to share one, and what "Copy link" put on the
+     * clipboard.
+     *
+     * The test is the section in the document, not `deckRef.current`. The ref was the
+     * first attempt and it is a race: this provider is in the root layout and the deck is
+     * in the page, so with streaming hydration the shell can run its effects before the
+     * page's ref attaches — which loses the hash on the home page instead, and did, once,
+     * under six parallel workers. The sections are server-rendered, so the element is in
+     * the HTML from first paint whatever hydration is doing. It is also the same question
+     * `hopTo` asks two effects above.
      */
-    if (!deckRef.current) return;
+    if (!document.getElementById(active)) return;
 
     const url = `${window.location.pathname}${window.location.search}#${active}`;
     window.history.replaceState(null, "", url);
