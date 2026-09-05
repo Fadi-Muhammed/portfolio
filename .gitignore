@@ -72,3 +72,6 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 !.vscode/settings.json
 .tmp-*
+
+# Lighthouse CI writes reports here; they are artefacts of a run, not source.
+.lighthouseci/
