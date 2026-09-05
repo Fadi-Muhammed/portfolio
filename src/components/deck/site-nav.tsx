@@ -1,6 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useDeck } from "@/components/deck/deck-provider";
 import { usePalette } from "@/components/palette/palette-provider";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -16,10 +17,17 @@ import { Button } from "@/components/ui/button";
  * On a phone only the name, search and theme survive. The two section links are dropped
  * rather than shrunk: the rail and the peek strip already reach every section, so
  * repeating them would spend scarce width on the third-best route to the same place.
+ *
+ * On /maintenance it keeps the name and the theme and drops everything else. While the
+ * flag is on, every route is rewritten to that page: Work and Contact would land back on
+ * it, and the palette would list seven sections that all lead nowhere. A control that
+ * cannot do what it says is worse than no control, and the maintenance page is the one
+ * place on this site where navigation is a promise it cannot keep.
  */
 export function SiteNav() {
   const { active, hopTo } = useDeck();
   const { open: openPalette } = usePalette();
+  const bare = usePathname() === "/maintenance";
 
   return (
     <header
@@ -39,38 +47,54 @@ export function SiteNav() {
       data-solid={active === "hero" ? undefined : ""}
       className="fixed inset-x-0 top-0 z-30 flex items-center justify-between gap-4 px-6 py-3 data-solid:bg-bg sm:px-10 lg:px-16"
     >
-      <a
-        href="#hero"
-        onClick={(event) => {
-          event.preventDefault();
-          hopTo("hero");
-        }}
-        className="flex items-center gap-2"
-      >
-        {/* The mark: the packet square that recurs in the rail and the topology. */}
-        <span aria-hidden="true" className="size-2 bg-signal" />
-        <span className="text-small font-medium text-ink">Fadi Muhammed</span>
-      </a>
+      {bare ? (
+        <span className="flex items-center gap-2">
+          <span aria-hidden="true" className="size-2 bg-signal" />
+          <span className="text-small font-medium text-ink">Fadi Muhammed</span>
+        </span>
+      ) : (
+        <a
+          href="#hero"
+          onClick={(event) => {
+            event.preventDefault();
+            hopTo("hero");
+          }}
+          className="flex items-center gap-2"
+        >
+          {/* The mark: the packet square that recurs in the rail and the topology. */}
+          <span aria-hidden="true" className="size-2 bg-signal" />
+          <span className="text-small font-medium text-ink">Fadi Muhammed</span>
+        </a>
+      )}
 
       <nav aria-label="Primary" className="flex items-center gap-1">
-        <Button variant="quiet" onClick={openPalette} aria-label="Search the site" className="px-3">
-          <Search size={20} strokeWidth={1.5} aria-hidden="true" />
-          <span className="text-data hidden sm:inline">Search</span>
-          <kbd className="text-data hidden text-muted lg:inline">⌘K</kbd>
-        </Button>
+        {bare ? null : (
+          <>
+            <Button
+              variant="quiet"
+              onClick={openPalette}
+              aria-label="Search the site"
+              className="px-3"
+            >
+              <Search size={20} strokeWidth={1.5} aria-hidden="true" />
+              <span className="text-data hidden sm:inline">Search</span>
+              <kbd className="text-data hidden text-muted lg:inline">⌘K</kbd>
+            </Button>
 
-        {/* Wrapped rather than given `hidden` directly: the Button base sets a display
+            {/* Wrapped rather than given `hidden` directly: the Button base sets a display
             utility, and two display utilities on one element is a coin toss decided by
             stylesheet order. On a phone these are dropped, not shrunk — the rail and the
             peek strip already reach every section. */}
-        <span className="hidden items-center gap-1 sm:flex">
-          <Button variant="quiet" onClick={() => hopTo("products")} className="px-3">
-            <span className="text-data">Work</span>
-          </Button>
-          <Button variant="quiet" onClick={() => hopTo("contact")} className="px-3">
-            <span className="text-data">Contact</span>
-          </Button>
-        </span>
+            <span className="hidden items-center gap-1 sm:flex">
+              <Button variant="quiet" onClick={() => hopTo("products")} className="px-3">
+                <span className="text-data">Work</span>
+              </Button>
+              <Button variant="quiet" onClick={() => hopTo("contact")} className="px-3">
+                <span className="text-data">Contact</span>
+              </Button>
+            </span>
+          </>
+        )}
 
         <ThemeToggle className="px-3" />
       </nav>

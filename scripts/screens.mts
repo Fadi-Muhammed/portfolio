@@ -5,6 +5,8 @@
  *   npm run screens -- design       # captures / and /design
  *   npm run screens -- "#products"  # captures the deck parked on a section
  *   SCREENS_PALETTE=1 npm run screens   # captures with the command palette open
+ *   SCREENS_OFFLINE=1 npm run screens   # captures with the connection cut
+ *   SCREENS_DEV=1 npm run screens -- debug/throw   # dev server, for dev-only routes
  *
  * Every route is captured at 390, 768 and 1440 px in both themes, into ./.screens
  * (gitignored). These exist to be looked at and critiqued against the frontend-design
@@ -68,6 +70,22 @@ const fullPage = process.env.SCREENS_FULL_PAGE === "1";
 /** Opens the command palette before capturing, for reviewing it at every size. */
 const openPalette = process.env.SCREENS_PALETTE === "1";
 
+/**
+ * Cuts the connection after the page has loaded, so the "No signal." panel can be
+ * reviewed. It is the one state on the site that no URL can reach.
+ */
+const offline = process.env.SCREENS_OFFLINE === "1";
+
+/**
+ * Captures against `next dev` instead of a production build.
+ *
+ * The render error is the reason this exists: the route that throws is development-only,
+ * like /debug/content, so a production build has nothing to photograph. Next's own error
+ * overlay is dismissed before the shutter opens — what is being reviewed is the page
+ * underneath it, which is what a visitor to the deployed site would see.
+ */
+const devServer = process.env.SCREENS_DEV === "1";
+
 function slugOf(route: string): string {
   const [pathAndQuery, hash] = route.split("#");
   const [pathname, query] = pathAndQuery.split("?");
@@ -115,7 +133,9 @@ async function main(): Promise<void> {
    * it silently photographed stale code after every edit — a screenshot that looks like
    * evidence and is not. SCREENS_SKIP_BUILD=1 opts out when nothing has changed.
    */
-  if (process.env.SCREENS_SKIP_BUILD === "1") {
+  if (devServer) {
+    // Nothing to build: next dev compiles each route the first time it is asked for.
+  } else if (process.env.SCREENS_SKIP_BUILD === "1") {
     if (!existsSync(path.join(ROOT, ".next", "BUILD_ID"))) {
       throw new Error("SCREENS_SKIP_BUILD is set but there is no build to screenshot.");
     }
@@ -131,7 +151,7 @@ async function main(): Promise<void> {
   // npm wrapper leaves the real server orphaned and holding the port.
   const server: ChildProcess = spawn(
     process.execPath,
-    [NEXT_BIN, "start", "--port", String(PORT)],
+    [NEXT_BIN, devServer ? "dev" : "start", "--port", String(PORT)],
     {
       cwd: ROOT,
       stdio: "ignore",
@@ -169,8 +189,23 @@ async function main(): Promise<void> {
              * designed state from a frame on the way to it.
              */
             const response = await page.goto(`${BASE_URL}${route}`, { waitUntil: "load" });
-            if (!response || !response.ok()) {
-              throw new Error(`${route} returned ${response?.status() ?? "no response"}`);
+            /*
+             * A status is reported, not refused.
+             *
+             * This used to throw on anything but 2xx, which was right while every route
+             * was a normal page and wrong from Part 14 onwards: the 404 answers 404 and
+             * the maintenance page answers 503, and both are designed pages that have to
+             * be reviewed. What still fails the capture is no response at all, which is
+             * the case the check was really for. The status goes in the log line so a
+             * route that 404s by accident is still obvious to whoever ran it.
+             */
+            if (!response) throw new Error(`${route} returned no response`);
+            const status = response.status();
+
+            if (devServer) {
+              // Next's development error overlay sits on top of the page being reviewed.
+              await page.keyboard.press("Escape");
+              await page.waitForTimeout(200);
             }
 
             // A hash route lands via a client-side scroll, so give the deck a moment to
@@ -204,6 +239,12 @@ async function main(): Promise<void> {
               });
             await page.waitForTimeout(150);
 
+            if (offline) {
+              await context.setOffline(true);
+              await page.waitForSelector("text=No signal.", { timeout: 10_000 });
+              await page.waitForTimeout(400);
+            }
+
             if (openPalette) {
               await page.keyboard.press("Control+k");
               // The palette is loaded on first open, so wait for it rather than guessing.
@@ -211,7 +252,7 @@ async function main(): Promise<void> {
               await page.waitForTimeout(300);
             }
 
-            const suffix = openPalette ? "-palette" : "";
+            const suffix = `${openPalette ? "-palette" : ""}${offline ? "-offline" : ""}`;
             const file = path.join(
               OUT_DIR,
               `${slugOf(route)}${suffix}__${viewport.width}__${theme}.png`,
@@ -219,7 +260,7 @@ async function main(): Promise<void> {
             await page.screenshot({ path: file, fullPage });
             await context.close();
             captured += 1;
-            console.log(`  ${path.relative(ROOT, file)}`);
+            console.log(`  ${path.relative(ROOT, file)}  (${status})`);
           }
         }
       }

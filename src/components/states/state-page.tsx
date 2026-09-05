@@ -22,6 +22,7 @@ export function StatePage({
   variant,
   title,
   children,
+  note,
   actions,
 }: {
   variant: StateVariant;
@@ -29,6 +30,14 @@ export function StatePage({
   title: string;
   /** What happened and what it means. One short paragraph. */
   children: ReactNode;
+  /**
+   * A line of machine detail under the prose — today, the error digest.
+   *
+   * Its own line rather than the end of the sentence. Set inline it read as a typo in
+   * the paragraph: uppercase mono running straight on from "gets through.", sharing the
+   * last line with it. A reference number is not part of what the page is saying.
+   */
+  note?: ReactNode;
   actions?: ReactNode;
 }) {
   return (
@@ -36,6 +45,7 @@ export function StatePage({
       <StateFigure variant={variant} />
       <h1 className="text-h1 text-ink">{title}</h1>
       <p className="text-body text-muted measure">{children}</p>
+      {note ? <p className="state__note text-data text-muted">{note}</p> : null}
       {actions ? <div className="state__actions">{actions}</div> : null}
     </main>
   );

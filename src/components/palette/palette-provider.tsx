@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import type { PaletteContent } from "@/lib/palette/items";
+import { usePathname } from "next/navigation";
 
 /**
  * Owns whether the palette is open, and the two ways of opening it.
@@ -79,7 +80,17 @@ export function PaletteProvider({
     }
   }, []);
 
+  /*
+   * The shortcuts are off on /maintenance, where the nav's Search button is gone for the
+   * same reason: while the flag is on every route is rewritten to that page, so a palette
+   * would list seven sections and two projects that all lead back to it. Removing the
+   * button and leaving the keystroke would just hide the broken promise from the mouse.
+   */
+  const shortcutsEnabled = usePathname() !== "/maintenance";
+
   useEffect(() => {
+    if (!shortcutsEnabled) return;
+
     const onKeyDown = (event: KeyboardEvent) => {
       const meta = event.metaKey || event.ctrlKey;
 
@@ -103,7 +114,7 @@ export function PaletteProvider({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [remember]);
+  }, [remember, shortcutsEnabled]);
 
   const value = useMemo<PaletteContextValue>(() => ({ open, isOpen }), [open, isOpen]);
 

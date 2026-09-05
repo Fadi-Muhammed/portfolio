@@ -40,6 +40,7 @@ export default function GlobalError({
         <StatePage
           variant="dropped"
           title="Packet dropped."
+          {...(error.digest ? { note: `Reference ${error.digest}` } : {})}
           actions={
             <>
               <button type="button" onClick={() => retry()} className="state__action text-small">
@@ -62,12 +63,6 @@ export default function GlobalError({
           The request reached this end and did not come back. The fault is here, not with your
           connection or the address you asked for. One request failed rather than the whole site,
           so trying again usually gets through.
-          {error.digest ? (
-            <>
-              {" "}
-              <span className="text-data text-muted">Reference {error.digest}</span>
-            </>
-          ) : null}
         </StatePage>
       </body>
     </html>

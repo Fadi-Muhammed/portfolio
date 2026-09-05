@@ -23,6 +23,11 @@ export const metadata: Metadata = {
  *
  * A node taken out of service on purpose, drawn with a ring — the difference between this
  * and the 404's dead node is that somebody put the ring there and will take it away.
+ *
+ * "Out of service." rather than "Down for maintenance.", which is what it said first and
+ * which restated the sentence underneath it word for word. The heading names the state and
+ * matches the ring in the drawing; the line from site_settings says it is scheduled and
+ * that it will be back, which is the part a visitor does not already know.
  */
 export const dynamic = "force-dynamic";
 
@@ -45,7 +50,7 @@ export default async function MaintenancePage() {
   return (
     <StatePage
       variant="maintenance"
-      title="Down for maintenance."
+      title="Out of service."
       actions={user && domain ? <EmailOut user={user} domain={domain} /> : null}
     >
       {message}

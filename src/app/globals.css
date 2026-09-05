@@ -2811,6 +2811,10 @@
     fill: var(--signal);
   }
 
+  .state__note {
+    margin-top: -0.25rem;
+  }
+
   .state__actions {
     display: flex;
     flex-wrap: wrap;
@@ -2849,9 +2853,6 @@
     right: var(--section-pad);
     bottom: var(--section-pad);
     max-width: 26rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
     padding: 1rem;
     background-color: var(--surface);
     border: var(--hairline) solid var(--line);
@@ -2861,18 +2862,6 @@
 
   .signal p {
     margin: 0;
-  }
-
-  .signal__figure {
-    flex: none;
-    width: 4.5rem;
-    /* The drawing is shared with the full-page states, which size it for a page. */
-    margin-top: 0.125rem;
-  }
-
-  .signal__figure .state__figure {
-    margin: 0;
-    max-width: none;
   }
 
   .signal__detail {

@@ -102,7 +102,7 @@ test.describe("maintenance", () => {
   test("the page says what is happening and offers a way to reach him", async ({ page }) => {
     await page.goto("/maintenance");
 
-    await expect(page.getByRole("heading", { name: "Down for maintenance." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Out of service." })).toBeVisible();
     await expect(page.getByRole("img", { name: /out of service/i })).toBeVisible();
   });
 
@@ -122,12 +122,27 @@ test.describe("maintenance", () => {
     await expect(page.getByRole("link", { name: /@/ })).toBeVisible();
   });
 
+  test("offers no navigation it cannot honour", async ({ page }) => {
+    await page.goto("/maintenance");
+
+    // While the flag is on, every one of these would land back on this page.
+    await expect(page.getByRole("button", { name: "Search the site" })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Work" })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Contact" })).toBeHidden();
+    await expect(page.getByRole("link", { name: "Skip to contact" })).toBeHidden();
+
+    // The keystroke goes with the button, or the promise is only hidden from the mouse.
+    await page.keyboard.press("Control+k");
+    await expect(page.locator("[cmdk-input]")).toBeHidden();
+
+    // The name and the theme stay: one is identity, the other still works.
+    await expect(page.getByText("Fadi Muhammed")).toBeVisible();
+    await expect(page.getByRole("button", { name: /theme/i })).toBeVisible();
+  });
+
   test("is not indexed", async ({ page }) => {
     await page.goto("/maintenance");
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
-      "content",
-      /noindex/,
-    );
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   });
 
   test("no serious accessibility violations", async ({ page }) => {

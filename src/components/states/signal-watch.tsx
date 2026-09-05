@@ -1,7 +1,6 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { StateFigure } from "./state-figure";
 
 /**
  * "No signal." (B10) — an overlay, not a page.
@@ -24,6 +23,11 @@ import { StateFigure } from "./state-figure";
  * database as well and answers 503 wherever Supabase is unconfigured — that would read as
  * "still offline" on a machine with a perfectly good connection. The question here is
  * only whether a request reaches anything at all, and any answer at all settles it.
+ *
+ * No drawing. The no-signal figure was in this panel and was removed: at the width a
+ * corner panel can spare it was a row of dots that read as a dotted line rather than as a
+ * broken route, and a drawing nobody can decode is decoration. The full-page states have
+ * the room to draw; this one has the words.
  *
  * The whole state machine, timer included, lives in the store rather than in the
  * component. That is not only the lint rule about setState in an effect, though it is
@@ -104,16 +108,10 @@ export function SignalWatch() {
     <div className="signal" data-state={state} role="status" aria-live="polite">
       {state === "lost" ? (
         <>
-          <div className="signal__figure">
-            <StateFigure variant="no-signal" />
-          </div>
-          <div>
-            <p className="text-body text-ink">No signal.</p>
-            <p className="signal__detail text-small text-muted">
-              The connection dropped. What is already on screen still works; anything new needs
-              the network. Checking every few seconds.
-            </p>
-          </div>
+          <p className="text-body text-ink">No signal.</p>
+          <p className="signal__detail text-small text-muted">
+            The connection dropped. Checking every few seconds.
+          </p>
         </>
       ) : (
         <p className="text-body text-ink">Signal restored.</p>
