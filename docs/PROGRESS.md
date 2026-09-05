@@ -175,6 +175,14 @@ Reviewed at 390, 768 and 1440 in both themes, on all four states.
   at 1440. Inherited from the 404 as reviewed in the audit, and left deliberately.
 - The Part 13 gaps are unchanged: the manual end-to-end send, the five Vercel variables,
   `motion` and `@supabase/ssr` still installed and unused.
+- **One test failed once and has not failed since.** The engineering instrument's fault
+  state — a spec Part 14 never touched — failed in one full run, between two full runs
+  that passed. It has since passed 25 more executions: three in isolation, two under
+  `--repeat-each`, and two more full suites. Recorded rather than written off, and
+  recorded rather than "fixed", because there is nothing yet to fix: the same thing
+  happened to the footer's route recap during the audit and has not recurred. If it
+  returns, the place to look is the six `fill()` calls in a row racing the instrument's
+  own state, not the app.
 
 ### Next
 
