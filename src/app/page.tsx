@@ -19,6 +19,7 @@ import {
   getSkills,
 } from "@/lib/content/queries";
 import { SECTIONS, type SectionId } from "@/lib/deck/sections";
+import { HomeJsonLd } from "@/components/seo/json-ld";
 
 export default async function Home() {
   // Fetched on the server, in one round, so a section that mounts later is not waiting on
@@ -57,6 +58,9 @@ export default async function Home() {
       in the root layout, because a case study needs them too.
     */
     <WorkFilterProvider skills={skills} workSections={workSections}>
+      {/* Person and WebSite, from the same row the hero renders (B12). */}
+      <HomeJsonLd settings={settings} />
+
       <Rail />
 
       <Deck>

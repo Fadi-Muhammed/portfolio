@@ -8,6 +8,8 @@ import { Tag } from "@/components/ui/tag";
 import { Markdown } from "@/lib/content/markdown";
 import { galleryImages, mediaUrl, storageUrl } from "@/lib/content/media";
 import { getEngineeringProject, getEngineeringProjects } from "@/lib/content/queries";
+import { WorkJsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo";
 
 /**
  * An engineering project.
@@ -34,10 +36,12 @@ export async function generateMetadata({
   const project = await getEngineeringProject(slug);
   if (!project) return { title: "Route not found" };
 
-  return {
-    title: `${project.title} — Fadi Muhammed`,
-    description: project.summary ?? undefined,
-  };
+  return pageMetadata({
+    title: project.title,
+    description: project.summary,
+    path: `/engineering/${project.slug}`,
+    type: "article",
+  });
 }
 
 const TYPE_LABEL: Record<string, string> = {
@@ -67,6 +71,7 @@ export default async function EngineeringPage({ params }: { params: Promise<{ sl
 
   return (
     <main className="detail" id="main">
+      <WorkJsonLd work={project} path={`/engineering/${project.slug}`} />
       <p className="detail__back text-data">
         <Link href="/#engineering">
           <span aria-hidden="true">←</span> Back to engineering

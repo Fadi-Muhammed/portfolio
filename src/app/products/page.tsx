@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductCard } from "@/components/products/product-card";
 import { getProducts } from "@/lib/content/queries";
+import { pageMetadata } from "@/lib/seo";
 
 /**
  * Every product, on one page.
@@ -11,10 +12,11 @@ import { getProducts } from "@/lib/content/queries";
  * in the deck, because a URL that people can reasonably guess should not 404.
  */
 
-export const metadata: Metadata = {
-  title: "Products — Fadi Muhammed",
-  description: "Products I have built and shipped, each with a case study.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Products",
+  description: "Things I have built and shipped. Each one has a case study.",
+  path: "/products",
+});
 
 export default async function ProductsIndex() {
   const products = await getProducts();

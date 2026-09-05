@@ -7,6 +7,8 @@ import { Tag } from "@/components/ui/tag";
 import { Markdown } from "@/lib/content/markdown";
 import { galleryImages, mediaUrl, parseMetrics } from "@/lib/content/media";
 import { getProduct, getProducts } from "@/lib/content/queries";
+import { WorkJsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo";
 
 /**
  * A product case study.
@@ -33,10 +35,12 @@ export async function generateMetadata({
   const product = await getProduct(slug);
   if (!product) return { title: "Route not found" };
 
-  return {
-    title: `${product.title} — Fadi Muhammed`,
-    description: product.summary ?? undefined,
-  };
+  return pageMetadata({
+    title: product.title,
+    description: product.summary,
+    path: `/products/${product.slug}`,
+    type: "article",
+  });
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -56,6 +60,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="detail" id="main">
+      <WorkJsonLd work={product} path={`/products/${product.slug}`} />
       <p className="detail__back text-data">
         <Link href="/#products">
           <span aria-hidden="true">←</span> Back to products

@@ -9,13 +9,41 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeScript } from "@/components/theme/theme-script";
 import { archivo, plexMono } from "@/lib/fonts";
 import { getPaletteContent } from "@/lib/palette/content";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, robotsRules } from "@/lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fadi Muhammed",
-  // The site is a holding page until launch. Part 15 sets the real metadata and
-  // Part 17 removes this, so "Building. Back soon." is never what gets indexed.
-  robots: { index: false, follow: false },
+  /*
+   * Resolves every relative URL in the metadata below, and every share card Next
+   * generates from an opengraph-image route. Without it those come out relative, which
+   * no crawler can follow.
+   */
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — telecommunications and network engineer`,
+    /* Every other page gives its own short title and this adds the name. */
+    template: `%s — ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  alternates: { canonical: SITE_URL },
+  /*
+   * Off until launch day, and off by default: NEXT_PUBLIC_INDEXABLE has to be set to
+   * "true" for anything here to be indexed. Part 17 sets it in Vercel, so launching is a
+   * configuration change rather than a deploy. See src/lib/seo.ts.
+   */
+  robots: robotsRules,
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — telecommunications and network engineer`,
+    description: SITE_DESCRIPTION,
+    locale: "en_GB",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 /*

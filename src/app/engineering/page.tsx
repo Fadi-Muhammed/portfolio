@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EngineeringCard } from "@/components/engineering/engineering-card";
 import { getEngineeringProjects } from "@/lib/content/queries";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Engineering — Fadi Muhammed",
+export const metadata: Metadata = pageMetadata({
+  title: "Engineering",
   description: "Lab and course work, with the concepts applied and what the measurements showed.",
-};
+  path: "/engineering",
+});
 
 export default async function EngineeringIndex() {
   const projects = await getEngineeringProjects();
